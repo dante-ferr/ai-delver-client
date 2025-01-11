@@ -1,12 +1,14 @@
 import json
 from .bone import Bone
 from .slot import Slot
+from .animation.skeleton_animation import SkeletonAnimation
 from .get_subtextures import get_subtextures, Subtexture
 import os
 import pyglet
+from typing import Union
 
 class Skeleton:
-    current_animation: str
+    current_animation: SkeletonAnimation | None
     position: tuple[float, float]
     scale: tuple[float, float]
     angle = 0.
@@ -34,20 +36,23 @@ class Skeleton:
         entity_name = os.path.basename(skeleton_path)
         with open(f"{skeleton_path}/{entity_name}_ske.json", 'r') as file:
             skeleton_data = json.load(file)
-        
+
+        armature_data = skeleton_data['armature'][0]
+        self.animation_data = armature_data['animation'][0]
+
         self.subtextures = get_subtextures(
             f"{skeleton_path}/{entity_name}_tex.json",
             f"{skeleton_path}/{entity_name}_tex.png",
         )
 
-        self.bones = self._load_bones(skeleton_data, groups)
-        self._load_slots(skeleton_data)
+        self.bones = self._load_bones(armature_data['bone'], groups)
+        self.slots = self._load_slots((armature_data['slot'], armature_data['skin'][0]['slot']))
 
         self.set_position(0, 0)
         self.set_scale(1, 1)
         self.set_angle(0)
 
-        self.current_animation = skeleton_data['armature'][0]['animation'][0]['name'] # default animation
+        self.current_animation = armature_data['animation'][0]['name'] # default animation
         self.animation_time = 0
 
         # for bone in self.bones.values():
@@ -60,7 +65,8 @@ class Skeleton:
 
     def _load_bones(self, data, groups: dict[str, pyglet.graphics.Group]):
         bones: dict[str, Bone] = {}
-        for b in data['armature'][0]['bone']:
+
+        for b in data:
             bone_name = b["name"]
             bone_group = groups.get(bone_name) or groups["all"]
             bone = Bone(b, bone_group, self)
@@ -69,12 +75,15 @@ class Skeleton:
         return bones
     
     def _load_slots(self, data):
+        slots: dict[str, Slot] = {}
+
+        slot_data, skin_data = data
         # Iterate through armature slots
-        for slot_info in data['armature'][0]['slot']:
+        for slot_info in slot_data:
             slot_displays = None
             
             # Find matching slot in skin and retrieve display info
-            for slot in data['armature'][0]['skin'][0]['slot']:
+            for slot in skin_data:
                 if slot['name'] == slot_info['name']:
                     slot_displays = slot.get('display')  # Use .get() to avoid KeyError
                     break
@@ -97,6 +106,9 @@ class Skeleton:
             )
             bone.slots[slot_name] = slot
             slot.bone = bone
+            slots[slot_name] = slot
+
+        return slots
     
     def set_position(self, x: float, y: float):
         """Change skeleton's postion."""
@@ -119,10 +131,17 @@ class Skeleton:
         for bone in self.bones.values():
             bone.update_scale()
 
-    def set_animation(self, animation: str, starting_frame=0):
+    def set_animation(self, animation_name: str, starting_frame=0, speed=1.):
         """Change skeleton's animation."""
+        animation = SkeletonAnimation(
+            info=self.animation_data[animation_name],
+            skeleton=self,
+            frame=starting_frame,
+            speed=speed,
+        )
         self.current_animation = animation
 
     def draw(self):
         """Draw each of the skeleton's parts."""
+
         self.batch.draw()

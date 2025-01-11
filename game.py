@@ -17,6 +17,7 @@ class Game:
         self.skeleton.set_position(config_data["window_width"] / 2, config_data["window_height"] / 2)
         self.skeleton.set_scale(3, 3)
         self.skeleton.set_angle(180)
+        self.skeleton.set_animation("run")
 
         # Register the key press event
         self.keys = pyglet.window.key.KeyStateHandler()
