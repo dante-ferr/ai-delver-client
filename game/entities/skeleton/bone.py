@@ -1,5 +1,4 @@
 from .slot import Slot
-from typing import TypedDict, List, Optional
 import pyglet
 from typing import TYPE_CHECKING
 import math
@@ -30,6 +29,7 @@ class Bone:
     relative_angle = 0.
     relative_scale: tuple[float, float]
 
+    name: str
     group: pyglet.graphics.Group
 
     skeleton = None
@@ -66,12 +66,14 @@ class Bone:
     def set_position(self, x: float, y: float, update=True):
         """Change bone's relative position. If update is True, the bone's actual position will be updated."""
         self.relative_position = (x + self.base_position[0], y + self.base_position[1])
-        if update: self.update_position()
+        if update:
+            self.update_position()
     
     def set_angle(self, angle: float, update=True):
         """Change bone's relative angle. If update is True, the bone's actual angle will be updated."""
         self.relative_angle = angle
-        if update: self.update_angle()
+        if update:
+            self.update_angle()
     
     def set_scale(self, x: float, y: float, update=True):
         """Change bone's relative scale. If update is True, the bone's actual scale will be updated."""
@@ -89,8 +91,6 @@ class Bone:
             self.skeleton.position[0] + rotated_position[0],
             self.skeleton.position[1] + rotated_position[1]
         )
-        # print(self.scale)
-        # print(((self.relative_position[0]) * self.scale[0], (self.relative_position[1]) * self.scale[1]))
 
         for slot in self.slots.values():
             slot.update_position()

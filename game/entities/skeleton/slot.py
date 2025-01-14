@@ -9,6 +9,7 @@ class Slot:
     current_display: int
 
     bone = None
+    name: str
     group = None
 
     relative_position: tuple[float, float]

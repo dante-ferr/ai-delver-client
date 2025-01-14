@@ -5,13 +5,13 @@ from .animation.skeleton_animation import SkeletonAnimation
 from .get_subtextures import get_subtextures, Subtexture
 import os
 import pyglet
-from typing import Union
+
 
 class Skeleton:
     current_animation: SkeletonAnimation | None
     position: tuple[float, float]
     scale: tuple[float, float]
-    angle = 0.
+    angle = 0.0
 
     frame = 0
 
@@ -20,7 +20,14 @@ class Skeleton:
 
     batch: pyglet.graphics.Batch
 
-    def __init__(self, skeleton_path: str, groups: dict[str, pyglet.graphics.Group]):
+    animation_data: list[dict]
+
+    def __init__(
+        self,
+        skeleton_path: str,
+        groups: dict[str, pyglet.graphics.Group],
+        smooth: bool = True,
+    ):
         """
         Load a skeleton from a JSON file and create bones and slots.
 
@@ -34,34 +41,30 @@ class Skeleton:
         self.batch = pyglet.graphics.Batch()
 
         entity_name = os.path.basename(skeleton_path)
-        with open(f"{skeleton_path}/{entity_name}_ske.json", 'r') as file:
+        with open(f"{skeleton_path}/{entity_name}_ske.json", "r") as file:
             skeleton_data = json.load(file)
 
-        armature_data = skeleton_data['armature'][0]
-        self.animation_data = armature_data['animation'][0]
+        armature_data = skeleton_data["armature"][0]
+        self.animation_data = armature_data["animation"]
 
         self.subtextures = get_subtextures(
             f"{skeleton_path}/{entity_name}_tex.json",
             f"{skeleton_path}/{entity_name}_tex.png",
         )
 
-        self.bones = self._load_bones(armature_data['bone'], groups)
-        self.slots = self._load_slots((armature_data['slot'], armature_data['skin'][0]['slot']))
+        self.bones = self._load_bones(armature_data["bone"], groups)
+        self.slots = self._load_slots(
+            (armature_data["slot"], armature_data["skin"][0]["slot"])
+        )
 
         self.set_position(0, 0)
         self.set_scale(1, 1)
         self.set_angle(0)
 
-        self.current_animation = armature_data['animation'][0]['name'] # default animation
+        self.set_animation(armature_data["animation"][0]["name"])
         self.animation_time = 0
 
-        # for bone in self.bones.values():
-        #     print("\nbone: ", bone.name)
-        #     print(bone.position)
-            # for slot in bone.slots.values():
-            #     print(slot.name)
-            #     for subtexture in slot.subtextures.keys():
-            #         print(subtexture)
+        self.set_smooth(smooth)
 
     def _load_bones(self, data, groups: dict[str, pyglet.graphics.Group]):
         bones: dict[str, Bone] = {}
@@ -73,7 +76,7 @@ class Skeleton:
             bones[bone_name] = bone
 
         return bones
-    
+
     def _load_slots(self, data):
         slots: dict[str, Slot] = {}
 
@@ -81,17 +84,19 @@ class Skeleton:
         # Iterate through armature slots
         for slot_info in slot_data:
             slot_displays = None
-            
+
             # Find matching slot in skin and retrieve display info
             for slot in skin_data:
-                if slot['name'] == slot_info['name']:
-                    slot_displays = slot.get('display')  # Use .get() to avoid KeyError
+                if slot["name"] == slot_info["name"]:
+                    slot_displays = slot.get("display")  # Use .get() to avoid KeyError
                     break
-            
+
             # If slot displays are found, create a dictionary for subtextures
             slot_subtextures = {}
             if slot_displays:
-                slot_subtextures = [self.subtextures[display["name"]] for display in slot_displays]
+                slot_subtextures = [
+                    self.subtextures[display["name"]] for display in slot_displays
+                ]
 
             # Create a slot and assign it to the bone's slot dictionary
             bone_name = slot_info["parent"]
@@ -99,31 +104,28 @@ class Skeleton:
 
             bone = self.bones[bone_name]
             slot = Slot(
-                slot_info,
-                bone=bone,
-                subtextures=slot_subtextures,
-                batch=self.batch
+                slot_info, bone=bone, subtextures=slot_subtextures, batch=self.batch
             )
             bone.slots[slot_name] = slot
             slot.bone = bone
             slots[slot_name] = slot
 
         return slots
-    
+
     def set_position(self, x: float, y: float):
-        """Change skeleton's postion."""
+        """Change skeleton's position."""
         self.position = (x, y)
 
         for bone in self.bones.values():
             bone.update_position()
-        
+
     def set_angle(self, angle: float):
         """Change skeleton's angle."""
         self.angle = angle
 
         for bone in self.bones.values():
             bone.update_angle()
-        
+
     def set_scale(self, x: float, y: float):
         """Change skeleton's scale."""
         self.scale = (x, y)
@@ -131,17 +133,30 @@ class Skeleton:
         for bone in self.bones.values():
             bone.update_scale()
 
-    def set_animation(self, animation_name: str, starting_frame=0, speed=1.):
+    def set_animation(self, animation_name: str, starting_frame=0, speed=1.0):
         """Change skeleton's animation."""
+        animation_info = next(
+            (info for info in self.animation_data if info["name"] == animation_name),
+            None,
+        )
+        if animation_info is None:
+            raise ValueError(f"Animation {animation_name} not found.")
+
         animation = SkeletonAnimation(
-            info=self.animation_data[animation_name],
+            info=animation_info,
             skeleton=self,
             frame=starting_frame,
             speed=speed,
         )
         self.current_animation = animation
 
-    def draw(self):
-        """Draw each of the skeleton's parts."""
+    def set_smooth(self, smooth: bool):
+        if self.current_animation:
+            self.current_animation.set_smooth(smooth)
+        else:
+            raise ValueError("No animation is currently playing.")
 
+    def draw(self, dt):
+        """Draw each of the skeleton's parts."""
+        self.current_animation.update(dt)
         self.batch.draw()
