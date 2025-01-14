@@ -8,26 +8,24 @@ import pyglet
 
 
 class Skeleton:
-    current_animation: SkeletonAnimation | None
     position: tuple[float, float]
     scale: tuple[float, float]
     angle = 0.0
 
+    current_animation: SkeletonAnimation | None
     frame = 0
+    framerate: float
 
     bones: dict[str, Bone]
-    subtextures: dict[str, Subtexture]
 
+    subtextures: dict[str, Subtexture]
     batch: pyglet.graphics.Batch
 
     animation_data: list[dict]
 
-    def __init__(
-        self,
-        skeleton_path: str,
-        groups: dict[str, pyglet.graphics.Group],
-        smooth: bool = True,
-    ):
+    velocity: tuple[float, float]
+
+    def __init__(self, skeleton_path: str, groups: dict[str, pyglet.graphics.Group]):
         """
         Load a skeleton from a JSON file and create bones and slots.
 
@@ -44,6 +42,7 @@ class Skeleton:
         with open(f"{skeleton_path}/{entity_name}_ske.json", "r") as file:
             skeleton_data = json.load(file)
 
+        self.framerate = skeleton_data["frameRate"]
         armature_data = skeleton_data["armature"][0]
         self.animation_data = armature_data["animation"]
 
@@ -64,7 +63,7 @@ class Skeleton:
         self.set_animation(armature_data["animation"][0]["name"])
         self.animation_time = 0
 
-        self.set_smooth(smooth)
+        self.speed = (0, 0)
 
     def _load_bones(self, data, groups: dict[str, pyglet.graphics.Group]):
         bones: dict[str, Bone] = {}
@@ -145,6 +144,7 @@ class Skeleton:
         animation = SkeletonAnimation(
             info=animation_info,
             skeleton=self,
+            framerate=self.framerate,
             frame=starting_frame,
             speed=speed,
         )
@@ -156,7 +156,9 @@ class Skeleton:
         else:
             raise ValueError("No animation is currently playing.")
 
-    def draw(self, dt):
-        """Draw each of the skeleton's parts."""
+    def update(self, dt):
+        """Update skeleton's attributes and draw each of its parts."""
+        # self.body.update(dt)
+
         self.current_animation.update(dt)
         self.batch.draw()

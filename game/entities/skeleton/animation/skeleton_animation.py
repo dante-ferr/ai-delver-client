@@ -15,9 +15,11 @@ class EventsDict(TypedDict):
 
 
 class SkeletonAnimation:
+    framerate: float
     duration: float
     frame = 0.0
     speed: float
+    smooth: bool = True
 
     events: EventsDict = {
         "bone": {},
@@ -27,8 +29,11 @@ class SkeletonAnimation:
     bone_info: dict
     slot_info: dict
 
-    def __init__(self, info: dict, skeleton: "Skeleton", frame=0, speed=1.0):
+    def __init__(
+        self, info: dict, skeleton: "Skeleton", framerate=30, frame=0, speed=1.0
+    ):
         self.duration = info["duration"]
+        self.framerate = framerate
         self.bone_info = info["bone"]
         self.slot_info = info["slot"]
 
@@ -44,8 +49,9 @@ class SkeletonAnimation:
         self.speed = speed
 
     def update(self, dt):
-        frame_step = dt * self.speed
+        frame_step = dt * self.speed * self.framerate
 
+        self.set_smooth()
         for bone_events in self.events["bone"].values():
             for event_type, event in bone_events.items():
                 new_event = event.update(
@@ -70,7 +76,12 @@ class SkeletonAnimation:
 
         self.frame += dt * self.speed
 
-    def set_smooth(self, smooth: bool):
+    def set_smooth(self, smooth=None):
+        if smooth is None:
+            smooth = self.smooth
+        else:
+            self.smooth = smooth
+
         for events in self.events["bone"].values():
             for event in events.values():
                 event.smooth = smooth
@@ -88,7 +99,6 @@ class SkeletonAnimation:
                         frame, event_sequence
                     )
 
-                    print("bone: ", bone_name, bone_event_type)
                     self.events["bone"][bone_name][bone_event_type] = BoneEvent(
                         bone,
                         event_type=bone_event_type,
@@ -109,7 +119,6 @@ class SkeletonAnimation:
                         frame, event_sequence
                     )
 
-                    print("slot: ", slot_name, slot_event_type)
                     self.events["slot"][slot_name][slot_event_type] = SlotEvent(
                         slot,
                         event_type=slot_event_type,

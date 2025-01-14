@@ -38,12 +38,8 @@ class BoneEvent(AnimationEvent):
         )
 
     def _execute_update_changes(self):
-        if self.total_duration == 0:
-            return
-
         info = self._get_info_pair()
 
-        print(self.smooth)
         if self.event_type == "translateFrame":
             key_x = (info[0].get("x", 0), info[1].get("x", 0))
             key_y = (info[0].get("y", 0), info[1].get("y", 0))
@@ -61,7 +57,7 @@ class BoneEvent(AnimationEvent):
             self.bone.set_position(x, y)
 
         elif self.event_type == "rotateFrame":
-            key_angle = (info[0].get("rotate", 0), info[1].get("rotate", 0))
+            key_angle = (-info[0].get("rotate", 0), -info[1].get("rotate", 0))
 
             angle = key_angle[0] + (
                 (key_angle[1] - key_angle[0])

@@ -1,10 +1,12 @@
 import json
 import pyglet
-from pyglet.window import key
 from game.entities.skeleton.skeleton import Skeleton
 import game.groups as groups
+from game.controls import Controls
 
-with open("config.json", "r") as file:
+# from pymunk import pyglet_util, Space
+
+with open("game/config.json", "r") as file:
     config_data = json.load(file)
 
 
@@ -13,15 +15,17 @@ class Game:
         self.window = pyglet.window.Window()
         self.window.set_size(config_data["window_width"], config_data["window_height"])
 
+        # self.space = Space()
+        # self.space.gravity = (0, 0)
+
         # Initialize skeleton
         self.skeleton = Skeleton("assets/sprites/delver", groups.delver)
         self.skeleton.set_position(
             config_data["window_width"] / 2, config_data["window_height"] / 2
         )
-        self.skeleton.set_scale(3, 3)
+        self.skeleton.set_scale(2, 2)
         self.skeleton.set_angle(180)
-        self.skeleton.set_animation("run", speed=50)
-        self.skeleton.set_smooth(False)
+        self.skeleton.set_animation("run")
 
         # Register the key press event
         self.keys = pyglet.window.key.KeyStateHandler()
@@ -29,16 +33,10 @@ class Game:
 
     def update(self, dt):
         self.window.clear()
-        if self.keys[key.LEFT]:
-            self.skeleton.set_angle(self.skeleton.angle - 2)
-        elif self.keys[key.RIGHT]:
-            self.skeleton.set_angle(self.skeleton.angle + 2)
-        self.skeleton.draw(dt)
+        controls = Controls(self.keys)
+        controls.update(dt)
+        self.skeleton.update(dt)
 
     def run(self):
         pyglet.clock.schedule_interval(self.update, 1 / 60.0)  # Update at 60 FPS
         pyglet.app.run()
-
-
-game = Game()
-game.run()
