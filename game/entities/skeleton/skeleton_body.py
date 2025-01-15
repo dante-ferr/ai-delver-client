@@ -1,15 +1,17 @@
 import pymunk
-from pyglet import shapes
-from .skeleton import Skeleton  # Assuming the Skeleton class is defined elsewhere
+from typing import Literal
 
 
 class SkeletonBody:
     def __init__(
         self,
-        skeleton: Skeleton,
+        space: pymunk.Space,
+        position: tuple[float, float] = (0, 0),
         mass: float = 1.0,
         radius: float = 10.0,
-        position: tuple[float, float] = (0, 0),
+        elasticity: float = 0.8,
+        friction: float = 0.5,
+        damping: float = 1,
     ):
         """
         A Body object that holds the physics representation of the skeleton.
@@ -20,44 +22,52 @@ class SkeletonBody:
         - radius: The radius for the collision shape (for simplicity, assuming a circular shape).
         - position: The initial position of the body.
         """
-        self.skeleton = skeleton
-        self.position = pymunk.Vec2d(*position)
+        self.space = space
 
-        self.space = pymunk.Space()
         self.body = pymunk.Body(mass, pymunk.moment_for_circle(mass, 0, radius))
-        self.body.position = self.position
-
-        # Create a circular shape for collision (this can be expanded)
         self.shape = pymunk.Circle(self.body, radius)
-        self.shape.elasticity = 0.8  # Set some elasticity for bouncy effect
-        self.shape.friction = 0.5  # Set the friction for collisions
+        self.shape.elasticity = elasticity
+        self.shape.friction = friction
         self.space.add(self.body, self.shape)
 
-        # Optional: Create a pyglet circle to visually represent the body
-        self.circle = shapes.Circle(
-            self.body.position.x,
-            self.body.position.y,
-            radius,
-            color=(50, 50, 255),
-            batch=self.skeleton.batch,
-        )
+        self.body.position = pymunk.Vec2d(*position)
+        self.normal_damping = damping
+        self.damping = damping
+
+        # self.circle = shapes.Circle(
+        #     self.body.position.x,
+        #     self.body.position.y,
+        #     radius,
+        #     color=(50, 50, 255),
+        # )
 
     def update(self, dt):
         """Update the body position and the skeleton."""
-        # Update physics space
         self.space.step(dt)
 
-        # Update the skeleton's position based on the physics body
-        self.skeleton.set_position(self.body.position.x, self.body.position.y)
+        vx, vy = self.body.velocity
 
-        # Update the visual representation (circle)
-        self.circle.x = self.body.position.x
-        self.circle.y = self.body.position.y
+        damping_factor = self.damping**dt
+        new_vx = vx * damping_factor
+        new_vy = vy * damping_factor
+
+        self.body.velocity = new_vx, new_vy
+
+        # self.circle.x = self.body.position.x
+        # self.circle.y = self.body.position.y
+        # self.circle.draw()
+
+    def set_damping(self, damping: float | Literal["normal"] = "normal"):
+        """Set the damping of the body. If damping is "normal", the normal damping will be used."""
+        if damping == "normal":
+            damping = self.normal_damping
+        self.damping = damping
 
     def apply_force(self, force: pymunk.Vec2d):
         """Apply a force to the body."""
+        # print(force, self.body.position)
         self.body.apply_force_at_local_point(force)
 
-    def set_velocity(self, velocity: tuple[float, float]):
+    def set_velocity(self, velocity: pymunk.Vec2d):
         """Set the velocity of the body."""
-        self.body.velocity = pymunk.Vec2d(*velocity)
+        self.body.velocity = velocity

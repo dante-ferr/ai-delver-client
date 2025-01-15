@@ -5,14 +5,13 @@ from .animation.skeleton_animation import SkeletonAnimation
 from .get_subtextures import get_subtextures, Subtexture
 import os
 import pyglet
+from .skeleton_body import SkeletonBody
+from .animation.skeleton_animation_manager import SkeletonAnimationManager
 
 
 class Skeleton:
-    position: tuple[float, float]
-    scale: tuple[float, float]
-    angle = 0.0
-
-    current_animation: SkeletonAnimation | None
+    current_animation_name: str | None = None
+    current_animation: SkeletonAnimation | None = None
     frame = 0
     framerate: float
 
@@ -23,9 +22,17 @@ class Skeleton:
 
     animation_data: list[dict]
 
-    velocity: tuple[float, float]
+    target_angle: float | None = None
 
-    def __init__(self, skeleton_path: str, groups: dict[str, pyglet.graphics.Group]):
+    animation: SkeletonAnimationManager
+
+    def __init__(
+        self,
+        skeleton_path: str,
+        groups: dict[str, pyglet.graphics.Group],
+        body: SkeletonBody,
+        angle_smoothing_speed=10.0,
+    ):
         """
         Load a skeleton from a JSON file and create bones and slots.
 
@@ -42,9 +49,7 @@ class Skeleton:
         with open(f"{skeleton_path}/{entity_name}_ske.json", "r") as file:
             skeleton_data = json.load(file)
 
-        self.framerate = skeleton_data["frameRate"]
         armature_data = skeleton_data["armature"][0]
-        self.animation_data = armature_data["animation"]
 
         self.subtextures = get_subtextures(
             f"{skeleton_path}/{entity_name}_tex.json",
@@ -60,10 +65,13 @@ class Skeleton:
         self.set_scale(1, 1)
         self.set_angle(0)
 
-        self.set_animation(armature_data["animation"][0]["name"])
-        self.animation_time = 0
+        animation_data = armature_data["animation"]
+        framerate = skeleton_data["frameRate"]
+        self.animation = SkeletonAnimationManager(animation_data, self, framerate)
 
-        self.speed = (0, 0)
+        self.body = body
+
+        self.angle_smoothing_speed = angle_smoothing_speed
 
     def _load_bones(self, data, groups: dict[str, pyglet.graphics.Group]):
         bones: dict[str, Bone] = {}
@@ -115,50 +123,43 @@ class Skeleton:
         """Change skeleton's position."""
         self.position = (x, y)
 
-        for bone in self.bones.values():
-            bone.update_position()
-
     def set_angle(self, angle: float):
         """Change skeleton's angle."""
         self.angle = angle
-
-        for bone in self.bones.values():
-            bone.update_angle()
 
     def set_scale(self, x: float, y: float):
         """Change skeleton's scale."""
         self.scale = (x, y)
 
+    def set_target_angle(self, angle: float):
+        self.target_angle = angle
+
+    def _do_default_pose(self):
         for bone in self.bones.values():
-            bone.update_scale()
-
-    def set_animation(self, animation_name: str, starting_frame=0, speed=1.0):
-        """Change skeleton's animation."""
-        animation_info = next(
-            (info for info in self.animation_data if info["name"] == animation_name),
-            None,
-        )
-        if animation_info is None:
-            raise ValueError(f"Animation {animation_name} not found.")
-
-        animation = SkeletonAnimation(
-            info=animation_info,
-            skeleton=self,
-            framerate=self.framerate,
-            frame=starting_frame,
-            speed=speed,
-        )
-        self.current_animation = animation
+            bone.do_default_pose()
 
     def set_smooth(self, smooth: bool):
-        if self.current_animation:
-            self.current_animation.set_smooth(smooth)
-        else:
-            raise ValueError("No animation is currently playing.")
+        self.animation.set_smooth(smooth)
+
+    def on_animation_start(self):
+        for bone in self.bones.values():
+            bone.on_animation_start()
 
     def update(self, dt):
         """Update skeleton's attributes and draw each of its parts."""
-        # self.body.update(dt)
+        self.body.update(dt)
+        self.set_position(self.body.body.position.x, self.body.body.position.y)
+        for bone in self.bones.values():
+            bone.update(dt)
 
-        self.current_animation.update(dt)
+        self.animation.update(dt)
+
         self.batch.draw()
+
+    def update_angle_to_target(self, dt):
+        if self.target_angle is not None:
+            angle_diff = (self.target_angle - self.angle + 180) % 360 - 180
+            # print(self.target_angle, self.angle, angle_diff)
+            self.angle += angle_diff * self.angle_smoothing_speed * dt
+
+            self.set_angle(self.angle)

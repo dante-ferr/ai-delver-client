@@ -54,7 +54,7 @@ class BoneEvent(AnimationEvent):
                 if self.smooth
                 else 0
             )
-            self.bone.set_position(x, y)
+            self.bone.set_target_position(x, y)
 
         elif self.event_type == "rotateFrame":
             key_angle = (-info[0].get("rotate", 0), -info[1].get("rotate", 0))
@@ -66,7 +66,7 @@ class BoneEvent(AnimationEvent):
                 if self.smooth
                 else 0
             )
-            self.bone.set_angle(angle)
+            self.bone.set_target_angle(angle)
 
         elif self.event_type == "scaleFrame":
             key_x = (info[0].get("x", 1), info[1].get("x", 1))
@@ -82,4 +82,4 @@ class BoneEvent(AnimationEvent):
                 if self.smooth
                 else 0
             )
-            self.bone.set_scale(x, y)
+            self.bone.set_target_scale(x, y)

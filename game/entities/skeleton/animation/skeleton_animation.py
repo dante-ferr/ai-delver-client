@@ -30,10 +30,17 @@ class SkeletonAnimation:
     slot_info: dict
 
     def __init__(
-        self, info: dict, skeleton: "Skeleton", framerate=30, frame=0, speed=1.0
+        self,
+        info: dict,
+        skeleton: "Skeleton",
+        framerate=30,
+        frame=0,
+        speed=1.0,
+        paused=False,
     ):
         self.duration = info["duration"]
         self.framerate = framerate
+        self.start_frame = frame
         self.bone_info = info["bone"]
         self.slot_info = info["slot"]
 
@@ -42,6 +49,8 @@ class SkeletonAnimation:
 
         self._instantiate_events(frame)
 
+        self.playing = not paused
+
     def set_frame(self, frame: float):
         self._instantiate_events(frame)
 
@@ -49,6 +58,9 @@ class SkeletonAnimation:
         self.speed = speed
 
     def update(self, dt):
+        if not self.playing:
+            return
+
         frame_step = dt * self.speed * self.framerate
 
         self.set_smooth()
@@ -85,6 +97,15 @@ class SkeletonAnimation:
         for events in self.events["bone"].values():
             for event in events.values():
                 event.smooth = smooth
+
+    def pause(self):
+        self.playing = False
+
+    def unpause(self):
+        self.playing = True
+
+    def restart(self):
+        self._instantiate_events(self.start_frame)
 
     def _instantiate_events(self, frame: float = 0):
         for bone_animation_info in self.bone_info:

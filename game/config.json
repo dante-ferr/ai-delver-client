@@ -1,5 +1,6 @@
 {
     "window_width": 1280,
     "window_height": 720,
+    "fps": 60,
     "window_title": "AI Delver"
 }

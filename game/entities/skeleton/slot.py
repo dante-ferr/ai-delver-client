@@ -10,12 +10,6 @@ class Slot:
     current_display: int
 
     bone = None
-    name: str
-    group = None
-
-    relative_position: tuple[float, float]
-    relative_angle = 0.0
-    relative_scale: tuple[float, float]
 
     def __init__(
         self,
@@ -28,13 +22,13 @@ class Slot:
         self.subtextures = subtextures
         self.group = bone.group
 
-        self.relative_position = (0, 0)
-        self.relative_angle = 0
-        self.relative_scale = (1, 1)
+        self.relative_position = (0.0, 0.0)
+        self.relative_angle = 0.0
+        self.relative_scale = (1.0, 1.0)
 
-        default_display = slot_info.get("displayIndex", 1) - 1
-        self.current_display = default_display
-        default_subtexture = self.subtextures[default_display]["image"]
+        self.default_display = slot_info.get("displayIndex", 1) - 1
+        self.current_display = self.default_display
+        default_subtexture = self.subtextures[self.default_display]["image"]
 
         self.sprite = pyglet.sprite.Sprite(
             default_subtexture, group=self.group, batch=batch
@@ -44,6 +38,9 @@ class Slot:
         """Change the sprite's texture."""
         self.current_display = display_index
         self.sprite.image = self.subtextures[display_index]["image"]
+
+    def do_default_pose(self):
+        self.change_display(self.default_display)
 
     def update_position(self):
         """Follow parent bone's position"""
