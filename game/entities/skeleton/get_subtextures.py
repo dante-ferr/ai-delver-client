@@ -1,8 +1,8 @@
 from PIL import Image
 import json
-import os
 import pyglet
-from typing import TypedDict, Optional
+from typing import TypedDict
+
 
 class Subtexture(TypedDict):
     name: str
@@ -10,10 +10,13 @@ class Subtexture(TypedDict):
     frameY: int
     frameWidth: int
     frameHeight: int
-    image: pyglet.image.AbstractImage  # Replace with the correct pyglet image type if necessary
+    image: (
+        pyglet.image.AbstractImage
+    )  # Replace with the correct pyglet image type if necessary
+
 
 def get_subtextures(texture_path, image_path):
-    with open(texture_path, 'r') as file:
+    with open(texture_path, "r") as file:
         texture_data = json.load(file)
 
     subtextures = {}
@@ -31,7 +34,7 @@ def get_subtextures(texture_path, image_path):
         frameHeight = subtexture["frameHeight"]
 
         cropped_image = atlas_image.crop((x, y, x + width, y + height))
-        image = pyglet.image.ImageData(width, height, 'RGBA', cropped_image.tobytes())
+        image = pyglet.image.ImageData(width, height, "RGBA", cropped_image.tobytes())
         image.anchor_x = width // 2
         image.anchor_y = height // 2
 
@@ -45,7 +48,7 @@ def get_subtextures(texture_path, image_path):
             frameY=frameY,
             frameWidth=frameWidth,
             frameHeight=frameHeight,
-            image=image
+            image=image,
         )
-    
+
     return subtextures

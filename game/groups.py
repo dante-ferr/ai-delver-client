@@ -1,7 +1,9 @@
 import pyglet
 
-delver_all = pyglet.graphics.Group(0)
+floor_layer = pyglet.graphics.Group(0)
+walls_layer = pyglet.graphics.Group(1)
 
+delver_all = pyglet.graphics.Group(10)
 delver = {
     "all": delver_all,
     "head": pyglet.graphics.Group(3, parent=delver_all),

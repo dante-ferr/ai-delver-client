@@ -1,6 +1,7 @@
 from typing import TypedDict, Literal, Any
-from .tile import Tile
+from .tile.tile import Tile
 import numpy as np
+from .tileset import Tileset
 
 
 class Area(TypedDict):
@@ -9,24 +10,27 @@ class Area(TypedDict):
 
 
 class TilemapLayer:
-    def __init__(self, name: str, size: tuple[int, int]):
+    def __init__(self, name: str, tileset: Tileset):
         self.name = name
         self.grid = np.empty((8, 8), dtype=Tile)
+        self.tileset = tileset
 
-        self.set_size(size)
+    def add_tile(self, tile: Tile, apply_formatting=True):
+        tile.set_layer(self)
+        self.grid[*tile.position] = tile
 
-    def add_tile(self, tile: Tile, tile_position: tuple[int, int]):
-        self.grid[*tile_position] = tile
-        self._format(self._get_area_around(tile_position, 1))
+        if apply_formatting:
+            self.format(self._get_area_around(tile.position, 1))
 
     def set_size(self, size: tuple[int, int]):
         np.resize(self.grid, size)
 
-    def _format(self, area: Area | Literal["all"] = "all"):
+    def format(self, area: Area | Literal["all"] = "all"):
+        radius = 2
         if area == "all":
             area = Area(
                 top_left=(0, 0),
-                bottom_right=(self.grid.shape[0] - 1, self.grid.shape[1] - 1),
+                bottom_right=(self.grid.shape[0] - radius, self.grid.shape[1] - radius),
             )
 
         def tile_format_callback(x, y):

@@ -1,6 +1,5 @@
 from .tile import Tile
-from .tilemap_layer import TilemapLayer
-import numpy as np
+from ..tilemap_layer import TilemapLayer
 
 
 class AutotileTile(Tile):
@@ -55,12 +54,11 @@ class AutotileTile(Tile):
 
     def __init__(
         self,
-        layer: TilemapLayer,
         position: tuple[int, int],
         object_type: str | None = None,
         tile_positions=None,
     ):
-        super().__init__(layer, position, object_type)
+        super().__init__(position, object_type)
 
         if tile_positions is None:
             self.tile_positions = self.default_tile_positions
@@ -68,7 +66,9 @@ class AutotileTile(Tile):
         self.tile_display = self.tile_positions["lone"]
 
     def format(self):
-        super().format()
+        if self.layer is None:
+            return
+
         neighbors = self.layer.get_neighbors_of(self, same_object_type=True)
         self._position_format(neighbors)
 
@@ -78,6 +78,8 @@ class AutotileTile(Tile):
             )
             if range_2_neighbors_amount == 0:
                 self.is_deep = True
+
+        super().format()
 
     def _position_format(self, filtered_neighbors):
         top_left = filtered_neighbors[0, 0]

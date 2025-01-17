@@ -4,6 +4,7 @@ from game.controls import Controls
 import pymunk
 from typing import Any
 from .entities.player import Player
+from .tilemap_renderer import get_tilemap_renderer
 
 with open("game/config.json", "r") as file:
     config_data = json.load(file)
@@ -33,14 +34,18 @@ class Game:
         player.set_scale(2, 2)
         player.set_angle(180)
 
-        # Register the key press event
+        self.tilemap_renderer = get_tilemap_renderer()
+
         self.keys = pyglet.window.key.KeyStateHandler()
         self.window.push_handlers(self.keys)
 
     def update(self, dt):
         self.window.clear()
+
         controls = Controls(self.keys, self.player)
         controls.update(dt)
+
+        self.tilemap_renderer.draw()
         self.player.update(dt)
 
     def run(self):
