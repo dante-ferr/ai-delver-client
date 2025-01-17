@@ -34,6 +34,7 @@ def get_subtextures(texture_path, image_path):
         frameHeight = subtexture["frameHeight"]
 
         cropped_image = atlas_image.crop((x, y, x + width, y + height))
+
         image = pyglet.image.ImageData(width, height, "RGBA", cropped_image.tobytes())
         image.anchor_x = width // 2
         image.anchor_y = height // 2

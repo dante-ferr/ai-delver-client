@@ -11,7 +11,7 @@ class Tilemap:
 
     def add_layer(self, layer: TilemapLayer):
         """Add a layer to the tilemap"""
-        layer.set_size(self.size)
+        layer.initialize_grid(self.size)
         self.layers[layer.name] = layer
 
     def set_size(self, size: tuple[int, int]):

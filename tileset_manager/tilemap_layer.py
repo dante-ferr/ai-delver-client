@@ -12,18 +12,35 @@ class Area(TypedDict):
 class TilemapLayer:
     def __init__(self, name: str, tileset: Tileset):
         self.name = name
-        self.grid = np.empty((8, 8), dtype=Tile)
         self.tileset = tileset
 
+    def initialize_grid(self, size: tuple[int, int]):
+        self.grid = np.empty(size, dtype=Tile)
+
+    def set_size(self, size: tuple[int, int]):
+        np.resize(self.grid, size)
+
     def add_tile(self, tile: Tile, apply_formatting=True):
+        if self.grid is None:
+            raise ValueError(
+                "Grid is not initialized. Make sure to add this layer to a tilemap before adding tiles."
+            )
+        if (
+            tile.position[0] < 0
+            or tile.position[1] < 0
+            or tile.position[0] >= self.grid.shape[0]
+            or tile.position[1] >= self.grid.shape[1]
+        ):
+            raise ValueError(
+                f"Tile position ({tile.position}) is out of bounds for the grid ({self.grid.shape})."
+            )
+
         tile.set_layer(self)
+        # print(tile.position)
         self.grid[*tile.position] = tile
 
         if apply_formatting:
             self.format(self._get_area_around(tile.position, 1))
-
-    def set_size(self, size: tuple[int, int]):
-        np.resize(self.grid, size)
 
     def format(self, area: Area | Literal["all"] = "all"):
         radius = 2

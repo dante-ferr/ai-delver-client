@@ -1,5 +1,8 @@
-from ..tilemap_layer import TilemapLayer
+from typing import TYPE_CHECKING
 import random
+
+if TYPE_CHECKING:
+    from ..tilemap_layer import TilemapLayer
 
 
 class Tile:
@@ -16,7 +19,7 @@ class Tile:
 
         self.potential_displays: dict[tuple[int, int], float] = {}
 
-    def set_layer(self, layer: TilemapLayer):
+    def set_layer(self, layer: "TilemapLayer"):
         self.layer = layer
 
     def format(self):

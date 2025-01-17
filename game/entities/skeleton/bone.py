@@ -10,6 +10,7 @@ if TYPE_CHECKING:
 with open("game/config.json", "r") as file:
     config_data = json.load(file)
 fps = config_data["fps"]
+global_scale = config_data["global_scale"]
 
 
 class BetweenAnimationsType(TypedDict):

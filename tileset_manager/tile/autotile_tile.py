@@ -63,7 +63,7 @@ class AutotileTile(Tile):
         if tile_positions is None:
             self.tile_positions = self.default_tile_positions
 
-        self.tile_display = self.tile_positions["lone"]
+        self.display = self.tile_positions["lone"]
 
     def format(self):
         if self.layer is None:
@@ -102,11 +102,11 @@ class AutotileTile(Tile):
             and bottom_right
         ):
             self.is_center = True
-            self.tile_display = self.tile_positions["center"]
+            self.display = self.tile_positions["center"]
         elif (
             top_left and top and top_right and left and right and bottom_left and bottom
         ):
-            self.tile_display = self.tile_positions["inner_top_left"]
+            self.display = self.tile_positions["inner_top_left"]
         elif (
             top_left
             and top
@@ -116,7 +116,7 @@ class AutotileTile(Tile):
             and bottom
             and bottom_right
         ):
-            self.tile_display = self.tile_positions["inner_top_right"]
+            self.display = self.tile_positions["inner_top_right"]
         elif (
             top
             and top_right
@@ -126,7 +126,7 @@ class AutotileTile(Tile):
             and bottom_left
             and left
         ):
-            self.tile_display = self.tile_positions["inner_bottom_right"]
+            self.display = self.tile_positions["inner_bottom_right"]
         elif (
             top_left
             and top
@@ -136,52 +136,52 @@ class AutotileTile(Tile):
             and bottom_right
             and right
         ):
-            self.tile_display = self.tile_positions["inner_bottom_left"]
+            self.display = self.tile_positions["inner_bottom_left"]
         elif top_left and top and top_right and left and right and bottom:
-            self.tile_display = self.tile_positions["inner_t_junction_top"]
+            self.display = self.tile_positions["inner_t_junction_top"]
         elif top and top_right and left and right and bottom and bottom_right:
-            self.tile_display = self.tile_positions["inner_t_junction_right"]
+            self.display = self.tile_positions["inner_t_junction_right"]
         elif top and left and right and bottom_left and bottom and bottom_right:
-            self.tile_display = self.tile_positions["inner_t_junction_bottom"]
+            self.display = self.tile_positions["inner_t_junction_bottom"]
         elif top_left and top and left and right and bottom_left and bottom:
-            self.tile_display = self.tile_positions["inner_t_junction_left"]
+            self.display = self.tile_positions["inner_t_junction_left"]
         elif top and left and right and bottom:
-            self.tile_display = self.tile_positions["inner_cross"]
+            self.display = self.tile_positions["inner_cross"]
         elif right and bottom and bottom_right:
-            self.tile_display = self.tile_positions["top_left"]
+            self.display = self.tile_positions["top_left"]
         elif left and bottom_left and bottom:
-            self.tile_display = self.tile_positions["top_right"]
+            self.display = self.tile_positions["top_right"]
         elif top and top_right and right:
-            self.tile_display = self.tile_positions["bottom_left"]
+            self.display = self.tile_positions["bottom_left"]
         elif top_left and top and left:
-            self.tile_display = self.tile_positions["bottom_right"]
+            self.display = self.tile_positions["bottom_right"]
         elif left and right and bottom:
-            self.tile_display = self.tile_positions["t_junction_top"]
+            self.display = self.tile_positions["t_junction_top"]
         elif top and left and bottom:
-            self.tile_display = self.tile_positions["t_junction_right"]
+            self.display = self.tile_positions["t_junction_right"]
         elif top and left and right:
-            self.tile_display = self.tile_positions["t_junction_bottom"]
+            self.display = self.tile_positions["t_junction_bottom"]
         elif top and right and bottom:
-            self.tile_display = self.tile_positions["t_junction_left"]
+            self.display = self.tile_positions["t_junction_left"]
         elif top and bottom:
-            self.tile_display = self.tile_positions["vertical_edge"]
+            self.display = self.tile_positions["vertical_edge"]
         elif left and right:
-            self.tile_display = self.tile_positions["horizontal_edge"]
+            self.display = self.tile_positions["horizontal_edge"]
         elif right and bottom:
-            self.tile_display = self.tile_positions["top_left_corner"]
+            self.display = self.tile_positions["top_left_corner"]
         elif left and bottom:
-            self.tile_display = self.tile_positions["top_right_corner"]
+            self.display = self.tile_positions["top_right_corner"]
         elif top and right:
-            self.tile_display = self.tile_positions["bottom_left_corner"]
+            self.display = self.tile_positions["bottom_left_corner"]
         elif top and left:
             self.title = self.tile_positions["bottom_right_corner"]
         elif top:
-            self.tile_display = self.tile_positions["top_edge"]
+            self.display = self.tile_positions["top_edge"]
         elif right:
-            self.tile_display = self.tile_positions["right_edge"]
+            self.display = self.tile_positions["right_edge"]
         elif bottom:
-            self.tile_display = self.tile_positions["bottom_edge"]
+            self.display = self.tile_positions["bottom_edge"]
         elif left:
-            self.tile_display = self.tile_positions["left_edge"]
+            self.display = self.tile_positions["left_edge"]
         else:
-            self.tile_display = self.tile_positions["lone"]
+            self.display = self.tile_positions["lone"]
