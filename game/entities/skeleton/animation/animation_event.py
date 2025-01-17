@@ -38,6 +38,7 @@ class AnimationEvent:
     def _get_next_valid_event_index(
         self, event_index=None, step=1, remainder_duration=0
     ):
+        """Get the next valid event index, skipping useless events or the ones with a duration smaller than the remainder duration."""
         if event_index is None:
             event_index = self.event_index
 
@@ -55,6 +56,7 @@ class AnimationEvent:
         return event_index
 
     def _get_next_event_index(self, event_index=None, step=1):
+        """Get the next event index, handling the case where the event index is out of bounds."""
         if event_index is None:
             event_index = self.event_index
 
@@ -63,15 +65,18 @@ class AnimationEvent:
         )
 
     def _duration_of(self, event_index: int):
+        """Get the duration of the event at the given index."""
         return self.event_sequence[event_index].get("duration", 0)
 
     def _get_info_pair(self):
+        """Get the current event and the next event."""
         return (
             self.event_sequence[self.event_index],
             self.event_sequence[self._get_next_event_index()],
         )
 
     def _index_duration_to_frame(self, index=None, duration=None):
+        """Get the corresponding frame for the given index and duration."""
         if index is None:
             index = self.event_index
         if duration is None:

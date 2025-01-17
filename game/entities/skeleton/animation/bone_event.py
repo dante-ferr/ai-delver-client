@@ -30,6 +30,7 @@ class BoneEvent(AnimationEvent):
         self.event_type = event_type
 
     def update(self, frame_step: float, new_event_callback: Callable):
+        """Update the event with the given frame step and new event callback."""
         return super().update(
             frame_step,
             lambda event_sequence, event_index, start_duration: new_event_callback(
@@ -38,6 +39,7 @@ class BoneEvent(AnimationEvent):
         )
 
     def _execute_update_changes(self):
+        """Execute the update changes of the event."""
         info = self._get_info_pair()
 
         if self.event_type == "translateFrame":

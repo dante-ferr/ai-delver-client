@@ -8,6 +8,7 @@ pyglet = "*"
 customtkinter = "*"
 pillow = "*"
 pymunk = "*"
+numpy = "*"
 
 [dev-packages]
 

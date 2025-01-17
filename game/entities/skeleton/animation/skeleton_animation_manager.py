@@ -16,7 +16,7 @@ class SkeletonAnimationManager:
         self.framerate = framerate
 
     def run(self, animation_name: str | None, starting_frame=0, speed=1.0):
-        """Change skeleton's animation."""
+        """Change skeleton's animation. If animation_name is None, the skeleton will be reset to its default pose."""
         if self.current_name == animation_name:
             return
         self.current_name = animation_name
@@ -37,16 +37,19 @@ class SkeletonAnimationManager:
         )
 
     def update(self, dt):
+        """Update the current animation with the given delta time if it exists."""
         if self.current:
             self.current.update(dt)
 
     def set_smooth(self, smooth: bool):
+        """Make the current animation smooth or not."""
         if self.current:
             self.current.set_smooth(smooth)
         else:
             raise ValueError("No animation is currently playing.")
 
     def _get_animation_info(self, animation_name: str):
+        """Get the animation info from the animation data, given the animation name."""
         animation_info = next(
             (info for info in self.animation_data if info["name"] == animation_name),
             None,

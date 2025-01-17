@@ -58,6 +58,7 @@ class SkeletonAnimation:
         self.speed = speed
 
     def update(self, dt):
+        """Update the current animation with the given delta time if it exists."""
         if not self.playing:
             return
 
@@ -89,6 +90,7 @@ class SkeletonAnimation:
         self.frame += dt * self.speed
 
     def set_smooth(self, smooth=None):
+        """Make the current animation smooth or not."""
         if smooth is None:
             smooth = self.smooth
         else:
@@ -108,6 +110,7 @@ class SkeletonAnimation:
         self._instantiate_events(self.start_frame)
 
     def _instantiate_events(self, frame: float = 0):
+        """Instantiate the events for the given frame."""
         for bone_animation_info in self.bone_info:
             bone_name = bone_animation_info["name"]
             bone = self.skeleton.bones[bone_name]
