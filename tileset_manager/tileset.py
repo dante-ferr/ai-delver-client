@@ -2,6 +2,7 @@ from PIL import Image
 import numpy as np
 import warnings
 from typing import Any
+from utils.plot_bytes_image import plot_bytes_image
 
 
 class Tileset:
@@ -18,13 +19,8 @@ class Tileset:
         )
 
     def get_tile_images(self):
-        tile_images = np.empty(
-            (self.size[0], self.size[1]),
-            dtype=Any,
-        )
+        tile_images = np.empty((self.size[1], self.size[0]), dtype=Any)
 
-        x = 0
-        y = 0
         tile_width, tile_height = self.tile_size
 
         if self.atlas_image.width % tile_width != 0:
@@ -38,16 +34,16 @@ class Tileset:
                 UserWarning,
             )
 
-        for x in range(0, self.atlas_image.width, tile_width):
-            for y in range(0, self.atlas_image.height, tile_height):
+        for x in range(0, self.size[0] * tile_width, tile_width):
+            for y in range(0, self.size[1] * tile_height, tile_height):
                 tile_image = self.atlas_image.crop(
                     (x, y, x + tile_width, y + tile_height)
                 ).tobytes()
-                # plot_bytes_image(tile_image, tile_width, tile_height)
 
-                tile_x = x // tile_width  # Calculate the tile's x index
-                tile_y = y // tile_height  # Calculate the tile's y index
-                tile_images[tile_x, tile_y] = tile_image
+                tile_x = x // tile_width
+                tile_y = y // tile_height
+
+                tile_images[tile_y, tile_x] = tile_image
 
         return tile_images
 

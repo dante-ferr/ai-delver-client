@@ -10,17 +10,22 @@ class Tile:
 
     def __init__(
         self,
-        position: tuple[int, int],
+        position: tuple[int, int] | None = None,
         object_type: str | None = None,
+        display: tuple[int, int] | None = None,
     ):
         self.position = position
         self.object_type = object_type
         self.display: tuple[int, int] | None = None
 
         self.potential_displays: dict[tuple[int, int], float] = {}
+        self.set_display(display)
 
     def set_layer(self, layer: "TilemapLayer"):
         self.layer = layer
+
+    def set_position(self, position: tuple[int, int] | None):
+        self.position = position
 
     def format(self):
         if len(self.potential_displays) > 0:
@@ -38,7 +43,7 @@ class Tile:
         self.potential_displays[tile_coordinates] = chance
         self.potential_displays_chance_sum += chance
 
-    def set_display(self, display: tuple[int, int]):
+    def set_display(self, display: tuple[int, int] | None):
         self.display = display
 
     # def get_image(self):

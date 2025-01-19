@@ -25,19 +25,23 @@ class TilemapLayer:
             raise ValueError(
                 "Grid is not initialized. Make sure to add this layer to a tilemap before adding tiles."
             )
+        if tile.position is None:
+            raise ValueError(
+                "Tile position cannot be None. Ensure to set the position of the tile before adding it to the layer."
+            )
         if (
             tile.position[0] < 0
             or tile.position[1] < 0
-            or tile.position[0] >= self.grid.shape[0]
-            or tile.position[1] >= self.grid.shape[1]
+            or tile.position[0] >= self.grid.shape[1]
+            or tile.position[1] >= self.grid.shape[0]
         ):
             raise ValueError(
                 f"Tile position ({tile.position}) is out of bounds for the grid ({self.grid.shape})."
             )
-
+        if self.grid[tile.position[1], tile.position[0]] is not None:
+            return
         tile.set_layer(self)
-        # print(tile.position)
-        self.grid[*tile.position] = tile
+        self.grid[tile.position[1], tile.position[0]] = tile
 
         if apply_formatting:
             self.format(self._get_area_around(tile.position, 1))
@@ -47,11 +51,11 @@ class TilemapLayer:
         if area == "all":
             area = Area(
                 top_left=(0, 0),
-                bottom_right=(self.grid.shape[0] - radius, self.grid.shape[1] - radius),
+                bottom_right=(self.grid.shape[1] - radius, self.grid.shape[0] - radius),
             )
 
         def tile_format_callback(x, y):
-            tile = self.grid[x, y]
+            tile = self.grid[y, x]
             if tile is not None:
                 tile.format()
 
@@ -65,12 +69,17 @@ class TilemapLayer:
         output_type: Literal["tile_grid", "bool_grid", "amount"] = "bool_grid",
     ):
         """Get the neighbors of a tile in a given radius. If output_type is "grid", it returns a numpy array of tuples, where each tuple represents a neighbor's position. If output_type is "amount", it returns the amount of neighbors."""
+        if tile.position is None:
+            raise ValueError(
+                "Tile position cannot be None. Ensure to set the position of the tile before getting its neighbors."
+            )
         neighbors: Any
 
+        matrix_size = radius * 2 + 1
         if output_type == "tile_grid":
-            neighbors = np.empty((3, 3), dtype=Tile)
+            neighbors = np.empty((matrix_size, matrix_size), dtype=Tile)
         elif output_type == "bool_grid":
-            neighbors = np.full((3, 3), False)
+            neighbors = np.full((matrix_size, matrix_size), False)
         elif output_type == "amount":
             neighbors = 0
 
@@ -79,7 +88,7 @@ class TilemapLayer:
 
             if x == tile.position[0] and y == tile.position[1]:
                 return
-            neighbor = self.grid[x, y]
+            neighbor = self.grid[y, x]
             if neighbor is None:
                 return
             if same_object_type and neighbor.object_type != tile.object_type:
@@ -87,11 +96,11 @@ class TilemapLayer:
 
             if output_type == "grid":
                 neighbors[
-                    x - tile.position[0] + radius, y - tile.position[1] + radius
+                    y - tile.position[1] + radius, x - tile.position[0] + radius
                 ] = neighbor
             elif output_type == "bool_grid":
                 neighbors[
-                    x - tile.position[0] + radius, y - tile.position[1] + radius
+                    y - tile.position[1] + radius, x - tile.position[0] + radius
                 ] = True
             elif output_type == "amount":
                 neighbors += 1
@@ -111,7 +120,7 @@ class TilemapLayer:
 
     def _get_area_around(self, center: tuple[int, int], radius: int) -> Area:
         center_x, center_y = center
-        grid_width, grid_height = self.grid.shape
+        grid_height, grid_width = self.grid.shape
 
         top_left_x = max(center_x - radius, 0)
         top_left_y = max(center_y - radius, 0)

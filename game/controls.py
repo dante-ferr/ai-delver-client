@@ -16,6 +16,9 @@ class Controls:
         self.player = player
 
     def update(self, dt):
+        self._update_player_controls(dt)
+
+    def _update_player_controls(self, dt):
         run_vector = [0, 0]
         if self.keys[window.key.LEFT]:
             run_vector[0] = -1

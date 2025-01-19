@@ -159,7 +159,6 @@ class Skeleton:
     def update_angle_to_target(self, dt):
         if self.target_angle is not None:
             angle_diff = (self.target_angle - self.angle + 180) % 360 - 180
-            # print(self.target_angle, self.angle, angle_diff)
             self.angle += angle_diff * self.angle_smoothing_speed * dt
 
             self.set_angle(self.angle)

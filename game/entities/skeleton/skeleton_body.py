@@ -65,7 +65,6 @@ class SkeletonBody:
 
     def apply_force(self, force: pymunk.Vec2d):
         """Apply a force to the body."""
-        # print(force, self.body.position)
         self.body.apply_force_at_local_point(force)
 
     def set_velocity(self, velocity: pymunk.Vec2d):
