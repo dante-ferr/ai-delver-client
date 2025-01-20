@@ -8,6 +8,7 @@ class AutotileTile(Tile):
     """A class representing an autotile tile. It extends the Tile class and adds the ability to change its display based on the rules it has. Each rule defines a specific display based on the tile's neighbors."""
 
     rules: list[AutotileRule]
+    is_deep = False
 
     def __init__(self, position: tuple[int, int], autotile_object: str):
         super().__init__(position)
@@ -20,23 +21,18 @@ class AutotileTile(Tile):
         if self.layer is None:
             return
 
+        if (
+            self.layer.get_neighbors_of(
+                self, radius=2, same_autotile_object=True, output_type="amount"
+            )
+            == 16
+        ):
+            self.is_deep = True
+        else:
+            self.is_deep = False
+
         neighbors = self.layer.get_neighbors_of(self, same_autotile_object=True)
         self._rule_format(neighbors)
-
-        # if (
-        #     self.layer.get_neighbors_of(
-        #         self, radius=1, same_object_type=True, output_type="amount"
-        #     )
-        #     == 8
-        # ):
-        #     self.is_center = True
-        #     if (
-        #         self.layer.get_neighbors_of(
-        #             self, radius=1, same_object_type=True, output_type="amount"
-        #         )
-        #         == 16
-        #     ):
-        #         self.is_deep = True
 
         super().format()
 

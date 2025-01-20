@@ -13,3 +13,5 @@ delver = {
     "left_hand": pyglet.graphics.Group(2, parent=delver_all),
     "right_hand": pyglet.graphics.Group(2, parent=delver_all),
 }
+
+debug = pyglet.graphics.Group(20)

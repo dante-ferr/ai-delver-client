@@ -5,6 +5,7 @@ from .tile.tile import Tile
 from .tilemap_layer import TilemapLayer
 from .tilemap import Tilemap
 from .tileset import Tileset
+from .utils.tilemap_border_tracer import TilemapBorderTracer
 
 __all__ = [
     "AutotileRule",
@@ -14,4 +15,5 @@ __all__ = [
     "TilemapLayer",
     "Tileset",
     "PygletTilemapRenderer",
+    "TilemapBorderTracer",
 ]

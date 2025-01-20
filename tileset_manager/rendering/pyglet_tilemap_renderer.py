@@ -2,8 +2,8 @@ import pyglet
 from typing import Any
 import numpy as np
 from PIL import Image
-from ..tilemap_layer import TilemapLayer
 from ..tile.tile import Tile
+from ..utils.tilemap_border_tracer import TilemapBorderTracer
 
 
 class PygletTilemapRenderer:
@@ -19,6 +19,8 @@ class PygletTilemapRenderer:
 
         self.layer_groups = {}
         self.tile_sprites = {}
+
+        self.debug_batch = pyglet.graphics.Batch()
 
         self._create_tile_images()
 
@@ -86,8 +88,8 @@ class PygletTilemapRenderer:
                     if tile.display is None:
                         continue
 
-                    tile_x_pos, tile_y_pos = self.timelap_layer_pos_to_pyglet_pos(
-                        tile.position, layer
+                    tile_x_pos, tile_y_pos = layer.tilemap_pos_to_actual_pos(
+                        tile.position
                     )
 
                     tile_image = self.tile_images[layer.name][
@@ -112,7 +114,7 @@ class PygletTilemapRenderer:
 
         def on_mouse_press(x, y, button, modifiers):
             if button == pyglet.window.mouse.LEFT:
-                grid_x, grid_y = self.pyglet_pos_to_tilemap_layer_pos((x, y), layer)
+                grid_x, grid_y = layer.actual_pos_to_tilemap_pos((x, y))
                 tile = create_tile_callback(grid_x, grid_y)
                 tile.set_position((grid_x, grid_y))
 
@@ -121,24 +123,26 @@ class PygletTilemapRenderer:
 
         return on_mouse_press
 
-    def timelap_layer_pos_to_pyglet_pos(
-        self, position: tuple[int, int], layer: TilemapLayer
+    def create_debug_lines(
+        self, border_tracer: TilemapBorderTracer, group: pyglet.graphics.Group
     ):
-        """Convert a tile position in the tilemap layer to a position in the pyglet window."""
-        tile_width, tile_height = layer.tileset.tile_size
-        map_height = layer.grid.shape[0] * tile_height
-        return (position[0] * tile_width, map_height - (position[1] + 1) * tile_height)
+        """Creates a vertex list for a line in the Pyglet batch."""
+        layer = border_tracer.tilemap_layer
+        for line in border_tracer.lines:
+            print(line)
+            x1, y1 = line.start
+            x2, y2 = line.end
 
-    def pyglet_pos_to_tilemap_layer_pos(
-        self, position: tuple[int, int], layer: TilemapLayer
-    ):
-        """Convert a position in the pyglet window to a tile position in the tilemap layer."""
-        tile_width, tile_height = layer.tileset.tile_size
-        map_height = layer.grid.shape[0] * tile_height
-        pos = int(position[0] // tile_width), int(
-            (map_height - position[1]) // tile_height
-        )
-        return pos
+            x1, y1 = layer.tilemap_pos_to_actual_pos((x1, y1))
+            x2, y2 = layer.tilemap_pos_to_actual_pos((x2, y2))
+
+            self.debug_batch.add(
+                2,
+                pyglet.gl.GL_LINES,
+                group,
+                ("v2f", (x1, y1, x2, y2)),
+                ("c3B", (255, 0, 0, 255, 0, 0)),
+            )
 
     def draw(self, update_sprites: bool = False):
         """Draw the tilemap. If update_sprites is True, the sprites will be updated. Otherwise, they will be created if they don't exist."""
@@ -148,3 +152,4 @@ class PygletTilemapRenderer:
             self._create_tile_sprites()
 
         self.batch.draw()
+        self.debug_batch.draw()

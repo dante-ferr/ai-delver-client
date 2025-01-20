@@ -3,36 +3,8 @@ from .tile.tile import Tile
 import numpy as np
 from .tileset import Tileset
 from .tile.autotile.autotile_rule import AutotileRule
+from .tile.autotile.default_autotile_rules import default_rules
 from .tile.autotile.autotile_tile import AutotileTile
-import json
-from itertools import chain
-from .tile.autotile.autotile_rule import get_rule_group
-
-with open("tileset_manager/tile/autotile/default_autotile_forms.json", "r") as file:
-    autotile_forms = json.load(file)
-
-default_rules = list(
-    chain.from_iterable(
-        [
-            get_rule_group(autotile_forms["outer_corner"], (1, 0)),
-            get_rule_group(autotile_forms["inner_corner"], (3, 0)),
-            get_rule_group(autotile_forms["thin_t_junction"], (5, 0)),
-            get_rule_group(autotile_forms["t_junction"], (7, 0)),
-            get_rule_group(autotile_forms["straight"], (1, 2)),
-            get_rule_group(autotile_forms["edge"], (3, 2)),
-            get_rule_group(autotile_forms["thin_corner"], (5, 2)),
-            get_rule_group(autotile_forms["d_junction"], (7, 2)),
-            get_rule_group(autotile_forms["b_junction"], (9, 2)),
-            get_rule_group(autotile_forms["fish_junction"], (9, 0)),
-            get_rule_group(autotile_forms["straight_thin"], (11, 2), amount=2),
-            get_rule_group(autotile_forms["diagonal_junction"], (11, 0), amount=2),
-        ]
-    )
-) + [
-    AutotileRule(autotile_forms["lone"], (0, 1)),
-    AutotileRule(autotile_forms["cross"], (0, 2)),
-    AutotileRule(autotile_forms["center"], (0, 3)),
-]
 
 
 class Area(TypedDict):
@@ -125,6 +97,9 @@ class TilemapLayer:
         radius: int = 1,
         same_autotile_object=False,
         output_type: Literal["tile_grid", "bool_grid", "amount"] = "bool_grid",
+        adjacency_rule: Literal[
+            "eight_neighbors", "four_neighbors"
+        ] = "eight_neighbors",
     ):
         """Get the neighbors of a tile in a given radius. If output_type is "grid", it returns a numpy array of tuples, where each tuple represents a neighbor's position. If output_type is "amount", it returns the amount of neighbors."""
         if tile.position is None:
@@ -141,6 +116,9 @@ class TilemapLayer:
         elif output_type == "amount":
             neighbors = 0
 
+        if radius == 0:
+            return neighbors
+
         def tile_neighbors_callback(x, y):
             nonlocal neighbors
 
@@ -156,7 +134,7 @@ class TilemapLayer:
             ):
                 return
 
-            if output_type == "grid":
+            if output_type == "tile_grid":
                 neighbors[
                     y - tile.position[1] + radius, x - tile.position[0] + radius
                 ] = neighbor
@@ -167,9 +145,25 @@ class TilemapLayer:
             elif output_type == "amount":
                 neighbors += 1
 
-        self._loop_over_area(
-            self._get_area_around(tile.position, radius), tile_neighbors_callback
-        )
+        if adjacency_rule == "eight_neighbors":
+            self._loop_over_area(
+                self._get_area_around(tile.position, radius), tile_neighbors_callback
+            )
+        elif adjacency_rule == "four_neighbors":
+            if radius > 1:
+                raise ValueError("Radius must be 1 for four neighbors search.")
+
+            tile_x, tile_y = tile.position
+            positions = [
+                (tile_x + 1, tile_y),
+                (tile_x, tile_y - 1),
+                (tile_x - 1, tile_y),
+                (tile_x, tile_y + 1),
+            ]
+            for position in positions:
+                if self._position_is_valid(position):
+                    tile_neighbors_callback(*position)
+
         return neighbors
 
     def _loop_over_area(self, area: Area, callback):
@@ -194,4 +188,57 @@ class TilemapLayer:
         return Area(
             top_left=(top_left_x, top_left_y),
             bottom_right=(bottom_right_x, bottom_right_y),
+        )
+
+    def _position_is_valid(self, position: tuple[int, int]):
+        return (
+            position[0] >= 0
+            and position[1] >= 0
+            and position[0] < self.grid.shape[1]
+            and position[1] < self.grid.shape[0]
+        )
+
+    def tilemap_pos_to_actual_pos(
+        self, position: tuple[int, int], invert_x_axis=False, invert_y_axis=True
+    ):
+        """Convert a tile position in the tilemap layer to an actual position in the window."""
+        tile_width, tile_height = self.tile_size
+        map_width, map_height = self.size
+        pos = [position[0] * tile_width, position[1] * tile_height]
+
+        if invert_x_axis:
+            pos[0] = map_width - pos[0]
+        if invert_y_axis:
+            pos[1] = map_height - pos[1]
+
+        return (*pos,)
+
+    def actual_pos_to_tilemap_pos(
+        self, position: tuple[int, int], invert_x_axis=False, invert_y_axis=True
+    ):
+        """Convert an actual position in the window to a tile position in the tilemap layer."""
+        tile_width, tile_height = self.tile_size
+        map_width, map_height = self.size
+        pos: list[int] = [
+            int(position[0] // tile_width),
+            int(position[1] // tile_height + 1),
+        ]
+
+        if invert_x_axis:
+            pos[0] = int((map_width - position[0]) // tile_width)
+        if invert_y_axis:
+            pos[1] = int((map_height - position[1]) // tile_height + 1)
+
+        return (*pos,)
+
+    @property
+    def tile_size(self):
+        return self.tileset.tile_size
+
+    @property
+    def size(self):
+        tile_width, tile_height = self.tile_size
+        return (
+            self.grid.shape[1] * tile_width,
+            self.grid.shape[0] * tile_height,
         )
