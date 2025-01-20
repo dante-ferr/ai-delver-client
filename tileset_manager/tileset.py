@@ -2,10 +2,11 @@ from PIL import Image
 import numpy as np
 import warnings
 from typing import Any
-from utils.plot_bytes_image import plot_bytes_image
 
 
 class Tileset:
+    """This object works over a tileset, mainly to get the tiles from it as byte images."""
+
     tile_size: tuple[int, int]
 
     def __init__(self, tileset_path: str, tile_size: tuple[int, int]):

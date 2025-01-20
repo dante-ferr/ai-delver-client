@@ -48,7 +48,8 @@ class Game:
         self.controls = Controls(self.keys, self.player)
 
         def create_tile_callback(grid_x, grid_y):
-            return AutotileTile((grid_x, grid_y), "wall")
+            tile = AutotileTile((grid_x, grid_y), "wall")
+            return tile
 
         self.window.push_handlers(
             self.keys,

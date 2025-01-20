@@ -3,6 +3,16 @@ import numpy as np
 
 
 class AutotileRule:
+    """
+    A class representing an autotile rule. It contains a rule matrix and a display.
+    - Rule matrix: a 2D array of integers with shape (3, 3). The center cell of the matrix represents the tile on which the rule applies, while the other ones represent its neighbors.
+      - 0: no tile from the same layer
+      - 1: autotile tile
+      - 2: any tile within the same layer (including no tile)
+      - 3: tiles within the same layer with the same object type
+    - Display: a tuple of two integers representing the x and y coordinates of the tile's display in the layer's tileset.
+    """
+
     display: tuple[int, int]
 
     def __init__(
@@ -17,6 +27,7 @@ class AutotileRule:
 def get_rule_group(
     rule_matrix: list[list[int]], display: tuple[int, int], amount: int = 4
 ):
+    """Create a rule group from a base rule matrix and a display. The rule matrix will be rotated and the display will be adjusted accordingly."""
     if amount <= 0:
         raise ValueError("Amount must be greater than 0")
     if amount > 4:

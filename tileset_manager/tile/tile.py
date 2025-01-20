@@ -6,28 +6,31 @@ if TYPE_CHECKING:
 
 
 class Tile:
+    """A class representing a tile. It contains information about its position, object type, and display. It also has a potential displays dictionary, which stores the chances of each display being chosen."""
+
     potential_displays_chance_sum = 0.0
 
     def __init__(
         self,
         position: tuple[int, int] | None = None,
-        object_type: str | None = None,
         display: tuple[int, int] | None = None,
     ):
         self.position = position
-        self.object_type = object_type
         self.display: tuple[int, int] | None = None
 
         self.potential_displays: dict[tuple[int, int], float] = {}
         self.set_display(display)
 
     def set_layer(self, layer: "TilemapLayer"):
+        """Set the tile's layer."""
         self.layer = layer
 
     def set_position(self, position: tuple[int, int] | None):
+        """Set the tile's position."""
         self.position = position
 
     def format(self):
+        """Format the tile's display."""
         if len(self.potential_displays) > 0:
             chosen_chance = random.random() * self.potential_displays_chance_sum
 
@@ -44,6 +47,7 @@ class Tile:
         self.potential_displays_chance_sum += chance
 
     def set_display(self, display: tuple[int, int] | None):
+        """Set the tile's display."""
         self.display = display
 
     # def get_image(self):

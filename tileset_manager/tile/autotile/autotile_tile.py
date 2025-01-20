@@ -1,82 +1,53 @@
 from ..tile import Tile
-from .autotile_rule import AutotileRule, get_rule_group
-from itertools import chain
+from .autotile_rule import AutotileRule
+
 import warnings
-import json
-
-# 0: no tile from the same layer
-# 1: autotile tile
-# 2: any tile within the same layer (including no tile)
-# 3: tiles within the same layer with the same object type
-
-with open("tileset_manager/tile/autotile/default_autotile_forms.json", "r") as file:
-    autotile_forms = json.load(file)
-
-default_rules = list(
-    chain.from_iterable(
-        [
-            get_rule_group(autotile_forms["outer_corner"], (1, 0)),
-            get_rule_group(autotile_forms["inner_corner"], (3, 0)),
-            get_rule_group(autotile_forms["thin_t_junction"], (5, 0)),
-            get_rule_group(autotile_forms["t_junction"], (7, 0)),
-            get_rule_group(autotile_forms["straight"], (1, 2)),
-            get_rule_group(autotile_forms["edge"], (3, 2)),
-            get_rule_group(autotile_forms["thin_corner"], (5, 2)),
-            get_rule_group(autotile_forms["d_junction"], (7, 2)),
-            get_rule_group(autotile_forms["b_junction"], (9, 2)),
-            get_rule_group(autotile_forms["fish_junction"], (9, 0)),
-            get_rule_group(autotile_forms["straight_thin"], (11, 2), amount=2),
-            get_rule_group(autotile_forms["diagonal_junction"], (11, 0), amount=2),
-        ]
-    )
-) + [
-    AutotileRule(autotile_forms["lone"], (0, 1)),
-    AutotileRule(autotile_forms["cross"], (0, 2)),
-    AutotileRule(autotile_forms["center"], (0, 3)),
-]
 
 
 class AutotileTile(Tile):
-    is_center = False
-    is_deep = True
+    """A class representing an autotile tile. It extends the Tile class and adds the ability to change its display based on the rules it has. Each rule defines a specific display based on the tile's neighbors."""
 
     rules: list[AutotileRule]
 
-    def __init__(
-        self,
-        position: tuple[int, int],
-        object_type: str | None = None,
-        rules=None,
-    ):
-        super().__init__(position, object_type)
-
-        if rules is None:
-            self.rules = default_rules
+    def __init__(self, position: tuple[int, int], autotile_object: str):
+        super().__init__(position)
+        self.autotile_object = autotile_object
 
         self.display = None
 
     def format(self):
+        """Format the tile's display"""
         if self.layer is None:
             return
 
-        neighbors = self.layer.get_neighbors_of(self, same_object_type=True)
-        self._position_format(neighbors)
+        neighbors = self.layer.get_neighbors_of(self, same_autotile_object=True)
+        self._rule_format(neighbors)
 
-        if self.is_center:
-            range_2_neighbors_amount = self.layer.get_neighbors_of(
-                self, radius=2, same_object_type=True, output_type="amount"
-            )
-            if range_2_neighbors_amount == 0:
-                self.is_deep = True
+        # if (
+        #     self.layer.get_neighbors_of(
+        #         self, radius=1, same_object_type=True, output_type="amount"
+        #     )
+        #     == 8
+        # ):
+        #     self.is_center = True
+        #     if (
+        #         self.layer.get_neighbors_of(
+        #             self, radius=1, same_object_type=True, output_type="amount"
+        #         )
+        #         == 16
+        #     ):
+        #         self.is_deep = True
 
         super().format()
 
-    def _position_format(self, filtered_neighbors):
+    def _rule_format(self, filtered_neighbors):
+        """Change the tile's display based on the rules it has."""
+
         def find_display(rule_index: int):
             if rule_index >= len(self.rules):
                 warnings.warn("No display found", UserWarning)
                 return
-            rule = self.rules[rule_index]
+            rule = self.layer.autotile_rules[self.autotile_object][rule_index]
 
             for y, row in enumerate(rule.rule_matrix):
                 for x, cell in enumerate(row):

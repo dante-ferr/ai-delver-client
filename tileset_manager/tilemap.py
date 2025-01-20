@@ -2,6 +2,8 @@ from .tilemap_layer import TilemapLayer
 
 
 class Tilemap:
+    """A class representing a tilemap. It contains a dictionary of tilemap layers."""
+
     layers: dict[str, TilemapLayer]
 
     def __init__(self, size: tuple[int, int] = (8, 8)):
