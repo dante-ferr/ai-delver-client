@@ -28,7 +28,9 @@ class SkeletonBody:
         self.shape = pymunk.Circle(self.body, radius)
         self.shape.elasticity = elasticity
         self.shape.friction = friction
+        self.shape.collision_type = 1
         self.space.add(self.body, self.shape)
+        self.shape.friction = 1
 
         self.body.position = pymunk.Vec2d(*position)
         self.normal_damping = damping

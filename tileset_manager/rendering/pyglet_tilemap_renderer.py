@@ -3,7 +3,8 @@ from typing import Any
 import numpy as np
 from PIL import Image
 from ..tile.tile import Tile
-from ..utils.tilemap_border_tracer import TilemapBorderTracer
+from ..tools.tilemap_border_tracer import TilemapBorderTracer
+from ..tilemap import Tilemap
 
 
 class PygletTilemapRenderer:
@@ -14,13 +15,16 @@ class PygletTilemapRenderer:
     tile_images: dict[str, np.ndarray[tuple[int, int], Any]]
     tile_sprites: dict[str, np.ndarray[tuple[int, int], Any]]
 
-    def __init__(self, tilemap):
+    debug_shapes: set[pyglet.shapes.Line | pyglet.shapes.Circle]
+
+    def __init__(self, tilemap: Tilemap):
         self.tilemap = tilemap
 
         self.layer_groups = {}
         self.tile_sprites = {}
 
         self.debug_batch = pyglet.graphics.Batch()
+        self.debug_shapes = set()
 
         self._create_tile_images()
 
@@ -126,23 +130,53 @@ class PygletTilemapRenderer:
     def create_debug_lines(
         self, border_tracer: TilemapBorderTracer, group: pyglet.graphics.Group
     ):
-        """Creates a vertex list for a line in the Pyglet batch."""
-        layer = border_tracer.tilemap_layer
-        for line in border_tracer.lines:
-            print(line)
-            x1, y1 = line.start
-            x2, y2 = line.end
+        """Creates a vertex list for lines in the Pyglet batch."""
+        # layer = border_tracer.tilemap_layer
+        # self.debug_shapes = set()
 
-            x1, y1 = layer.tilemap_pos_to_actual_pos((x1, y1))
-            x2, y2 = layer.tilemap_pos_to_actual_pos((x2, y2))
+        # for line in border_tracer.lines:
+        #     x1, y1 = line.start
+        #     x2, y2 = line.end
 
-            self.debug_batch.add(
-                2,
-                pyglet.gl.GL_LINES,
-                group,
-                ("v2f", (x1, y1, x2, y2)),
-                ("c3B", (255, 0, 0, 255, 0, 0)),
-            )
+        #     x1, y1 = layer.tilemap_pos_to_actual_pos((x1, y1 - 1))
+        #     x2, y2 = layer.tilemap_pos_to_actual_pos((x2, y2 - 1))
+
+        #     if line.orientation == "vertical":
+        #         color = (255, 0, 0)
+        #     else:
+        #         color = (0, 255, 0)
+
+        #     line_display = pyglet.shapes.Line(
+        #         x1,
+        #         y1,
+        #         x2,
+        #         y2,
+        #         thickness=1,
+        #         color=color,
+        #         batch=self.debug_batch,
+        #         group=group,
+        #     )
+        #     self.debug_shapes.add(line_display)
+
+        #     circle = pyglet.shapes.Circle(
+        #         x=x1 + (3 if line.orientation == "vertical" else 0),
+        #         y=y1,
+        #         radius=3,
+        #         color=color,
+        #         batch=self.debug_batch,
+        #         group=group,
+        #     )
+        #     self.debug_shapes.add(circle)
+        #     circle = pyglet.shapes.Circle(
+        #         x=x2 + (3 if line.orientation == "vertical" else 0),
+        #         y=y2,
+        #         radius=3,
+        #         color=color,
+        #         batch=self.debug_batch,
+        #         group=group,
+        #     )
+        #     self.debug_shapes.add(circle)
+        pass
 
     def draw(self, update_sprites: bool = False):
         """Draw the tilemap. If update_sprites is True, the sprites will be updated. Otherwise, they will be created if they don't exist."""

@@ -1,4 +1,4 @@
-from typing import TypedDict, Literal, Any
+from typing import TypedDict, Literal, Any, Callable
 from .tile.tile import Tile
 import numpy as np
 from .tileset import Tileset
@@ -22,6 +22,9 @@ class TilemapLayer:
         self.tileset = tileset
         self.autotile_rules = {}
 
+        self.format_callbacks: list[Callable] = []
+        self.individual_format_callbacks: list[Callable] = []
+
     def initialize_grid(self, size: tuple[int, int]):
         """Initialize the grid of the tilemap layer."""
         self.grid = np.empty(size, dtype=Tile)
@@ -29,6 +32,15 @@ class TilemapLayer:
     def set_size(self, size: tuple[int, int]):
         """Change the size of the grid."""
         np.resize(self.grid, size)
+
+    def add_format_callback(self, *callbacks: Callable):
+        """Add a callback to be called when the any tile in the layer is formatted."""
+        for callback in callbacks:
+            self.format_callbacks.append(callback)
+
+    def add_individual_format_callback(self, *callbacks: Callable):
+        for callback in callbacks:
+            self.individual_format_callbacks.append(callback)
 
     def add_tile(self, tile: Tile, apply_formatting=True):
         """Add a tile to the grid."""
@@ -65,6 +77,8 @@ class TilemapLayer:
 
         if apply_formatting:
             self.format(self._get_area_around(tile.position, 1))
+            for callback in self.individual_format_callbacks:
+                callback(tile)
 
     def add_autotile_rule(self, autotile_object, *rules):
         """Append one or more rules to the list of rules for a specific autotile object."""
@@ -101,7 +115,7 @@ class TilemapLayer:
             "eight_neighbors", "four_neighbors"
         ] = "eight_neighbors",
     ):
-        """Get the neighbors of a tile in a given radius. If output_type is "grid", it returns a numpy array of tuples, where each tuple represents a neighbor's position. If output_type is "amount", it returns the amount of neighbors."""
+        """Get the neighbors of a tile in a given radius."""
         if tile.position is None:
             raise ValueError(
                 "Tile position cannot be None. Ensure to set the position of the tile before getting its neighbors."

@@ -4,8 +4,10 @@ from tileset_manager import (
     Tilemap,
     PygletTilemapRenderer,
     TilemapBorderTracer,
+    PymunkTilemapPhysics,
 )
-from .groups import floor_layer, walls_layer
+import game.groups as groups
+from .space import space
 
 # Criação do tilemap:
 # - Criar tileset
@@ -29,13 +31,14 @@ def tilemap_factory():
     tilemap.add_layer(walls)
 
     tilemap_renderer = PygletTilemapRenderer(tilemap)
-    tilemap_renderer.assign_group_to_layer("floor", floor_layer)
-    tilemap_renderer.assign_group_to_layer("walls", walls_layer)
+    tilemap_renderer.assign_group_to_layer("floor", groups.floor_layer)
+    tilemap_renderer.assign_group_to_layer("walls", groups.walls_layer)
 
     border_tracer = TilemapBorderTracer(walls)
-    border_tracer.add_debug_callback(
-        lambda tile: tilemap_renderer.create_debug_lines(border_tracer, walls_layer)
+    border_tracer.add_format_callback(
+        lambda tile: tilemap_renderer.create_debug_lines(border_tracer, groups.debug)
     )
+    tilemap_physics = PymunkTilemapPhysics(border_tracer, space)
 
     # for position in wall_positions:
     #     wall_tile = AutotileTile(position, "wall")

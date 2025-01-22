@@ -31,15 +31,17 @@ class Tile:
         """Set the tile's position."""
         self.position = position
 
-    def format(self):
+    def format(self, individual_callbacks: list[Callable] = []):
         """Format the tile's display."""
         for callback in self.format_callbacks:
+            callback(self)
+        for callback in self.layer.format_callbacks:
             callback(self)
 
         if len(self.potential_displays) > 0:
             chosen_chance = random.random() * self.potential_displays_chance_sum
 
-            chance_sum = 0
+            chance_sum = 0.0
             for potential_display, chance in self.potential_displays.items():
                 chance_sum += chance
                 if chosen_chance < chance_sum:
@@ -47,6 +49,7 @@ class Tile:
                     break
 
     def add_format_callback(self, *callbacks: Callable):
+        """Add a callback to be called when the tile is formatted."""
         for callback in callbacks:
             self.format_callbacks.append(callback)
 

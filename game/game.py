@@ -1,12 +1,13 @@
 import json
 import pyglet
 from game.controls import Controls
-import pymunk
 from typing import Any
 from .entities.player import Player
 from .tilemap_factory import tilemap_factory
 from .camera import Camera
 from tileset_manager import AutotileTile
+import game.groups as groups
+from .space import space
 
 with open("game/config.json", "r") as file:
     config_data = json.load(file)
@@ -28,11 +29,8 @@ class Game:
         self.camera = Camera(self.window)
         self.camera.zoom = zoom_level
 
-        self.space = pymunk.Space()
-        self.space.gravity = (0, 0)
-
         # Initialize player
-        player = Player(self.space)
+        player = Player(space=space)
         self.entities.append(player)
         self.player = player
 
@@ -46,6 +44,19 @@ class Game:
 
         self.keys = pyglet.window.key.KeyStateHandler()
         self.controls = Controls(self.keys, self.player)
+
+        def collision_handler(arbiter, space, data):
+            print("Collision Detected!")
+            player_shape = arbiter.shapes[0]
+            line_shape = arbiter.shapes[1]
+
+            print(f"Player position: {player_shape.body.position}")
+            print(f"Line position: {line_shape.body.position}")
+
+            return True
+
+        handler = space.add_collision_handler(1, 2)
+        handler.begin = collision_handler
 
         def create_tile_callback(grid_x, grid_y):
             tile = AutotileTile((grid_x, grid_y), "wall")
@@ -66,6 +77,16 @@ class Game:
         self.camera.begin()
 
         self.tilemap_renderer.draw()
+
+        pyglet.shapes.Line(
+            0,
+            0,
+            100,
+            100,
+            thickness=2,
+            color=(255, 0, 0),
+            group=groups.debug,
+        ).draw()
 
         self.player.update(dt)
 

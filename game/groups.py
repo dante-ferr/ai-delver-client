@@ -1,5 +1,6 @@
 import pyglet
 
+
 floor_layer = pyglet.graphics.Group(0)
 walls_layer = pyglet.graphics.Group(1)
 

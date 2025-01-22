@@ -2,6 +2,7 @@ from .skeleton.skeleton import Skeleton
 import game.groups as groups
 from .skeleton.skeleton_body import SkeletonBody
 import json
+import pymunk
 
 with open("game/config.json", "r") as file:
     config_data = json.load(file)
@@ -13,15 +14,17 @@ window_height = config_data["window_height"]
 class Player(Skeleton):
     speed = 200
 
-    def __init__(self, space):
+    def __init__(self, space: pymunk.Space):
         player_body = SkeletonBody(
             space=space,
+            mass=10,
             position=(
                 window_width / 2,
                 window_height / 2,
             ),
             damping=1,
         )
+
         super().__init__("assets/sprites/delver", groups.delver, player_body)
 
     def animation_run(self, animation_name: str | None, starting_frame=0, speed=1):
