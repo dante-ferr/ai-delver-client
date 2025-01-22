@@ -25,25 +25,32 @@ class Controls:
         if self.keys[window.key.RIGHT]:
             run_vector[0] = 1
         if self.keys[window.key.UP]:
-            run_vector[1] = -1
-        if self.keys[window.key.DOWN]:
             run_vector[1] = 1
+        if self.keys[window.key.DOWN]:
+            run_vector[1] = -1
+
+        run_velocity = [
+            run_vector[0] * self.player.run_speed,
+            run_vector[1] * self.player.run_speed,
+        ]
 
         if run_vector == [0, 0]:
             self.player.animation_run(None)
-            self.player.body.set_velocity(Vec2d(0, 0))
+            self.player.body.velocity = Vec2d(0, 0)
         else:
-            run_velocity = [
-                run_vector[0] * self.player.speed,
-                run_vector[1] * self.player.speed,
-            ]
-            self.player.set_target_angle(vector_to_angle(run_vector) - 90)
+            self.player.set_target_angle(
+                vector_to_angle((run_vector[1], run_vector[0])) + 180
+            )
             self.player.update_angle_to_target(dt)
             self.player.animation_run("run")
 
-            magnitude = math.sqrt(run_velocity[0] ** 2 + run_velocity[1] ** 2)
-            if magnitude > self.player.speed:
-                run_velocity[0] *= self.player.speed / magnitude
-                run_velocity[1] *= self.player.speed / magnitude
+        magnitude = math.sqrt(run_velocity[0] ** 2 + run_velocity[1] ** 2)
+        if magnitude > self.player.run_speed:
+            run_velocity[0] *= self.player.run_speed / magnitude
+            run_velocity[1] *= self.player.run_speed / magnitude
 
-            self.player.body.set_velocity(Vec2d(run_velocity[0], -run_velocity[1]))
+        force = (
+            self.player.body.mass * run_velocity[0] / dt,
+            self.player.body.mass * run_velocity[1] / dt,
+        )
+        self.player.body.apply_force_at_local_point(Vec2d(force[0], force[1]))

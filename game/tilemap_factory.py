@@ -26,7 +26,7 @@ def tilemap_factory():
     walls = TilemapLayer("walls", tileset)
     floor = TilemapLayer("floor", tileset)
 
-    tilemap = Tilemap((16, 32))
+    tilemap = Tilemap((64, 64))
     tilemap.add_layer(floor)
     tilemap.add_layer(walls)
 
@@ -35,9 +35,9 @@ def tilemap_factory():
     tilemap_renderer.assign_group_to_layer("walls", groups.walls_layer)
 
     border_tracer = TilemapBorderTracer(walls)
-    border_tracer.add_format_callback(
-        lambda tile: tilemap_renderer.create_debug_lines(border_tracer, groups.debug)
-    )
+    # border_tracer.add_format_callback(
+    #     lambda tile: tilemap_renderer.create_debug_lines(border_tracer, groups.debug)
+    # )
     tilemap_physics = PymunkTilemapPhysics(border_tracer, space)
 
     # for position in wall_positions:

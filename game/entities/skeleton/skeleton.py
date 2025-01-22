@@ -148,7 +148,7 @@ class Skeleton:
     def update(self, dt):
         """Update skeleton's attributes and draw each of its parts."""
         self.body.update(dt)
-        self.set_position(self.body.body.position.x, self.body.body.position.y)
+        self.set_position(self.body.position.x, self.body.position.y)
         for bone in self.bones.values():
             bone.update(dt)
 

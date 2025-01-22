@@ -2,73 +2,68 @@ import pymunk
 from typing import Literal
 
 
-class SkeletonBody:
-    def __init__(
-        self,
-        space: pymunk.Space,
-        position: tuple[float, float] = (0, 0),
-        mass: float = 1.0,
-        radius: float = 10.0,
-        elasticity: float = 0.8,
-        friction: float = 0.5,
-        damping: float = 1,
-    ):
+class SkeletonBody(pymunk.Body):
+    space: pymunk.Space
+
+    def __init__(self, mass: float = 0, moment: float = 0):
         """
         A Body object that holds the physics representation of the skeleton.
-
-        Parameters:
-        - skeleton: The Skeleton object that this body will be associated with.
-        - mass: The mass of the body for physics simulation.
-        - radius: The radius for the collision shape (for simplicity, assuming a circular shape).
-        - position: The initial position of the body.
         """
-        self.space = space
+        super().__init__(mass, moment)
 
-        self.body = pymunk.Body(mass, pymunk.moment_for_circle(mass, 0, radius))
-        self.shape = pymunk.Circle(self.body, radius)
-        self.shape.elasticity = elasticity
-        self.shape.friction = friction
-        self.shape.collision_type = 1
-        self.space.add(self.body, self.shape)
-        self.shape.friction = 1
+        self.is_colliding = False
 
-        self.body.position = pymunk.Vec2d(*position)
-        self.normal_damping = damping
-        self.damping = damping
+    def setup_collision_handlers(self):
+        """Set up collision handlers for the body."""
+        collision_handler = self.space.add_collision_handler(1, 2)
 
-        # self.circle = shapes.Circle(
-        #     self.body.position.x,
-        #     self.body.position.y,
-        #     radius,
-        #     color=(50, 50, 255),
-        # )
+        collision_handler.begin = self._on_collision_begin
+        collision_handler.separate = self._on_collision_end
+        collision_handler.pre_solve = self._on_collision_pre_solve
+
+    def _on_collision_begin(self, arbiter, space, data):
+        """Callback when collision begins."""
+        return True
+
+    def _on_collision_pre_solve(self, arbiter, space, data):
+        """Callback that occurs while the collision is happening."""
+        self.velocity = pymunk.Vec2d(0, 0)
+        return True
+
+    def _on_collision_end(self, arbiter, space, data):
+        """Callback when collision ends."""
+        self.is_colliding = False
+        # self.body.angular_velocity = 0  # Reset angular velocity
+        # self.body.force = pymunk.Vec2d(0, 0)
+        # self.body.torque = 0
+        # self.body.velocity = pymunk.Vec2d(0, 0)
+
+        return True
 
     def update(self, dt):
-        """Update the body position and the skeleton."""
-        self.space.step(dt)
-
-        vx, vy = self.body.velocity
-
-        damping_factor = self.damping**dt
-        new_vx = vx * damping_factor
-        new_vy = vy * damping_factor
-
-        self.body.velocity = new_vx, new_vy
-
-        # self.circle.x = self.body.position.x
-        # self.circle.y = self.body.position.y
-        # self.circle.draw()
+        """Update the body position and resolve collisions."""
+        self.limit_speed()
 
     def set_damping(self, damping: float | Literal["normal"] = "normal"):
-        """Set the damping of the body. If damping is "normal", the normal damping will be used."""
+        """Set the damping of the body."""
         if damping == "normal":
-            damping = self.normal_damping
+            self.damping = self.normal_damping
+            return
         self.damping = damping
 
-    def apply_force(self, force: pymunk.Vec2d):
-        """Apply a force to the body."""
-        self.body.apply_force_at_local_point(force)
+    @property
+    def max_velocity(self):
+        """Get the maximum speed for the body."""
+        return self._max_velocity
 
-    def set_velocity(self, velocity: pymunk.Vec2d):
-        """Set the velocity of the body."""
-        self.body.velocity = velocity
+    @max_velocity.setter
+    def max_velocity(self, value: float):
+        """Set the maximum speed for the body."""
+        self._max_velocity = value
+
+    def limit_speed(self):
+        """Limit the body's speed to the set maximum speed."""
+        if self.max_velocity is not None:
+            current_speed = self.velocity.length
+            if current_speed > self.max_velocity:
+                self.velocity = self.velocity.normalized() * self.max_velocity

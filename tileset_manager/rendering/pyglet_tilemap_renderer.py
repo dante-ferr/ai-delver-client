@@ -131,52 +131,51 @@ class PygletTilemapRenderer:
         self, border_tracer: TilemapBorderTracer, group: pyglet.graphics.Group
     ):
         """Creates a vertex list for lines in the Pyglet batch."""
-        # layer = border_tracer.tilemap_layer
-        # self.debug_shapes = set()
+        layer = border_tracer.tilemap_layer
+        self.debug_shapes = set()
 
-        # for line in border_tracer.lines:
-        #     x1, y1 = line.start
-        #     x2, y2 = line.end
+        for line in border_tracer.lines:
+            x1, y1 = line.start
+            x2, y2 = line.end
 
-        #     x1, y1 = layer.tilemap_pos_to_actual_pos((x1, y1 - 1))
-        #     x2, y2 = layer.tilemap_pos_to_actual_pos((x2, y2 - 1))
+            x1, y1 = layer.tilemap_pos_to_actual_pos((x1, y1 - 1))
+            x2, y2 = layer.tilemap_pos_to_actual_pos((x2, y2 - 1))
 
-        #     if line.orientation == "vertical":
-        #         color = (255, 0, 0)
-        #     else:
-        #         color = (0, 255, 0)
+            if line.orientation == "vertical":
+                color = (255, 0, 0)
+            else:
+                color = (0, 255, 0)
 
-        #     line_display = pyglet.shapes.Line(
-        #         x1,
-        #         y1,
-        #         x2,
-        #         y2,
-        #         thickness=1,
-        #         color=color,
-        #         batch=self.debug_batch,
-        #         group=group,
-        #     )
-        #     self.debug_shapes.add(line_display)
+            line_display = pyglet.shapes.Line(
+                x1,
+                y1,
+                x2,
+                y2,
+                thickness=1,
+                color=color,
+                batch=self.debug_batch,
+                group=group,
+            )
+            self.debug_shapes.add(line_display)
 
-        #     circle = pyglet.shapes.Circle(
-        #         x=x1 + (3 if line.orientation == "vertical" else 0),
-        #         y=y1,
-        #         radius=3,
-        #         color=color,
-        #         batch=self.debug_batch,
-        #         group=group,
-        #     )
-        #     self.debug_shapes.add(circle)
-        #     circle = pyglet.shapes.Circle(
-        #         x=x2 + (3 if line.orientation == "vertical" else 0),
-        #         y=y2,
-        #         radius=3,
-        #         color=color,
-        #         batch=self.debug_batch,
-        #         group=group,
-        #     )
-        #     self.debug_shapes.add(circle)
-        pass
+            circle = pyglet.shapes.Circle(
+                x=x1 + (2 if line.orientation == "vertical" else -2),
+                y=y1,
+                radius=3,
+                color=color,
+                batch=self.debug_batch,
+                group=group,
+            )
+            self.debug_shapes.add(circle)
+            circle = pyglet.shapes.Circle(
+                x=x2 + (2 if line.orientation == "vertical" else -2),
+                y=y2,
+                radius=3,
+                color=color,
+                batch=self.debug_batch,
+                group=group,
+            )
+            self.debug_shapes.add(circle)
 
     def draw(self, update_sprites: bool = False):
         """Draw the tilemap. If update_sprites is True, the sprites will be updated. Otherwise, they will be created if they don't exist."""
