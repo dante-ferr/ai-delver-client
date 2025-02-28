@@ -1,4 +1,4 @@
-from tileset_manager import (
+from pytiling import (
     Tileset,
     TilemapLayer,
     Tilemap,

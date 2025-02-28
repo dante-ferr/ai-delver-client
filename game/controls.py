@@ -7,7 +7,6 @@ from utils.vector_to_angle import vector_to_angle
 if TYPE_CHECKING:
     from .entities.skeleton.skeleton import Skeleton
 
-
 class Controls:
     keys: window.key.KeyStateHandler
 

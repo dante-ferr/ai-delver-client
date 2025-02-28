@@ -5,9 +5,10 @@ from typing import Any
 from .entities.player import Player
 from .tilemap_factory import tilemap_factory
 from .camera import Camera, CenteredCamera
-from tileset_manager import AutotileTile
 import game.groups as groups
 from .space import space
+from pytiling import AutotileTile
+
 
 with open("game/config.json", "r") as file:
     config_data = json.load(file)
