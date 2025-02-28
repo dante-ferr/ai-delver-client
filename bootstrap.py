@@ -3,6 +3,24 @@ import os
 import subprocess
 
 
+def create_symlink_for_hyphenated_dirs(base_path):
+    """Finds directories with '-' in their name and creates a '_' symlink."""
+    for name in os.listdir(base_path):
+        full_path = os.path.join(base_path, name)
+
+        if os.path.isdir(full_path) and "-" in name:
+            symlink_name = name.replace("-", "_")
+            symlink_path = os.path.join(base_path, symlink_name)
+
+            if not os.path.exists(symlink_path):
+                try:
+                    os.symlink(full_path, symlink_path)
+                    # print(f"Created symlink: {symlink_path} → {full_path}")
+                except OSError as e:
+                    # print(f"Failed to create symlink {symlink_name}: {e}")
+                    pass
+
+
 def activate_subproject(env_path):
     try:
         venv_path = subprocess.check_output(
@@ -15,7 +33,7 @@ def activate_subproject(env_path):
         print(f"Warning: No Pipenv environment found in {env_path}")
 
 
-subprojects = ["../pytiling"]
+subprojects = ["../pytiling", "../pyglet-dragonbones"]
 
 for subproject in subprojects:
     activate_subproject(
@@ -28,5 +46,8 @@ if suite_path not in sys.path:
 
 try:
     import pytiling
+    import pyglet_dragonbones
 except ModuleNotFoundError:
-    print("Using local version of pytiling")
+    print("Using local versions of subprojects.")
+
+    create_symlink_for_hyphenated_dirs(suite_path)

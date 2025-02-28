@@ -1,6 +1,6 @@
-from .skeleton.skeleton import Skeleton
+from pyglet_dragonbones.skeleton import Skeleton
 import game.groups as groups
-from .skeleton.skeleton_body import SkeletonBody
+from pyglet_dragonbones.skeleton_body import SkeletonBody
 import json
 import pymunk
 

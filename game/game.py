@@ -17,7 +17,7 @@ global_scale = config_data["global_scale"]
 window_width = config_data["window_width"]
 window_height = config_data["window_height"]
 
-zoom_level = 1
+zoom_level = 3
 
 
 class Game:
@@ -34,17 +34,18 @@ class Game:
         player = Player(space=space)
         self.entities.append(player)
         self.player = player
-
         player.set_angle(180)
 
+        # Initialize tilemap
         self.tilemap_renderer = tilemap_factory()
-
-        self.keys = pyglet.window.key.KeyStateHandler()
-        self.controls = Controls(self.keys, self.player)
 
         def create_tile_callback(grid_x, grid_y):
             tile = AutotileTile((grid_x, grid_y), "wall")
             return tile
+
+        # Initialize controls
+        self.keys = pyglet.window.key.KeyStateHandler()
+        self.controls = Controls(self.keys, self.player)
 
         self.window.push_handlers(
             self.keys,
