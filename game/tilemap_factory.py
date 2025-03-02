@@ -2,11 +2,10 @@ from pytiling import (
     Tileset,
     TilemapLayer,
     Tilemap,
-    PygletTilemapRenderer,
     TilemapBorderTracer,
     PymunkTilemapPhysics,
 )
-import game.groups as groups
+from pytiling.pyglet_support import TilemapRenderer
 from .space import space
 
 # Criação do tilemap:
@@ -30,19 +29,14 @@ def tilemap_factory():
     tilemap.add_layer(floor)
     tilemap.add_layer(walls)
 
-    tilemap_renderer = PygletTilemapRenderer(tilemap)
-    tilemap_renderer.assign_group_to_layer("floor", groups.floor_layer)
-    tilemap_renderer.assign_group_to_layer("walls", groups.walls_layer)
+    tilemap_renderer = TilemapRenderer(tilemap)
 
     border_tracer = TilemapBorderTracer(walls)
-    # border_tracer.add_format_callback(
-    #     lambda tile: tilemap_renderer.create_debug_lines(border_tracer, groups.debug)
-    # )
-    tilemap_physics = PymunkTilemapPhysics(border_tracer, space)
 
-    # for position in wall_positions:
-    #     wall_tile = AutotileTile(position, "wall")
-    #     walls.add_tile(wall_tile, False)
+    border_tracer.add_create_tile_callback(
+        lambda tile: tilemap_renderer.update_debug_lines(border_tracer)
+    )
+    tilemap_physics = PymunkTilemapPhysics(border_tracer, space)
 
     # walls.format()
 

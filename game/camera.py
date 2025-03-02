@@ -1,4 +1,5 @@
-import pyglet
+from pyglet.window import Window
+from pyglet.math import Vec3
 
 """Camera class for easy scrolling and zooming.
 
@@ -58,8 +59,16 @@ manager, allowing easy use of "with"::
 class Camera:
     """A simple 2D camera that contains the speed and offset."""
 
+    offset_x: float = 0
+    offset_y: float = 0
+    target_position: tuple[float, float] | None = None
+
     def __init__(
-        self, window: pyglet.window.Window, scroll_speed=1, min_zoom=1, max_zoom=4
+        self,
+        window: Window,
+        scroll_speed=1.0,
+        min_zoom=1.0,
+        max_zoom=4.0,
     ):
         assert (
             min_zoom <= max_zoom
@@ -68,8 +77,7 @@ class Camera:
         self.scroll_speed = scroll_speed
         self.max_zoom = max_zoom
         self.min_zoom = min_zoom
-        self.offset_x = 0
-        self.offset_y = 0
+
         self._zoom = max(min(1, self.max_zoom), self.min_zoom)
 
     @property
@@ -103,10 +111,10 @@ class Camera:
 
         # Translate using the offset.
         view_matrix = self._window.view.translate(
-            (-self.offset_x * self._zoom, -self.offset_y * self._zoom, 0)
+            Vec3(-self.offset_x * self._zoom, -self.offset_y * self._zoom, 0)
         )
         # Scale by zoom level.
-        view_matrix = view_matrix.scale((self._zoom, self._zoom, 1))
+        view_matrix = view_matrix.scale(Vec3(self._zoom, self._zoom, 1))
 
         self._window.view = view_matrix
 
@@ -115,10 +123,10 @@ class Camera:
         # it will multiply the current offset every draw update pushing it further and further away.
 
         # Reverse scale, since that was the last transform.
-        view_matrix = self._window.view.scale((1 / self._zoom, 1 / self._zoom, 1))
+        view_matrix = self._window.view.scale(Vec3(1 / self._zoom, 1 / self._zoom, 1))
         # Reverse translate.
         view_matrix = view_matrix.translate(
-            (self.offset_x * self._zoom, self.offset_y * self._zoom, 0)
+            Vec3(self.offset_x * self._zoom, self.offset_y * self._zoom, 0)
         )
 
         self._window.view = view_matrix
@@ -137,14 +145,16 @@ class CenteredCamera(Camera):
         x = -self._window.width // 2 / self._zoom + self.offset_x
         y = -self._window.height // 2 / self._zoom + self.offset_y
 
-        view_matrix = self._window.view.translate((-x * self._zoom, -y * self._zoom, 0))
-        view_matrix = view_matrix.scale((self._zoom, self._zoom, 1))
+        view_matrix = self._window.view.translate(
+            Vec3(-x * self._zoom, -y * self._zoom, 0)
+        )
+        view_matrix = view_matrix.scale(Vec3(self._zoom, self._zoom, 1))
         self._window.view = view_matrix
 
     def end(self):
         x = -self._window.width // 2 / self._zoom + self.offset_x
         y = -self._window.height // 2 / self._zoom + self.offset_y
 
-        view_matrix = self._window.view.scale((1 / self._zoom, 1 / self._zoom, 1))
-        view_matrix = view_matrix.translate((x * self._zoom, y * self._zoom, 0))
+        view_matrix = self._window.view.scale(Vec3(1 / self._zoom, 1 / self._zoom, 1))
+        view_matrix = view_matrix.translate(Vec3(x * self._zoom, y * self._zoom, 0))
         self._window.view = view_matrix

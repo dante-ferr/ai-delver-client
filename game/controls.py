@@ -5,12 +5,13 @@ import math
 from utils.vector_to_angle import vector_to_angle
 
 if TYPE_CHECKING:
-    from .entities.skeleton.skeleton import Skeleton
+    from .entities.player import Player
+
 
 class Controls:
     keys: window.key.KeyStateHandler
 
-    def __init__(self, keys: window.key.KeyStateHandler, player: "Skeleton"):
+    def __init__(self, keys: window.key.KeyStateHandler, player: "Player"):
         self.keys = keys
         self.player = player
 
@@ -28,7 +29,7 @@ class Controls:
         if self.keys[window.key.DOWN]:
             run_vector[1] = -1
 
-        run_velocity = [
+        run_velocity: list[float] = [
             run_vector[0] * self.player.run_speed,
             run_vector[1] * self.player.run_speed,
         ]
