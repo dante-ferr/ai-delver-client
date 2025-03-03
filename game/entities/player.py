@@ -3,6 +3,9 @@ from pyglet_dragonbones.skeleton import Skeleton
 from pyglet_dragonbones.skeleton_body import SkeletonBody
 import json
 import pymunk
+from pymunk import Vec2d
+from utils import angle_to_vector
+import math
 
 with open("game/config.json", "r") as file:
     config_data = json.load(file)
@@ -22,6 +25,8 @@ delver_groups = {
 
 class Player(Skeleton):
     run_speed = 200
+    is_running = False
+    run_angle = 0.0
 
     def __init__(self, space: pymunk.Space):
         mass = 1
@@ -39,5 +44,34 @@ class Player(Skeleton):
 
         super().__init__("assets/sprites/delver", delver_groups, player_body)
 
-    def animation_run(self, animation_name: str | None, starting_frame=0, speed=1):
-        self.animation.run(animation_name, starting_frame, speed)
+    def move(self, dt: float, move_angle: float):
+        """Make the player move."""
+        print(move_angle)
+        self.run_animation("run")
+        self.set_target_angle(-move_angle - 90)
+        self.update_angle_to_target(dt)
+
+        run_vector = angle_to_vector(move_angle)
+        run_velocity: list[float] = [
+            run_vector[0] * self.run_speed,
+            run_vector[1] * self.run_speed,
+        ]
+
+        magnitude = math.sqrt(run_velocity[0] ** 2 + run_velocity[1] ** 2)
+        if magnitude > self.run_speed:
+            run_velocity[0] *= self.run_speed / magnitude
+            run_velocity[1] *= self.run_speed / magnitude
+
+        force = Vec2d(
+            self.body.mass * run_velocity[0] / dt,
+            self.body.mass * run_velocity[1] / dt,
+        )
+        self.body.apply_force_at_local_point(force)
+
+    def stand(self):
+        """ "Make the player stand."""
+        self.run_animation(None)
+        self.body.velocity = Vec2d(0, 0)
+
+    def update(self, dt):
+        super().update(dt)

@@ -37,7 +37,9 @@ class Game:
 
         # Initialize controls
         self.keys = pyglet.window.key.KeyStateHandler()
-        self.controls = Controls(self.keys, self.player)
+        self.controls = Controls(self.keys)
+        self.controls.append_player(player)
+        self.controls.append_camera(self.camera)
 
         def create_tile_callback(grid_x, grid_y):
             tile = AutotileTile((grid_x, grid_y), "wall")
@@ -48,6 +50,7 @@ class Game:
             create_tile_on_click(
                 self.tilemap_renderer.layer_renderers["walls"], create_tile_callback
             ),
+            on_mouse_scroll=self.controls.on_mouse_scroll,
         )
 
     def update(self, dt):
