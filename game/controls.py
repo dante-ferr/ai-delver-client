@@ -5,7 +5,7 @@ from pymunk import Vec2d
 from utils import vector_to_angle
 
 if TYPE_CHECKING:
-    from .entities.player import Player
+    from .entities.player.player import Player
 
 
 class Controls:

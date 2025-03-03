@@ -2,7 +2,7 @@ import json
 import pyglet
 from game.controls import Controls
 from typing import Any
-from .entities.player import Player
+from .entities.player.player import Player
 from .tilemap_factory import tilemap_factory
 from .camera import Camera, CenteredCamera
 from .space import space
@@ -28,9 +28,10 @@ class Game:
 
         # Initialize player
         player = Player(space=space)
-        self.entities.append(player)
-        self.player = player
         player.set_angle(180)
+
+        self.player = player
+        self.entities.append(player)
 
         # Initialize tilemap
         self.tilemap_renderer = tilemap_factory()
