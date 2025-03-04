@@ -36,7 +36,6 @@ class Player(SkeletalEntity):
         space.add(body, shape)
 
         body.setup_collision_handlers()
-        body.position = pymunk.Vec2d(window_width / 2, window_height / 2)
         body.max_velocity = self.move_speed
 
         self.skeleton = Skeleton("assets/sprites/delver", delver_groups)

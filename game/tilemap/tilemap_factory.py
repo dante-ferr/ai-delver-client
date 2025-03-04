@@ -6,7 +6,7 @@ from pytiling import (
     PymunkTilemapPhysics,
 )
 from pytiling.pyglet_support import TilemapRenderer
-from .space import space
+from ..space import space
 
 # Criação do tilemap:
 # - Criar tileset
@@ -25,7 +25,7 @@ def tilemap_factory():
     walls = TilemapLayer("walls", tileset)
     floor = TilemapLayer("floor", tileset)
 
-    tilemap = Tilemap((64, 64))
+    tilemap = Tilemap((640, 640))
     tilemap.add_layer(floor)
     tilemap.add_layer(walls)
 

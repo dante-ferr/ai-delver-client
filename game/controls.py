@@ -44,7 +44,7 @@ class Controls:
         if not self.camera:
             raise ValueError("Camera not set")
         zoom_speed = 0.1
-        self.camera.zoom += scroll_y * zoom_speed
+        self.camera.zoom = self.camera.zoom + scroll_y * zoom_speed
 
     def update(self, dt):
         self._update_player_controls(dt)

@@ -1,59 +1,9 @@
 from pyglet.window import Window
 from pyglet.math import Vec3
+from typing import TYPE_CHECKING
 
-"""Camera class for easy scrolling and zooming.
-
-A simple example of a Camera class that can be used to easily scroll and
-zoom when rendering. For example, you might have a playfield that needs  
-to scroll and/or zoom, and a GUI layer that will remain static. For that
-scenario, you can create two Camera instances. You can optionally set
-the minimum allowed zoom, maximum allowed zoom, and scrolling speed::
-
-    world_camera = Camera(scroll_speed=5, min_zoom=1, max_zoom=4)
-    gui_camera = Camera()
-
-After creating Camera instances, the zoom can be easily updated. It will
-clamp to the `max_zoom` parameter (default of 4)::
-
-    world_camera.zoom += 1
-
-The scrolling can be set in two different ways. Directly with the
-`Camera.position attribute, which can be set with a tuple of absolute
-x, y values::
-
-    world_camera.position = 50, 0
-
-Or, it can be updated incrementally with the `Camera.move(x, y)` method.
-This will update the camera position by multiplying the passed vector by
-the `Camera.scroll_speed` parameter, which can be set on instantiation. 
-
-    world_camera.move(1, 0)
-    # If the world_camera.scroll_speed is "5", this will move the camera
-    # by 5 pixels right on the x axis. 
-
-
-During your `Window.on_draw` event, you can set the Camera, and draw the
-appropriate objects. For convenience, the Camera class can act as a context
-manager, allowing easy use of "with"::
-
-    @window.event
-    def on_draw():
-        window.clear()
-    
-        # Draw your world scene using the world camera
-        with world_camera:
-            batch.draw()
-    
-        # Can also be written as:
-        # camera.begin()
-        # batch.draw()
-        # camera.end()
-    
-        # Draw your GUI elements with the GUI camera.
-        with gui_camera:
-            label.draw()
-
-"""
+if TYPE_CHECKING:
+    from .entities.entity import Entity
 
 
 class Camera:
@@ -63,10 +13,17 @@ class Camera:
     offset_y: float = 0
     target_position: tuple[float, float] | None = None
 
+    entity_being_followed: "Entity | None" = None
+    follow_smoothing_factor = 0.05
+
+    _zoom_target: float = 1.0
+    zoom_smoothing_factor: float = 0.1
+
     def __init__(
         self,
         window: Window,
         scroll_speed=1.0,
+        start_zoom=1.0,
         min_zoom=1.0,
         max_zoom=4.0,
     ):
@@ -75,19 +32,34 @@ class Camera:
         ), "Minimum zoom must not be greater than maximum zoom"
         self._window = window
         self.scroll_speed = scroll_speed
+
         self.max_zoom = max_zoom
         self.min_zoom = min_zoom
 
-        self._zoom = max(min(1, self.max_zoom), self.min_zoom)
+        self.immediate_zoom(1.0)
+        self.begin()
+        self.immediate_zoom(start_zoom)
+        self.end()
+
+    def immediate_zoom(self, value: float):
+        """Set the zoom value immediately."""
+        clamped_value = self._clamp_zoom(value)
+        self._zoom_target = clamped_value
+        self._zoom = clamped_value
 
     @property
     def zoom(self):
-        return self._zoom
+        """ "Get the current zoom target value."""
+        return self._zoom_target
 
     @zoom.setter
     def zoom(self, value):
-        """Here we set zoom, clamp value to minimum of min_zoom and max of max_zoom."""
-        self._zoom = max(min(value, self.max_zoom), self.min_zoom)
+        """Here we set zoom target, clamp value to minimum of min_zoom and max of max_zoom."""
+        self._zoom_target = self._clamp_zoom(value)
+
+    def _clamp_zoom(self, value: float):
+        """Clamp zoom value to min and max zoom."""
+        return max(min(value, self.max_zoom), self.min_zoom)
 
     @property
     def position(self):
@@ -106,30 +78,9 @@ class Camera:
         self.offset_x += self.scroll_speed * axis_x
         self.offset_y += self.scroll_speed * axis_y
 
-    def begin(self):
-        # Set the current camera offset so you can draw your scene.
-
-        # Translate using the offset.
-        view_matrix = self._window.view.translate(
-            Vec3(-self.offset_x * self._zoom, -self.offset_y * self._zoom, 0)
-        )
-        # Scale by zoom level.
-        view_matrix = view_matrix.scale(Vec3(self._zoom, self._zoom, 1))
-
-        self._window.view = view_matrix
-
-    def end(self):
-        # Since this is a matrix, you will need to reverse the translate after rendering otherwise
-        # it will multiply the current offset every draw update pushing it further and further away.
-
-        # Reverse scale, since that was the last transform.
-        view_matrix = self._window.view.scale(Vec3(1 / self._zoom, 1 / self._zoom, 1))
-        # Reverse translate.
-        view_matrix = view_matrix.translate(
-            Vec3(self.offset_x * self._zoom, self.offset_y * self._zoom, 0)
-        )
-
-        self._window.view = view_matrix
+    def start_following(self, entity: "Entity"):
+        """Start following a given entity."""
+        self.entity_being_followed = entity
 
     def __enter__(self):
         self.begin()
@@ -137,11 +88,16 @@ class Camera:
     def __exit__(self, exception_type, exception_value, traceback):
         self.end()
 
-
-class CenteredCamera(Camera):
-    """A simple 2D camera class. 0, 0 will be the center of the screen, as opposed to the bottom left."""
-
     def begin(self):
+        self._apply_view_matrix_transformation()
+
+        self._execute_zoom()
+        self._follow_entity()
+
+    def end(self):
+        self._restore_view_matrix()
+
+    def _apply_view_matrix_transformation(self):
         x = -self._window.width // 2 / self._zoom + self.offset_x
         y = -self._window.height // 2 / self._zoom + self.offset_y
 
@@ -151,10 +107,35 @@ class CenteredCamera(Camera):
         view_matrix = view_matrix.scale(Vec3(self._zoom, self._zoom, 1))
         self._window.view = view_matrix
 
-    def end(self):
+    def _restore_view_matrix(self):
         x = -self._window.width // 2 / self._zoom + self.offset_x
         y = -self._window.height // 2 / self._zoom + self.offset_y
 
         view_matrix = self._window.view.scale(Vec3(1 / self._zoom, 1 / self._zoom, 1))
         view_matrix = view_matrix.translate(Vec3(x * self._zoom, y * self._zoom, 0))
         self._window.view = view_matrix
+
+    def _execute_zoom(self):
+        """Execute the zoom at each frame."""
+        self._zoom += (self._zoom_target - self._zoom) * self.zoom_smoothing_factor
+
+    def _follow_entity(self):
+        """ "Set the camera position to follow a given entity."""
+        if not self.entity_being_followed:
+            return
+
+        self.target_position = (
+            (-self.entity_being_followed.position[0] + self._window.width / 2)
+            / self._zoom,
+            (-self.entity_being_followed.position[1] + self._window.height / 2)
+            / self._zoom,
+        )
+
+        self.position = (
+            self.position[0]
+            + (self.target_position[0] - self.position[0])
+            * self.follow_smoothing_factor,
+            self.position[1]
+            + (self.target_position[1] - self.position[1])
+            * self.follow_smoothing_factor,
+        )

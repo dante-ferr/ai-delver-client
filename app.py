@@ -1,5 +1,4 @@
 import bootstrap
-from game.game import Game
+from game.game import game
 
-game = Game()
 game.run()

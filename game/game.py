@@ -3,11 +3,11 @@ import pyglet
 from game.controls import Controls
 from typing import Any
 from .entities.player.player import Player
-from .tilemap_factory import tilemap_factory
-from .camera import Camera, CenteredCamera
+from .tilemap.tilemap_factory import tilemap_factory
+from .camera import Camera, Camera
 from .space import space
 from pytiling import AutotileTile
-from pytiling.pyglet_support import create_tile_on_click
+from .tilemap.create_tile_on_click import create_tile_on_click
 
 with open("game/config.json", "r") as file:
     config_data = json.load(file)
@@ -21,17 +21,18 @@ class Game:
     entities: list[Any] = []
 
     def __init__(self):
-        self.window = pyglet.window.Window()
-        self.window.set_size(window_width, window_height)
-
-        self.camera = CenteredCamera(self.window, min_zoom=0.5, max_zoom=2)
+        self.window = pyglet.window.Window(window_width, window_height, resizable=False)
 
         # Initialize player
         player = Player(space=space)
         player.set_angle(180)
-
+        player.position = (window_width / 2, window_height / 2)
         self.player = player
         self.entities.append(player)
+
+        # Initialize camera
+        self.camera = Camera(self.window, start_zoom=0.75, min_zoom=0.25, max_zoom=2)
+        self.camera.start_following(player)
 
         # Initialize tilemap
         self.tilemap_renderer = tilemap_factory()
@@ -49,7 +50,10 @@ class Game:
         self.window.push_handlers(
             self.keys,
             create_tile_on_click(
-                self.tilemap_renderer.layer_renderers["walls"], create_tile_callback
+                self.tilemap_renderer.tilemap.layers["walls"],
+                create_tile_callback,
+                self.camera,
+                self.window,
             ),
             on_mouse_scroll=self.controls.on_mouse_scroll,
         )
@@ -59,11 +63,10 @@ class Game:
 
         self.tilemap_renderer.render_layer("walls")
         self.player.update(dt)
-
         self.controls.update(dt)
 
         with self.camera:
-            self.camera.zoom = 1  # 0.75
+            pass
 
         space.step(dt)
 
@@ -72,3 +75,6 @@ class Game:
             self.update, 1 / float(config_data["fps"])
         )  # Update at 60 FPS
         pyglet.app.run()
+
+
+game = Game()

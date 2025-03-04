@@ -33,6 +33,16 @@ class Entity:
         )
         self.body.apply_force_at_local_point(force)
 
+    @property
+    def position(self):
+        """Get the position of the entity."""
+        return self.body.position.x, self.body.position.y
+
+    @position.setter
+    def position(self, position: tuple[float, float]):
+        """Set the position of the entity by changing the position of its body."""
+        self.body.position = Vec2d(position[0], position[1])
+
     def stand(self):
         """Make the entity stand."""
         self.body.velocity = Vec2d(0, 0)
