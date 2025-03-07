@@ -1,1 +1,2 @@
 - Improve pyglet_tilemap_renderer.py code.
+- Create a parent class for tileset_image (used both on pyglet's renderer and ctk's).

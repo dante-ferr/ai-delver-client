@@ -8,6 +8,7 @@ from .camera import Camera, Camera
 from .space import space
 from pytiling import AutotileTile
 from .tilemap.create_tile_on_click import create_tile_on_click
+from utils import refine_texture
 
 with open("game/config.json", "r") as file:
     config_data = json.load(file)
@@ -31,7 +32,7 @@ class Game:
         self.entities.append(player)
 
         # Initialize camera
-        self.camera = Camera(self.window, start_zoom=0.75, min_zoom=0.25, max_zoom=2)
+        self.camera = Camera(self.window, start_zoom=0.5, min_zoom=0.25, max_zoom=2)
         self.camera.start_following(player)
 
         # Initialize tilemap
@@ -50,7 +51,7 @@ class Game:
         self.window.push_handlers(
             self.keys,
             create_tile_on_click(
-                self.tilemap_renderer.tilemap.layers["walls"],
+                self.tilemap_renderer.tilemap.get_layer("walls"),
                 create_tile_callback,
                 self.camera,
                 self.window,
@@ -75,6 +76,3 @@ class Game:
             self.update, 1 / float(config_data["fps"])
         )  # Update at 60 FPS
         pyglet.app.run()
-
-
-game = Game()
