@@ -1,16 +1,18 @@
 from .level_factory import LevelFactory
 from typing import TYPE_CHECKING
+from .level_selector import LevelSelector
 
 if TYPE_CHECKING:
     from .entity_map import EntityMap
     from pytiling import Tilemap
-    from editor.components.level_editor.sidebar.layers import LayerContainer
 
 
 class Level:
     def __init__(self, tilemap: "Tilemap", entity_map: "EntityMap"):
         self.tilemap = tilemap
         self.entity_map = entity_map
+
+        self.selector = LevelSelector()
 
     @property
     def grid_size(self):

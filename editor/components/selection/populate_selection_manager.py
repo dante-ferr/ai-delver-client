@@ -24,7 +24,7 @@ def populate_selection_manager(
         identifier = get_identifier(frame)
 
         def _on_select(current_id: str = identifier):
-            setattr(level, attribute_name, current_id)
+            setattr(level.selector, attribute_name, current_id)
 
         group = SelectionElementGroup(_on_select, frame)
         selection_manager.add_selection_element_group(group)
