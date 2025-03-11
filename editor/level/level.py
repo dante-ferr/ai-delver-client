@@ -4,14 +4,13 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from .entity_map import EntityMap
     from pytiling import Tilemap
+    from editor.components.level_editor.sidebar.layers import LayerContainer
 
 
 class Level:
     def __init__(self, tilemap: "Tilemap", entity_map: "EntityMap"):
         self.tilemap = tilemap
         self.entity_map = entity_map
-
-        self.selected_layer = None
 
     @property
     def grid_size(self):

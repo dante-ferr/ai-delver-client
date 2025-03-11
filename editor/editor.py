@@ -1,8 +1,9 @@
 import customtkinter as ctk
-from .components.level_editor import LevelEditor
+from .level.components.level_editor import LevelEditor
+from .theme import theme
 
 ctk.set_appearance_mode("Dark")
-ctk.set_default_color_theme("assets/themes/orange.json")
+ctk.set_default_color_theme(theme.path)
 
 
 class App(ctk.CTk):
@@ -14,6 +15,3 @@ class App(ctk.CTk):
 
         level_editor = LevelEditor(self)
         level_editor.pack(expand=True, fill="both")
-
-
-app = App()

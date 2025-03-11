@@ -6,6 +6,6 @@ import bootstrap
 # game = Game()
 # game.run()
 
-from editor import editor
+from editor import App as EditorApp
 
-editor.app.mainloop()
+EditorApp().mainloop()

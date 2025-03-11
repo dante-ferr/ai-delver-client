@@ -1,4 +1,3 @@
-import numpy as np
 from .entity_representation import EntityRepresentation
 
 

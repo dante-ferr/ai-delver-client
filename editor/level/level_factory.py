@@ -16,7 +16,7 @@ LEVEL_FILENAME = "editor/level_editor/saves/levels/level.pkl"
 
 class LevelFactory:
     def __init__(self):
-        self._level = None
+        self._level: "Level | None" = None
         self._load_level()
 
     def _load_level(self):

@@ -1,6 +1,5 @@
 from typing import TYPE_CHECKING, Callable
 from pyglet.window import mouse
-from utils import translate_mouse_coords
 
 if TYPE_CHECKING:
     from pytiling import TilemapLayer, Tile
@@ -15,7 +14,7 @@ def create_tile_on_click(
     window: "Window",
 ):
     def on_mouse_press(x, y, button, modifiers):
-        world_pos = translate_mouse_coords((x, y), camera, window)
+        world_pos = camera.translate_mouse_coords((x, y))
 
         if button == mouse.LEFT:
             grid_x, grid_y = tilemap_layer.actual_pos_to_tilemap_pos(world_pos)

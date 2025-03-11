@@ -97,6 +97,19 @@ class Camera:
     def end(self):
         self._restore_view_matrix()
 
+    def translate_mouse_coords(self, coords: tuple[float, float]):
+        x, y = coords
+        camera_x, camera_y = self.position
+
+        translated_x = (-camera_x + x) * self._zoom + (self._window.width / 2) * (
+            1 - self._zoom
+        )
+        translated_y = (-camera_y + y) * self._zoom + (self._window.height / 2) * (
+            1 - self._zoom
+        )
+
+        return (translated_x, translated_y)
+
     def _apply_view_matrix_transformation(self):
         x = -self._window.width // 2 / self._zoom + self.offset_x
         y = -self._window.height // 2 / self._zoom + self.offset_y
