@@ -1,27 +1,24 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 
 if TYPE_CHECKING:
-    from editor.level.components.sidebar.layers import LayerContainer
+    from editor.level.components.sidebar.layers_group import LayerContainer
 
 
 class LevelSelector:
     def __init__(self):
-        self._selected_tool: str = "pen"
-        self._selected_layer: str = "floor"
-        self._selected_layer_container: LayerContainer | None = None
+        self._selections: dict[str, str] = {}
+        self._selection_callbacks: dict[str, Callable[[str], None]] = {}
 
-    @property
-    def selected_tool(self):
-        return self._selected_tool
+    def set_selection(self, selection_name: str, selection_value: str):
+        print(f"Setting selection {selection_name} to {selection_value}")
+        self._selections[selection_name] = selection_value
 
-    @selected_tool.setter
-    def selected_tool(self, tool_name: str):
-        self._selected_tool = tool_name
+        callback = self._selection_callbacks.get(selection_name)
+        if callback is not None:
+            callback(selection_value)
 
-    @property
-    def selected_layer(self):
-        return self._selected_layer
+    def get_selection(self, selection_name: str) -> str:
+        return self._selections[selection_name]
 
-    @selected_layer.setter
-    def selected_layer(self, layer_name: str):
-        self._selected_layer = layer_name
+    def set_select_callback(self, selection_name: str, callback: Callable[[str], None]):
+        self._selection_callbacks[selection_name] = callback

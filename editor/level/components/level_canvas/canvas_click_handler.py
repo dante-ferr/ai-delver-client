@@ -66,20 +66,30 @@ class CanvasClickHandler:
             return
         self.drawn_tile_positions.append(grid_pos)
 
-        layer_name = level.selector.selected_layer
-        if layer_name == "walls":
+        layer_name = level.selector.get_selection("layer")
+        tool_name = level.selector.get_selection("tool")
+        place_wall = (layer_name == "walls" and tool_name == "pencil") or (
+            layer_name == "floor" and tool_name == "eraser"
+        )
+        place_floor = (layer_name == "floor" and tool_name == "pencil") or (
+            layer_name == "walls" and tool_name == "eraser"
+        )
+
+        if place_wall:
             tile = AutotileTile(position=grid_pos, autotile_object="wall")
-            self._add_tile(tile, layer_name)
-        elif layer_name == "floor":
+            self._add_tile(tile, "walls")
+        elif place_floor:
             tile = Tile(position=grid_pos, display=(0, 0))
-            self._add_tile(tile, layer_name)
+            self._add_tile(tile, "floor")
 
     def _add_tile(self, tile: "Tile", layer_name: str):
         """Add a tile to a tilemap layer."""
         layer = level.tilemap.get_layer(layer_name)
-        layer.add_tile(tile)
+        if layer:
+            layer.add_tile(tile)
 
     def _remove_tile(self, tile: "Tile", layer_name: str):
         """Remove a tile from a tilemap layer."""
         layer = level.tilemap.get_layer(layer_name)
-        layer.remove_tile(tile)
+        if layer:
+            layer.remove_tile(tile)

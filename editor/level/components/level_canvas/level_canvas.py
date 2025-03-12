@@ -18,9 +18,11 @@ class LevelCanvas(ctk.CTkCanvas):
 
         level.tilemap.add_format_callback_to_all_layers(self._draw_tile)
         level.tilemap.add_remove_tile_callback_to_all_layers(self._erase_tile)
-        level.tilemap.get_layer("walls").formatter.format_all_tiles()
+        walls_layer = level.tilemap.get_layer("walls")
+        if walls_layer:
+            walls_layer.formatter.format_all_tiles()
 
-        level.toggler.add_toggle_callback("grid_lines", self._handle_grid_lines_toggle)
+        level.toggler.set_toggle_callback("grid_lines", self._handle_grid_lines_toggle)
 
         self.click_handler = CanvasClickHandler(self)
         self.scroller = CanvasScroller(self)

@@ -3,6 +3,7 @@ from .layer_container import LayerContainer
 from editor.components.svg_image import SvgImage
 from editor.theme import theme
 from editor.components.selection import populate_selection_manager, SelectionManager
+from editor.level import level
 
 
 class LayersGroup(ctk.CTkFrame):
@@ -19,12 +20,16 @@ class LayersGroup(ctk.CTkFrame):
         self.layer_containers: list[LayerContainer] = self._create_layer_containers()
 
         self._pack_layer_containers()
+
+        def _on_select(identifier: str):
+            level.selector.set_selection("layer", identifier)
+
         populate_selection_manager(
             SelectionManager(),
             frames=self.layer_containers,
             get_identifier=lambda layer_container: layer_container.layer_name,
-            attribute_name="selected_layer",
             default_identifier="floor",
+            on_select=_on_select,
         )
 
     def _pack_layer_containers(self):
@@ -32,19 +37,20 @@ class LayersGroup(ctk.CTkFrame):
             layer_container.pack(side="top", padx=8, anchor="w", fill="x")
 
     def _create_layer_containers(self):
+        essentials_container = self._create_layer_container(
+            "assets/svg/important.svg", "essentials"
+        )
+        walls_container = self._create_layer_container("assets/svg/walls.svg", "walls")
+        floor_container = self._create_layer_container("assets/svg/floor.svg", "floor")
+
+        return [essentials_container, walls_container, floor_container]
+
+    def _create_layer_container(self, svg_path: str, layer_name: str):
         layer_icon_size = 24
-        wall_icon = SvgImage(
-            svg_path="assets/svg/layers/walls.svg",
+        icon = SvgImage(
+            svg_path=svg_path,
             size=(layer_icon_size, layer_icon_size),
             fill=theme.light_icon_color,
         )
-        walls_container = LayerContainer(self, "walls", wall_icon.get_ctk_image())
-
-        floor_icon = SvgImage(
-            svg_path="assets/svg/layers/floor.svg",
-            size=(layer_icon_size, layer_icon_size),
-            fill=theme.light_icon_color,
-        )
-        floor_container = LayerContainer(self, "floor", floor_icon.get_ctk_image())
-
-        return [walls_container, floor_container]
+        container = LayerContainer(self, layer_name, icon.get_ctk_image())
+        return container

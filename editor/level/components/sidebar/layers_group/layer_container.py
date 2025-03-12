@@ -14,7 +14,7 @@ class LayerContainer(ctk.CTkFrame):
         self.selected = False
 
         icon = ctk.CTkLabel(self, image=icon_image, text="")
-        icon.grid(row=0, column=0, padx=4.8)
+        icon.grid(row=0, column=0, padx=6.4)
 
         name_label = ctk.CTkLabel(self, text=layer_name.capitalize())
         name_label.grid(row=0, column=1)

@@ -2,7 +2,7 @@ import pickle
 import os
 import json
 from pytiling import Tilemap, Tileset, TilemapLayer, AutotileTile
-from .entity_map import EntityMap, EntityLayer
+from .game_objects_map import GameObjectsMap, GameObjectsLayer
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -12,6 +12,8 @@ with open(("editor/config.json"), "r") as file:
     config_data = json.load(file)
 
 LEVEL_FILENAME = "editor/level_editor/saves/levels/level.pkl"
+MAP_SIZE = (config_data["start_tilemap_width"], config_data["start_tilemap_height"])
+TILE_SIZE = (config_data["tile_width"], config_data["tile_height"])
 
 
 class LevelFactory:
@@ -33,22 +35,19 @@ class LevelFactory:
             self._create_level()
 
     def _create_level(self):
-        self._create_tilemap()
-
-    def _create_tilemap(self):
         from .level import Level
 
+        self._level = Level(self._create_tilemap(), self._create_entity_map())
+
+    def _create_tilemap(self):
         walls = TilemapLayer(
-            "walls", Tileset("assets/tilesets/dungeon/walls.png", (32, 32))
+            "walls", Tileset("assets/tilesets/dungeon/walls.png", TILE_SIZE)
         )
-
         floor = TilemapLayer(
-            "floor", Tileset("assets/tilesets/dungeon/floor.png", (32, 32))
+            "floor", Tileset("assets/tilesets/dungeon/floor.png", TILE_SIZE)
         )
 
-        tilemap = Tilemap(
-            (config_data["start_tilemap_width"], config_data["start_tilemap_height"])
-        )
+        tilemap = Tilemap(MAP_SIZE)
         tilemap.add_layer(floor)
         tilemap.add_layer(walls)
         tilemap.add_layer_concurrence(walls, floor)
@@ -62,11 +61,15 @@ class LevelFactory:
         for tile in walls.get_edge_tiles():
             tile.locked = True
 
-        player = EntityLayer("player")
-        entity_map = EntityMap()
-        entity_map.add_layer(player)
+        return tilemap
 
-        self._level = Level(tilemap, entity_map)
+    def _create_entity_map(self):
+        player = GameObjectsLayer("player", TILE_SIZE)
+
+        game_objects_map = GameObjectsMap(MAP_SIZE)
+        game_objects_map.add_layer(player)
+
+        return game_objects_map
 
     @property
     def level(self) -> "Level":

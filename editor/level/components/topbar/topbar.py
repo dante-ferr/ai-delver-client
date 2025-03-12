@@ -16,4 +16,4 @@ class Topbar(ctk.CTkFrame):
             checkbox_width=20,
             checkbox_height=20,
         )
-        grid_toggle.pack(pady=1, side="right")
+        grid_toggle.pack(pady=2, side="right")

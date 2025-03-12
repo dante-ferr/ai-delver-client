@@ -2,6 +2,7 @@ import customtkinter as ctk
 from editor.components import SvgImage
 from editor.theme import theme
 from editor.components.selection import populate_selection_manager, SelectionManager
+from editor.level import level
 
 
 class ToolBox(ctk.CTkFrame):
@@ -20,12 +21,16 @@ class ToolsFrame(ctk.CTkFrame):
         self.tool_boxes = self._create_tool_boxes()
 
         self._grid_tool_boxes()
+
+        def _on_select(identifier: str):
+            level.selector.set_selection("tool", identifier)
+
         populate_selection_manager(
             SelectionManager(),
             frames=self.tool_boxes,
             get_identifier=lambda tool_box: tool_box.tool_name,
-            attribute_name="selected_tool",
-            default_identifier="pen",
+            default_identifier="pencil",
+            on_select=_on_select,
         )
 
     def _grid_tool_boxes(self):
@@ -36,11 +41,11 @@ class ToolsFrame(ctk.CTkFrame):
         tool_size = 24
 
         pen_icon = SvgImage(
-            svg_path="assets/svg/pen.svg",
+            svg_path="assets/svg/pencil.svg",
             size=(tool_size, tool_size),
             stroke=theme.light_icon_color,
         )
-        pen_box = ToolBox(self, "pen", pen_icon.get_ctk_image())
+        pen_box = ToolBox(self, "pencil", pen_icon.get_ctk_image())
 
         eraser_icon = SvgImage(
             svg_path="assets/svg/eraser.svg",

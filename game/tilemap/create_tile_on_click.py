@@ -17,7 +17,7 @@ def create_tile_on_click(
         world_pos = camera.translate_mouse_coords((x, y))
 
         if button == mouse.LEFT:
-            grid_x, grid_y = tilemap_layer.actual_pos_to_tilemap_pos(world_pos)
+            grid_x, grid_y = tilemap_layer.actual_pos_to_grid_pos(world_pos)
             tile = create_tile_callback(grid_x, grid_y)
             tilemap_layer.add_tile(tile)
 

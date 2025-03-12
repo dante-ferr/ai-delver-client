@@ -9,7 +9,7 @@ class LevelToggler:
     def add_var(self, var: ctk.BooleanVar, var_name: str):
         self.vars[var_name] = var
 
-    def add_toggle_callback(self, var_name: str, callback: Callable[[bool], None]):
+    def set_toggle_callback(self, var_name: str, callback: Callable[[bool], None]):
         if var_name not in self.vars:
             raise ValueError(f"No variable named {var_name}.")
 

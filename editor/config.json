@@ -1,4 +1,6 @@
 {
   "start_tilemap_width": 32,
-  "start_tilemap_height": 32
+  "start_tilemap_height": 32,
+  "tile_width": 32,
+  "tile_height": 32
 }
