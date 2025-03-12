@@ -1,7 +1,7 @@
 import pickle
 import os
 import json
-from pytiling import Tilemap, Tileset, TilemapLayer
+from pytiling import Tilemap, Tileset, TilemapLayer, AutotileTile
 from .entity_map import EntityMap, EntityLayer
 from typing import TYPE_CHECKING
 
@@ -33,17 +33,34 @@ class LevelFactory:
             self._create_level()
 
     def _create_level(self):
+        self._create_tilemap()
+
+    def _create_tilemap(self):
         from .level import Level
 
-        tileset = Tileset("assets/tilesets/dungeon_tileset.png", (32, 32))
-        walls = TilemapLayer("walls", tileset)
-        floor = TilemapLayer("floor", tileset)
+        walls = TilemapLayer(
+            "walls", Tileset("assets/tilesets/dungeon/walls.png", (32, 32))
+        )
+
+        floor = TilemapLayer(
+            "floor", Tileset("assets/tilesets/dungeon/floor.png", (32, 32))
+        )
 
         tilemap = Tilemap(
             (config_data["start_tilemap_width"], config_data["start_tilemap_height"])
         )
         tilemap.add_layer(floor)
         tilemap.add_layer(walls)
+        tilemap.add_layer_concurrence(walls, floor)
+
+        def create_starting_tile(x, y):
+            tile = AutotileTile(position=(x, y), autotile_object="wall")
+            walls.add_tile(tile, apply_formatting=False)
+
+        walls.for_grid_position(create_starting_tile)
+
+        for tile in walls.get_edge_tiles():
+            tile.locked = True
 
         player = EntityLayer("player")
         entity_map = EntityMap()

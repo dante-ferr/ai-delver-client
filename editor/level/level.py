@@ -1,6 +1,7 @@
 from .level_factory import LevelFactory
 from typing import TYPE_CHECKING
 from .level_selector import LevelSelector
+from .level_toggler import LevelToggler
 
 if TYPE_CHECKING:
     from .entity_map import EntityMap
@@ -13,6 +14,7 @@ class Level:
         self.entity_map = entity_map
 
         self.selector = LevelSelector()
+        self.toggler = LevelToggler()
 
     @property
     def grid_size(self):
