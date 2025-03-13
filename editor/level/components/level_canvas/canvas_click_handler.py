@@ -68,14 +68,19 @@ class CanvasClickHandler:
 
         layer_name = level.selector.get_selection("layer")
         tool_name = level.selector.get_selection("tool")
-        place_wall = (layer_name == "walls" and tool_name == "pencil") or (
-            layer_name == "floor" and tool_name == "eraser"
+        canvas_object = level.selector.get_selection(layer_name + ".canvas_object")
+
+        using_wall_tool = layer_name == "walls" and canvas_object == "wall"
+        using_floor_tool = layer_name == "floor" and canvas_object == "floor"
+
+        place_autotile_wall = (using_wall_tool and tool_name == "pencil") or (
+            using_floor_tool and tool_name == "eraser"
         )
-        place_floor = (layer_name == "floor" and tool_name == "pencil") or (
-            layer_name == "walls" and tool_name == "eraser"
+        place_floor = (using_floor_tool and tool_name == "pencil") or (
+            using_wall_tool and tool_name == "eraser"
         )
 
-        if place_wall:
+        if place_autotile_wall:
             tile = AutotileTile(position=grid_pos, autotile_object="wall")
             self._add_tile(tile, "walls")
         elif place_floor:

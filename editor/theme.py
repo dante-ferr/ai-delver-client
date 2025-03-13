@@ -8,7 +8,8 @@ class Theme:
         with open(self.path, "r") as file:
             data = json.load(file)
 
-        self.light_icon_color = data["CTkButton"]["text_color"][1]
+        self.icon_color = data["CTkLabel"]["text_color"][1]
+        self.select_border_color = data["CTkButton"]["border_color"][1]
 
 
 default_theme = "orange"

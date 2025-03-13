@@ -1,9 +1,11 @@
 import pickle
 import os
 import json
-from pytiling import Tilemap, Tileset, TilemapLayer, AutotileTile
-from .game_objects_map import GameObjectsMap, GameObjectsLayer
+from pytiling import Tilemap, Tileset, AutotileTile
+from .tilemap.editor_tilemap_layer import EditorTilemapLayer
+from .world_objects_map import WorldObjectsMap, WorldObjectsLayer
 from typing import TYPE_CHECKING
+from editor.level.canvas_object import CanvasObject
 
 if TYPE_CHECKING:
     from .level import Level
@@ -37,14 +39,22 @@ class LevelFactory:
     def _create_level(self):
         from .level import Level
 
-        self._level = Level(self._create_tilemap(), self._create_entity_map())
+        tilemap = self._create_tilemap()
+        entity_map = self._create_entity_map()
+        self._level = Level(tilemap, entity_map)
+
+        self._create_canvas_objects(tilemap, entity_map)
 
     def _create_tilemap(self):
-        walls = TilemapLayer(
-            "walls", Tileset("assets/tilesets/dungeon/walls.png", TILE_SIZE)
+        walls = EditorTilemapLayer(
+            "walls",
+            Tileset("assets/img/tilesets/dungeon/walls.png", TILE_SIZE),
+            "assets/svg/walls.svg",
         )
-        floor = TilemapLayer(
-            "floor", Tileset("assets/tilesets/dungeon/floor.png", TILE_SIZE)
+        floor = EditorTilemapLayer(
+            "floor",
+            Tileset("assets/img/tilesets/dungeon/floor.png", TILE_SIZE),
+            "assets/svg/floor.svg",
         )
 
         tilemap = Tilemap(MAP_SIZE)
@@ -52,24 +62,43 @@ class LevelFactory:
         tilemap.add_layer(walls)
         tilemap.add_layer_concurrence(walls, floor)
 
-        def create_starting_tile(x, y):
-            tile = AutotileTile(position=(x, y), autotile_object="wall")
-            walls.add_tile(tile, apply_formatting=False)
+        # def create_starting_tile(x, y):
+        #     tile = AutotileTile(position=(x, y), autotile_object="wall")
+        #     walls.add_tile(tile, apply_formatting=False)
 
-        walls.for_grid_position(create_starting_tile)
+        # walls.for_grid_position(create_starting_tile)
 
-        for tile in walls.get_edge_tiles():
-            tile.locked = True
+        # for tile in walls.get_edge_tiles():
+        #     tile.locked = True
 
         return tilemap
 
     def _create_entity_map(self):
-        player = GameObjectsLayer("player", TILE_SIZE)
+        essentials = WorldObjectsLayer(
+            "essentials", TILE_SIZE, "assets/svg/important.svg"
+        )
 
-        game_objects_map = GameObjectsMap(MAP_SIZE)
-        game_objects_map.add_layer(player)
+        game_objects_map = WorldObjectsMap(MAP_SIZE)
+        game_objects_map.add_layer(essentials)
 
         return game_objects_map
+
+    def _create_canvas_objects(self, tilemap: "Tilemap", entity_map: "WorldObjectsMap"):
+        floor = tilemap.get_layer("floor")
+        if floor:
+            floor.add_canvas_object(self._create_canvas_object("floor"))
+
+        walls = tilemap.get_layer("walls")
+        if walls:
+            walls.add_canvas_object(self._create_canvas_object("wall"))
+
+        essentials = entity_map.get_layer("essentials")
+        if essentials:
+            essentials.add_canvas_object(self._create_canvas_object("delver"))
+
+    def _create_canvas_object(self, canvas_object_name: str):
+        path = "assets/img/representations/" + canvas_object_name + ".png"
+        return CanvasObject(canvas_object_name, path)
 
     @property
     def level(self) -> "Level":

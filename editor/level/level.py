@@ -3,9 +3,10 @@ from typing import TYPE_CHECKING
 from .level_selector import LevelSelector
 from .level_toggler import LevelToggler
 import json
+from itertools import chain
 
 if TYPE_CHECKING:
-    from .game_objects_map import GameObjectsMap
+    from .world_objects_map import WorldObjectsMap
     from pytiling import Tilemap
 
 with open("config.json", "r") as general_config_data:
@@ -15,7 +16,7 @@ LAYER_ORDER = general_config["layer_order"]
 
 
 class Level:
-    def __init__(self, tilemap: "Tilemap", entity_map: "GameObjectsMap"):
+    def __init__(self, tilemap: "Tilemap", entity_map: "WorldObjectsMap"):
         self.tilemap = tilemap
         self.entity_map = entity_map
 
@@ -46,6 +47,10 @@ class Level:
                 layers.append(entity_layer)
 
         return layers
+
+    @property
+    def canvas_objects(self):
+        return chain.from_iterable(layer.canvas_objects for layer in self.layers)
 
 
 level = LevelFactory().level

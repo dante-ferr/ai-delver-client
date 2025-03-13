@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from editor.components import SvgImage
 from editor.theme import theme
-from editor.components.selection import populate_selection_manager, SelectionManager
+from editor.utils.selection import populate_selection_manager, SelectionManager
 from editor.level import level
 
 
@@ -43,14 +43,14 @@ class ToolsFrame(ctk.CTkFrame):
         pen_icon = SvgImage(
             svg_path="assets/svg/pencil.svg",
             size=(tool_size, tool_size),
-            stroke=theme.light_icon_color,
+            stroke=theme.icon_color,
         )
         pen_box = ToolBox(self, "pencil", pen_icon.get_ctk_image())
 
         eraser_icon = SvgImage(
             svg_path="assets/svg/eraser.svg",
-            fill=theme.light_icon_color,
-            stroke=theme.light_icon_color,
+            fill=theme.icon_color,
+            stroke=theme.icon_color,
             size=(tool_size, tool_size),
         )
         eraser_box = ToolBox(self, "eraser", eraser_icon.get_ctk_image())

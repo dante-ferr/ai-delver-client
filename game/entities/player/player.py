@@ -38,7 +38,7 @@ class Player(SkeletalEntity):
         body.setup_collision_handlers()
         body.max_velocity = self.move_speed
 
-        self.skeleton = Skeleton("assets/sprites/delver", delver_groups)
+        self.skeleton = Skeleton("assets/img/sprites/delver", delver_groups)
 
     def update(self, dt):
         self.skeleton.set_position(self.body.position.x, self.body.position.y)

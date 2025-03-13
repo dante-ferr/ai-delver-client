@@ -12,6 +12,7 @@ class App(ctk.CTk):
 
         self.title("Custom Tkinter App")
         self.attributes("-zoomed", True)
+        self.minsize(width=800, height=600)
 
         level_editor = LevelEditor(self)
         level_editor.pack(expand=True, fill="both")
