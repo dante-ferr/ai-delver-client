@@ -1,0 +1,352 @@
+{
+  "frameRate": 45,
+  "name": "delver",
+  "version": "5.5",
+  "compatibleVersion": "5.5",
+  "armature": [
+    {
+      "type": "Armature",
+      "frameRate": 45,
+      "name": "Armature",
+      "aabb": { "x": -33.78, "y": -19.36, "width": 67.09, "height": 36.07 },
+      "bone": [
+        { "name": "root" },
+        {
+          "name": "left_hand",
+          "parent": "root",
+          "transform": { "x": -17.783, "y": -3.0086 }
+        },
+        {
+          "name": "head",
+          "parent": "root",
+          "transform": { "x": 0.1298, "y": 0.712 }
+        },
+        {
+          "name": "left_foot",
+          "parent": "root",
+          "transform": { "x": -8.6361, "y": -3.3612 }
+        },
+        {
+          "length": 7,
+          "name": "right_hand",
+          "parent": "root",
+          "transform": {
+            "x": 17.3096,
+            "y": -2.7703,
+            "skX": -0.029,
+            "skY": -0.029
+          }
+        },
+        {
+          "name": "right_foot",
+          "parent": "root",
+          "transform": { "x": 9.0784, "y": -3.3518 }
+        },
+        {
+          "name": "body",
+          "parent": "root",
+          "transform": { "skX": -1.1911, "skY": -1.1911 }
+        }
+      ],
+      "slot": [
+        { "name": "right_foot", "parent": "right_foot" },
+        { "name": "left_foot", "parent": "left_foot" },
+        { "name": "body", "parent": "body" },
+        { "name": "right_hand", "parent": "right_hand" },
+        { "name": "left_hand", "parent": "left_hand" },
+        { "name": "head", "parent": "head" }
+      ],
+      "skin": [
+        {
+          "slot": [
+            {
+              "name": "right_hand",
+              "display": [
+                { "name": "right_hand1" },
+                { "name": "right_hand2" },
+                { "name": "right_hand3" },
+                { "name": "right_hand4" },
+                { "name": "right_hand5" }
+              ]
+            },
+            {
+              "name": "left_hand",
+              "display": [
+                { "name": "left_hand1" },
+                { "name": "left_hand2" },
+                { "name": "left_hand3" },
+                { "name": "left_hand4" },
+                {
+                  "name": "left_hand5",
+                  "transform": { "x": -0.48, "y": -0.16 }
+                }
+              ]
+            },
+            {
+              "name": "head",
+              "display": [
+                { "name": "head1", "transform": { "x": 0.06 } },
+                { "name": "head2", "transform": { "x": -0.01 } },
+                { "name": "head3" }
+              ]
+            },
+            {
+              "name": "right_foot",
+              "display": [
+                { "name": "right_foot1" },
+                { "name": "right_foot2" },
+                { "name": "right_foot3" },
+                { "name": "right_foot4" },
+                { "name": "right_foot5" }
+              ]
+            },
+            {
+              "name": "left_foot",
+              "display": [
+                { "name": "left_foot1" },
+                { "name": "left_foot2" },
+                { "name": "left_foot3" },
+                { "name": "left_foot4" },
+                { "name": "left_foot5" }
+              ]
+            },
+            {
+              "name": "body",
+              "display": [
+                { "name": "body1" },
+                { "name": "body3", "transform": { "skX": 1.21, "skY": 1.21 } },
+                { "name": "body5" },
+                { "name": "body4" },
+                { "name": "body2" }
+              ]
+            }
+          ]
+        }
+      ],
+      "animation": [
+        {
+          "duration": 32,
+          "playTimes": 0,
+          "name": "run",
+          "bone": [
+            {
+              "name": "left_hand",
+              "translateFrame": [
+                { "duration": 4, "tweenEasing": 0, "x": 2.1, "y": -13.48 },
+                { "duration": 4, "tweenEasing": 0, "x": 5.07, "y": -16.33 },
+                { "duration": 4, "tweenEasing": 0, "x": 1.56, "y": -12.62 },
+                { "duration": 4, "tweenEasing": 0, "x": -1.65, "y": 2.24 },
+                { "duration": 4, "tweenEasing": 0, "x": 2.63, "y": 16.25 },
+                { "duration": 4, "tweenEasing": 0, "x": 3.6, "y": 19 },
+                { "duration": 4, "tweenEasing": 0, "x": 1.11, "y": 12.59 },
+                { "duration": 4, "tweenEasing": 0, "x": -2.32, "y": 3.47 },
+                { "duration": 0, "x": 2.1, "y": -13.48 }
+              ]
+            },
+            {
+              "name": "left_foot",
+              "translateFrame": [
+                { "duration": 4, "tweenEasing": 0, "x": 1.21, "y": 24.74 },
+                { "duration": 4, "tweenEasing": 0, "x": 0.97, "y": 22.37 },
+                { "duration": 4, "tweenEasing": 0, "x": 1.48, "y": 17.93 },
+                { "duration": 4, "tweenEasing": 0, "x": 1.62, "y": 6.39 },
+                { "duration": 4, "tweenEasing": 0, "x": 0.73, "y": -15.81 },
+                { "duration": 4, "tweenEasing": 0, "x": 0.55, "y": -13.23 },
+                { "duration": 4, "tweenEasing": 0, "x": 1.5, "y": -1.83 },
+                { "duration": 4, "tweenEasing": 0, "x": 1.87, "y": 6.37 },
+                { "duration": 0, "x": 1.21, "y": 24.74 }
+              ]
+            },
+            {
+              "name": "head",
+              "translateFrame": [
+                { "duration": 4, "tweenEasing": 0, "x": -0.1, "y": -8.26 },
+                { "duration": 4, "tweenEasing": 0, "x": -0.06, "y": -7.79 },
+                { "duration": 4, "tweenEasing": 0, "x": 0.18, "y": -3.5 },
+                { "duration": 4, "tweenEasing": 0, "x": 0.04, "y": -1.67 },
+                { "duration": 4, "tweenEasing": 0, "x": -0.91, "y": -8.26 },
+                { "duration": 4, "tweenEasing": 0, "x": -0.69, "y": -7.35 },
+                { "duration": 4, "tweenEasing": 0, "y": -3.9 },
+                { "duration": 4, "tweenEasing": 0, "x": 0.02, "y": -1.83 },
+                { "duration": 0, "x": -0.1, "y": -8.26 }
+              ],
+              "rotateFrame": [
+                { "duration": 4, "tweenEasing": 0, "rotate": 7 },
+                { "duration": 4, "tweenEasing": 0, "rotate": 6 },
+                { "duration": 4, "tweenEasing": 0 },
+                { "duration": 4, "tweenEasing": 0 },
+                { "duration": 4, "tweenEasing": 0, "rotate": -7 },
+                { "duration": 4, "tweenEasing": 0, "rotate": -6 },
+                { "duration": 4, "tweenEasing": 0 },
+                { "duration": 4, "tweenEasing": 0 },
+                { "duration": 0, "rotate": 7 }
+              ]
+            },
+            {
+              "name": "right_hand",
+              "translateFrame": [
+                { "duration": 4, "tweenEasing": 0, "x": -1.88, "y": 14.22 },
+                { "duration": 4, "tweenEasing": 0, "x": -4.98, "y": 18.24 },
+                { "duration": 4, "tweenEasing": 0, "x": 0.11, "y": 16.89 },
+                { "duration": 4, "tweenEasing": 0, "x": 1.61, "y": 3.3 },
+                { "duration": 4, "tweenEasing": 0, "x": 1.37, "y": -15.68 },
+                { "duration": 4, "tweenEasing": 0, "x": -1.48, "y": -17.92 },
+                { "duration": 4, "tweenEasing": 0, "x": 1.59, "y": -8.2 },
+                { "duration": 4, "tweenEasing": 0, "x": 3.42, "y": 2.59 },
+                { "duration": 0, "x": -1.88, "y": 14.22 }
+              ]
+            },
+            {
+              "name": "right_foot",
+              "translateFrame": [
+                { "duration": 4, "tweenEasing": 0, "x": -0.43, "y": -14.92 },
+                { "duration": 4, "tweenEasing": 0, "x": -0.44, "y": -13.32 },
+                { "duration": 4, "tweenEasing": 0, "x": -0.42, "y": -5.29 },
+                { "duration": 4, "tweenEasing": 0, "x": -1.56, "y": 7.02 },
+                { "duration": 4, "tweenEasing": 0, "x": 0.06, "y": 24.7 },
+                { "duration": 4, "tweenEasing": 0, "x": -0.49, "y": 20.72 },
+                { "duration": 4, "tweenEasing": 0, "x": -0.96, "y": 14.41 },
+                { "duration": 4, "tweenEasing": 0, "x": -0.56, "y": 4.6 },
+                { "duration": 0, "x": -0.43, "y": -14.92 }
+              ]
+            },
+            {
+              "name": "body",
+              "translateFrame": [
+                { "duration": 4, "tweenEasing": 0, "x": -1.55, "y": -1.55 },
+                { "duration": 4, "tweenEasing": 0, "x": -0.96, "y": -0.72 },
+                { "duration": 4, "tweenEasing": 0, "x": 0.18, "y": 1.22 },
+                { "duration": 4, "tweenEasing": 0, "x": 0.02, "y": 1.93 },
+                { "duration": 4, "tweenEasing": 0, "x": 0.65, "y": -1.33 },
+                { "duration": 4, "tweenEasing": 0, "x": 0.24, "y": -0.66 },
+                { "duration": 4, "tweenEasing": 0, "x": 0.06, "y": 1.1 },
+                { "duration": 4, "tweenEasing": 0, "x": -0.14, "y": 2.29 },
+                { "duration": 0, "x": -1.55, "y": -1.55 }
+              ],
+              "rotateFrame": [
+                { "duration": 4, "tweenEasing": 0, "rotate": 14.07 },
+                { "duration": 4, "tweenEasing": 0, "rotate": 9.25 },
+                { "duration": 8, "tweenEasing": 0 },
+                { "duration": 4, "tweenEasing": 0, "rotate": -14 },
+                { "duration": 4, "tweenEasing": 0, "rotate": -9.25 },
+                { "duration": 8, "tweenEasing": 0 },
+                { "duration": 0, "rotate": 14.07 }
+              ]
+            }
+          ],
+          "slot": [
+            {
+              "name": "head",
+              "displayFrame": [
+                { "duration": 8, "value": 1 },
+                { "duration": 8 },
+                { "duration": 8, "value": 1 },
+                { "duration": 8 },
+                { "duration": 0, "value": 1 }
+              ]
+            },
+            {
+              "name": "left_foot",
+              "displayFrame": [
+                { "duration": 4, "value": 3 },
+                { "duration": 12, "value": 2 },
+                { "duration": 8 },
+                { "duration": 8, "value": 1 },
+                { "duration": 0, "value": 3 }
+              ]
+            },
+            {
+              "name": "left_hand",
+              "displayFrame": [
+                { "duration": 8 },
+                { "duration": 4, "value": 1 },
+                { "duration": 4, "value": 2 },
+                { "duration": 8, "value": 4 },
+                { "duration": 4, "value": 3 },
+                { "duration": 4, "value": 2 },
+                { "duration": 0 }
+              ]
+            },
+            {
+              "name": "right_foot",
+              "displayFrame": [
+                { "duration": 8 },
+                { "duration": 4, "value": 1 },
+                { "duration": 4 },
+                { "duration": 4, "value": 3 },
+                { "duration": 8, "value": 2 },
+                { "duration": 4 }
+              ]
+            },
+            {
+              "name": "right_hand",
+              "displayFrame": [
+                { "duration": 8, "value": 4 },
+                { "duration": 4, "value": 3 },
+                { "duration": 4, "value": 2 },
+                { "duration": 8 },
+                { "duration": 4, "value": 1 },
+                { "duration": 4, "value": 2 },
+                { "duration": 0, "value": 4 }
+              ]
+            },
+            {
+              "name": "body",
+              "displayFrame": [
+                { "duration": 8, "value": 1 },
+                { "duration": 8, "value": 4 },
+                { "duration": 8, "value": 1 },
+                { "duration": 8, "value": 4 },
+                { "duration": 0, "value": 1 }
+              ]
+            }
+          ]
+        }
+      ],
+      "defaultActions": [{ "gotoAndPlay": "run" }]
+    },
+    {
+      "type": "MovieClip",
+      "frameRate": 24,
+      "name": "MovieClip",
+      "bone": [{ "name": "root" }],
+      "defaultActions": [{}]
+    },
+    {
+      "type": "Sheet",
+      "frameRate": 24,
+      "name": "Sprite",
+      "aabb": { "x": -16, "y": -16, "width": 32, "height": 32 },
+      "bone": [{ "name": "root" }],
+      "slot": [{ "name": "sheetSlot", "parent": "root" }],
+      "skin": [
+        {
+          "slot": [
+            {
+              "name": "sheetSlot",
+              "display": [
+                { "name": "body1" },
+                { "name": "body2" },
+                { "name": "body3" }
+              ]
+            }
+          ]
+        }
+      ],
+      "animation": [
+        {
+          "duration": 3,
+          "playTimes": 0,
+          "name": "Sprite",
+          "slot": [
+            {
+              "name": "sheetSlot",
+              "displayFrame": [{}, { "value": 1 }, { "value": 2 }]
+            }
+          ]
+        }
+      ],
+      "defaultActions": [{ "gotoAndPlay": "Sprite" }]
+    }
+  ]
+}

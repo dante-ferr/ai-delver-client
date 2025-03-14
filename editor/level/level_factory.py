@@ -62,14 +62,14 @@ class LevelFactory:
         tilemap.add_layer(walls)
         tilemap.add_layer_concurrence(walls, floor)
 
-        # def create_starting_tile(x, y):
-        #     tile = AutotileTile(position=(x, y), autotile_object="wall")
-        #     walls.add_tile(tile, apply_formatting=False)
+        def create_starting_tile(x, y):
+            tile = AutotileTile(position=(x, y), autotile_object="wall")
+            walls.add_tile(tile, apply_formatting=False)
 
-        # walls.for_grid_position(create_starting_tile)
+        walls.for_grid_position(create_starting_tile)
 
-        # for tile in walls.get_edge_tiles():
-        #     tile.locked = True
+        for tile in walls.get_edge_tiles():
+            tile.locked = True
 
         return tilemap
 

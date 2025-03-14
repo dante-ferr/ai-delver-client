@@ -44,9 +44,14 @@ class LevelCanvas(ctk.CTkCanvas):
         x = grid_x * self.tile_size[0]
         y = grid_y * self.tile_size[1]
 
+        previous_tile = layer.get_tile_at((grid_x, grid_y))
+        if previous_tile:
+            self._erase_tile(previous_tile)
+
         photo_image = self.tileset_images[layer.tileset].get_tile_image(tile.display)
-        print(f"Drawing tile at {x}, {y}")
-        self.create_image(x, y, image=photo_image, anchor="nw", tags=f"{x},{y}")
+        self.create_image(
+            x, y, image=photo_image, anchor="nw", tags=f"{grid_x},{grid_y}"
+        )
 
         if self.grid_lines:
             self._draw_grid_lines()
