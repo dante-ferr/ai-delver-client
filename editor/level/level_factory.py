@@ -14,7 +14,7 @@ with open(("editor/config.json"), "r") as file:
     config_data = json.load(file)
 
 LEVEL_FILENAME = "editor/level_editor/saves/levels/level.pkl"
-MAP_SIZE = (config_data["start_tilemap_width"], config_data["start_tilemap_height"])
+MAP_SIZE = (config_data["start_map_width"], config_data["start_map_height"])
 TILE_SIZE = (config_data["tile_width"], config_data["tile_height"])
 
 
@@ -48,16 +48,16 @@ class LevelFactory:
     def _create_tilemap(self):
         walls = EditorTilemapLayer(
             "walls",
-            Tileset("assets/img/tilesets/dungeon/walls.png", TILE_SIZE),
+            Tileset("assets/img/tilesets/dungeon/walls.png"),
             "assets/svg/walls.svg",
         )
         floor = EditorTilemapLayer(
             "floor",
-            Tileset("assets/img/tilesets/dungeon/floor.png", TILE_SIZE),
+            Tileset("assets/img/tilesets/dungeon/floor.png"),
             "assets/svg/floor.svg",
         )
 
-        tilemap = Tilemap(MAP_SIZE)
+        tilemap = Tilemap(MAP_SIZE, TILE_SIZE)
         tilemap.add_layer(floor)
         tilemap.add_layer(walls)
         tilemap.add_layer_concurrence(walls, floor)
@@ -74,11 +74,9 @@ class LevelFactory:
         return tilemap
 
     def _create_entity_map(self):
-        essentials = WorldObjectsLayer(
-            "essentials", TILE_SIZE, "assets/svg/important.svg"
-        )
+        essentials = WorldObjectsLayer("essentials", "assets/svg/important.svg")
 
-        game_objects_map = WorldObjectsMap(MAP_SIZE)
+        game_objects_map = WorldObjectsMap(MAP_SIZE, TILE_SIZE)
         game_objects_map.add_layer(essentials)
 
         return game_objects_map

@@ -13,7 +13,7 @@ class TilesetImage:
         self.tileset = tileset
 
         self.tile_images = np.empty(
-            (tileset.size[0], tileset.size[1]),
+            (tileset.grid_size[0], tileset.grid_size[1]),
             dtype=object,
         )
 

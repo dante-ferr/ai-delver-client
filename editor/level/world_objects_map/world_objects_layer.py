@@ -6,8 +6,8 @@ if TYPE_CHECKING:
 
 
 class WorldObjectsLayer(GridLayer):
-    def __init__(self, name: str, tile_size: tuple[int, int], icon_path: str):
-        super().__init__(name, tile_size)
+    def __init__(self, name: str, icon_path: str):
+        super().__init__(name)
         self.icon_path = icon_path
 
         self.canvas_objects: list["CanvasObject"] = []

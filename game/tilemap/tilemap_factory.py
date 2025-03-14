@@ -21,11 +21,11 @@ from ..space import space
 
 
 def tilemap_factory():
-    tileset = Tileset("assets/img/tilesets/dungeon/walls.png", (32, 32))
+    tileset = Tileset("assets/img/tilesets/dungeon/walls.png")
     walls = TilemapLayer("walls", tileset)
     floor = TilemapLayer("floor", tileset)
 
-    tilemap = Tilemap((640, 640))
+    tilemap = Tilemap((640, 640), (32, 32))
     tilemap.add_layer(floor)
     tilemap.add_layer(walls)
 
