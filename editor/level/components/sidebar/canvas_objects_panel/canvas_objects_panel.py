@@ -7,7 +7,7 @@ from editor.theme import theme
 from editor.components import MouseWheelScrollableFrame
 
 if TYPE_CHECKING:
-    from editor.level.tilemap.editor_tilemap_layer import EditorTilemapLayer
+    from editor.level.editor_tilemap.editor_tilemap_layer import EditorTilemapLayer
     from editor.utils.selection.selection_element_group import SelectionElementGroup
 
 

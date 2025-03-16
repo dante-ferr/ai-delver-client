@@ -1,3 +1,4 @@
 {
-  "layer_order": ["floor", "walls", "essentials"]
+  "layer_order": ["floor", "walls", "essentials"],
+  "tilemap_layer_names": ["floor", "walls"]
 }

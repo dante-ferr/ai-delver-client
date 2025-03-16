@@ -11,6 +11,12 @@ if TYPE_CHECKING:
 class CanvasClickHandler:
     def __init__(self, canvas: "LevelCanvas"):
         self.canvas = canvas
+
+        self.floor = level.tilemap.get_layer("floor")
+        self.walls = level.tilemap.get_layer("walls")
+        # print(f"Floor grid: {self.floor.grid}")
+        # print(f"Walls grid: {self.walls.grid}")
+
         self._bind_click_hold_events()
 
     def _bind_click_hold_events(self):
@@ -58,6 +64,8 @@ class CanvasClickHandler:
         grid_y = y // tile_height
         if level.tilemap.position_is_valid((grid_x, grid_y)):
             return (grid_x, grid_y)
+        else:
+            print("out of bounds")
         return None
 
     def _process_single_grid_position(self, grid_pos: tuple[int, int]):
@@ -81,20 +89,76 @@ class CanvasClickHandler:
         )
 
         if place_autotile_wall:
-            tile = AutotileTile(position=grid_pos, autotile_object="wall")
-            self._add_tile(tile, "walls")
+            new_tile = self._create_wall_at(grid_pos)
+            self._reduce_grid_size_if_needed(new_tile)
         elif place_floor:
-            tile = Tile(position=grid_pos, display=(0, 0))
-            self._add_tile(tile, "floor")
+            new_tile = self._create_floor_at(grid_pos)
+            self._expand_grid_size_if_needed(new_tile)
 
-    def _add_tile(self, tile: "Tile", layer_name: str):
-        """Add a tile to a tilemap layer."""
-        layer = level.tilemap.get_layer(layer_name)
-        if layer:
-            layer.add_tile(tile)
+    def _reduce_grid_size_if_needed(self, new_tile: "Tile"):
+        reduced = False
+        tile_x, tile_y = new_tile.position
+
+        def _process_line(edge, walls=self.walls, level=level):
+            nonlocal reduced
+            # print(
+            #     edge,
+            #     [tile is not None for tile in walls.get_edge_tiles(edge, retreat=1)],
+            # )
+            full_of_walls = all(
+                tile is not None and tile.tile_object == "wall"
+                for tile in walls.get_edge_tiles(edge, retreat=1)
+            )
+            if not full_of_walls:
+                return
+
+            deleted_tiles_positions = level.reduce_towards(edge)
+            if not deleted_tiles_positions:
+                return
+            for x, y in deleted_tiles_positions:
+                self.canvas.erase_tile((x, y), "walls")
+
+            reduced = True
+
+        grid_width, grid_height = level.tilemap.grid_size
+
+        if tile_x == 1:
+            _process_line("left")
+        if tile_x == grid_width - 2:
+            _process_line("right")
+        if tile_y == 1:
+            _process_line("top")
+        if tile_y == grid_height - 2:
+            _process_line("bottom")
+
+        if reduced:
+            self.canvas.refresh()
+
+    def _expand_grid_size_if_needed(self, new_tile: "Tile"):
+        if new_tile.edges is None:
+            return
+        for edge in new_tile.edges:
+            added_positions = level.expand_towards(edge)
+            if not added_positions:
+                continue
+            for x, y in added_positions:
+                self._create_wall_at((x, y))
+
+        self.canvas.refresh()
+
+    def _create_wall_at(self, grid_pos: tuple[int, int]):
+        tile = AutotileTile(position=grid_pos, autotile_object="wall")
+        self.walls.add_tile(tile)
+        print(f"Wall created at {grid_pos}")
+        return tile
+
+    def _create_floor_at(self, grid_pos: tuple[int, int]):
+        tile = Tile(position=grid_pos, display=(0, 0))
+        self.floor.add_tile(tile)
+        print(f"Floor created at {grid_pos}")
+        return tile
 
     def _remove_tile(self, tile: "Tile", layer_name: str):
         """Remove a tile from a tilemap layer."""
         layer = level.tilemap.get_layer(layer_name)
-        if layer:
-            layer.remove_tile(tile)
+        layer.remove_tile(tile)

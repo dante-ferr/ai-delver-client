@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "cc0870e373dde0d281eac40ff56861ff91eb8db148f759ba36904c44c7d4a9f5"
+            "sha256": "23ac0f720618b4a776adcb03fb61330cc7a4b608f0fdf4c17d42cd5d10d45108"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -563,6 +563,10 @@
             "markers": "python_version >= '3.8'",
             "version": "==2.1.3"
         },
+        "pyglet-dragonbones": {
+            "editable": true,
+            "file": "../pyglet-dragonbones"
+        },
         "pymunk": {
             "hashes": [
                 "sha256:0575b0969262327972e246967bbe3654cf8c1d9e40ad809192ba59101de033e6",
@@ -644,6 +648,10 @@
             ],
             "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2'",
             "version": "==2.9.0.post0"
+        },
+        "pytiling": {
+            "editable": true,
+            "file": "../pytiling"
         },
         "scikit-build": {
             "hashes": [

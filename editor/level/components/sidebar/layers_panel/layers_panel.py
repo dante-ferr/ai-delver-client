@@ -7,8 +7,10 @@ from editor.level import level
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from editor.level.tilemap.editor_tilemap_layer import EditorTilemapLayer
-    from editor.level.world_objects_map.world_objects_layer import WorldObjectsLayer
+    from editor.level.editor_tilemap.editor_tilemap_layer import EditorTilemapLayer
+    from editor.level.world_objects_map.world_objects_layer.world_objects_layer import (
+        WorldObjectsLayer,
+    )
 
 
 class LayersPanel(ctk.CTkFrame):

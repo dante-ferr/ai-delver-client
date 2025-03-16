@@ -21,7 +21,7 @@ class TilesetImage:
 
     def _populate_tile_images(self, byte_data: bytes, x: int, y: int):
         """Populate the tile images array with ctk images."""
-        self.tile_images[x, y] = self._create_image_from_bytes(byte_data)
+        self.tile_images[y, x] = self._create_image_from_bytes(byte_data)
 
     def _create_image_from_bytes(self, image_bytes: bytes):
         """Create PhotoImage from a byte array."""

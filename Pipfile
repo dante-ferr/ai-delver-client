@@ -9,6 +9,8 @@ customtkinter = "*"
 pillow = "*"
 pymunk = "*"
 cairosvg = "*"
+pytiling = {file = "../pytiling", editable = true}
+pyglet-dragonbones = {file = "../pyglet-dragonbones", editable = true}
 
 [dev-packages]
 
