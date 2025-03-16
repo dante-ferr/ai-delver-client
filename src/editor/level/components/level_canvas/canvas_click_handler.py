@@ -2,7 +2,7 @@ from editor.level import level
 from typing import TYPE_CHECKING, Optional
 from pytiling import Tile, AutotileTile
 from .canvas_scroller import CanvasScroller
-from utils import bresenham_line
+from src.utils import bresenham_line
 
 if TYPE_CHECKING:
     from .level_canvas import LevelCanvas
@@ -64,8 +64,7 @@ class CanvasClickHandler:
         grid_y = y // tile_height
         if level.tilemap.position_is_valid((grid_x, grid_y)):
             return (grid_x, grid_y)
-        else:
-            print("out of bounds")
+
         return None
 
     def _process_single_grid_position(self, grid_pos: tuple[int, int]):
@@ -101,10 +100,7 @@ class CanvasClickHandler:
 
         def _process_line(edge, walls=self.walls, level=level):
             nonlocal reduced
-            # print(
-            #     edge,
-            #     [tile is not None for tile in walls.get_edge_tiles(edge, retreat=1)],
-            # )
+
             full_of_walls = all(
                 tile is not None and tile.tile_object == "wall"
                 for tile in walls.get_edge_tiles(edge, retreat=1)
@@ -149,13 +145,11 @@ class CanvasClickHandler:
     def _create_wall_at(self, grid_pos: tuple[int, int]):
         tile = AutotileTile(position=grid_pos, autotile_object="wall")
         self.walls.add_tile(tile)
-        print(f"Wall created at {grid_pos}")
         return tile
 
     def _create_floor_at(self, grid_pos: tuple[int, int]):
         tile = Tile(position=grid_pos, display=(0, 0))
         self.floor.add_tile(tile)
-        print(f"Floor created at {grid_pos}")
         return tile
 
     def _remove_tile(self, tile: "Tile", layer_name: str):

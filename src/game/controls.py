@@ -2,7 +2,7 @@ from pyglet import window
 from typing import TYPE_CHECKING
 import math
 from pymunk import Vec2d
-from utils import vector_to_angle
+from src.utils import vector_to_angle
 
 if TYPE_CHECKING:
     from .entities.player.player import Player

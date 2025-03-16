@@ -1,4 +1,4 @@
-from utils import angle_to_vector
+from src.utils import angle_to_vector
 import math
 from pymunk import Vec2d
 from typing import TYPE_CHECKING

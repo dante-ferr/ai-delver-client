@@ -11,8 +11,9 @@ from .editor_tilemap import EditorTilemap
 if TYPE_CHECKING:
     from .level import Level
 
-with open(("editor/config.json"), "r") as file:
+with open(("src/editor/config.json"), "r") as file:
     editor_config_data = json.load(file)
+
 LEVEL_FILENAME = "editor/level_editor/saves/levels/level.pkl"
 MAP_SIZE = (
     editor_config_data["start_map_width"],
@@ -22,8 +23,9 @@ TILE_SIZE = (editor_config_data["tile_width"], editor_config_data["tile_height"]
 MIN_GRID_SIZE = tuple(editor_config_data["min_grid_size"])
 MAX_GRID_SIZE = tuple(editor_config_data["max_grid_size"])
 
-with open("config.json", "r") as file:
+with open("src/config.json", "r") as file:
     general_config_data = json.load(file)
+
 layer_order: list[str] = general_config_data["layer_order"]
 tilemap_layer_names: list[str] = general_config_data["tilemap_layer_names"]
 

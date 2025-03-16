@@ -5,7 +5,7 @@ import json
 import pymunk
 from ..skeletal_entity import SkeletalEntity
 
-with open("game/config.json", "r") as file:
+with open("src/game/config.json", "r") as file:
     config_data = json.load(file)
 
 window_width = config_data["window_width"]

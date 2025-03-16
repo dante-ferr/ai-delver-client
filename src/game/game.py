@@ -8,9 +8,9 @@ from .camera import Camera, Camera
 from .space import space
 from pytiling import AutotileTile
 from .tilemap.create_tile_on_click import create_tile_on_click
-from utils import refine_texture
+from src.utils import refine_texture
 
-with open("game/config.json", "r") as file:
+with open("src/game/config.json", "r") as file:
     config_data = json.load(file)
 
 global_scale = config_data["global_scale"]

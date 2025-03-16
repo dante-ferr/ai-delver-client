@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from .world_objects_map import WorldObjectsMap
     from pytiling import Tilemap
 
-with open("config.json", "r") as general_config_data:
+with open("src/config.json", "r") as general_config_data:
     general_config = json.load(general_config_data)
 
 LAYER_ORDER = general_config["layer_order"]
