@@ -13,8 +13,6 @@ class CanvasObjectContainer(ctk.CTkFrame):
         super().__init__(parent, fg_color="transparent")
         self.canvas_object = canvas_object
 
-        image = ctk.CTkImage(
-            light_image=Image.open(canvas_object.image_path), size=self.image_size
-        )
+        image = ctk.CTkImage(canvas_object.image, size=self.image_size)
         label = ctk.CTkLabel(self, image=image, text="")
         label.pack(padx=3.2, pady=3.2)

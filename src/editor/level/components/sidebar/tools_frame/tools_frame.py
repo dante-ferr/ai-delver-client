@@ -22,14 +22,13 @@ class ToolsFrame(ctk.CTkFrame):
 
         self._grid_tool_boxes()
 
-        def _on_select(identifier: str):
-            level.selector.set_selection("tool", identifier)
+        def _on_select(frame: "ToolBox"):
+            level.selector.set_selection("tool", frame.tool_name)
 
         populate_selection_manager(
             SelectionManager(),
             frames=self.tool_boxes,
-            get_identifier=lambda tool_box: tool_box.tool_name,
-            default_identifier="pencil",
+            default_frame=self.tool_boxes[0],
             on_select=_on_select,
         )
 

@@ -1,7 +1,6 @@
 from editor.level import level
-from typing import TYPE_CHECKING, Optional
-from pytiling import Tile, AutotileTile
-from .canvas_scroller import CanvasScroller
+from typing import TYPE_CHECKING, Optional, cast
+from pytiling import Tile
 from src.utils import bresenham_line
 
 if TYPE_CHECKING:
@@ -59,7 +58,7 @@ class CanvasClickHandler:
     ) -> Optional[tuple[int, int]]:
         """Convert mouse coordinates to grid coordinates, adjusting for scroll."""
         x, y = self.canvas.translate_mouse_coords(mouse_position)
-        tile_width, tile_height = self.canvas.tile_size
+        tile_width, tile_height = level.tile_size
         grid_x = x // tile_width
         grid_y = y // tile_height
         if level.tilemap.position_is_valid((grid_x, grid_y)):
@@ -74,11 +73,30 @@ class CanvasClickHandler:
         self.drawn_tile_positions.append(grid_pos)
 
         layer_name = level.selector.get_selection("layer")
+        canvas_object_name = cast(
+            str, level.selector.get_selection(layer_name + ".canvas_object")
+        )
         tool_name = level.selector.get_selection("tool")
-        canvas_object = level.selector.get_selection(layer_name + ".canvas_object")
 
-        using_wall_tool = layer_name == "walls" and canvas_object == "wall"
-        using_floor_tool = layer_name == "floor" and canvas_object == "floor"
+        if canvas_object_name == "wall" or canvas_object_name == "floor":
+            self._handle_place_wall_or_floor(
+                grid_pos, layer_name, canvas_object_name, tool_name
+            )
+        else:
+            if tool_name == "pencil":
+                level.get_layer(layer_name).canvas_object_manager.get_canvas_object(
+                    canvas_object_name
+                ).click_callback(grid_pos)
+
+    def _handle_place_wall_or_floor(
+        self,
+        grid_pos: tuple[int, int],
+        layer_name: str,
+        canvas_object_name: str,
+        tool_name: str,
+    ):
+        using_wall_tool = layer_name == "walls" and canvas_object_name == "wall"
+        using_floor_tool = layer_name == "floor" and canvas_object_name == "floor"
 
         place_autotile_wall = (using_wall_tool and tool_name == "pencil") or (
             using_floor_tool and tool_name == "eraser"
@@ -88,10 +106,16 @@ class CanvasClickHandler:
         )
 
         if place_autotile_wall:
-            new_tile = self._create_wall_at(grid_pos)
+            new_tile = self.walls.canvas_object_manager.get_canvas_object(
+                "wall"
+            ).click_callback(grid_pos)
+
             self._reduce_grid_size_if_needed(new_tile)
         elif place_floor:
-            new_tile = self._create_floor_at(grid_pos)
+            new_tile = self.floor.canvas_object_manager.get_canvas_object(
+                "floor"
+            ).click_callback(grid_pos)
+
             self._expand_grid_size_if_needed(new_tile)
 
     def _reduce_grid_size_if_needed(self, new_tile: "Tile"):
@@ -102,19 +126,24 @@ class CanvasClickHandler:
             nonlocal reduced
 
             full_of_walls = all(
-                tile is not None and tile.tile_object == "wall"
+                tile is not None and tile.name == "wall"
                 for tile in walls.get_edge_tiles(edge, retreat=1)
             )
+
             if not full_of_walls:
                 return
-
-            deleted_tiles_positions = level.reduce_towards(edge)
-            if not deleted_tiles_positions:
+            deleted_elements = level.reduce_towards(edge)
+            if not deleted_elements:
                 return
-            for x, y in deleted_tiles_positions:
-                self.canvas.erase_tile((x, y), "walls")
-
             reduced = True
+
+            for layer_name, elements in deleted_elements.items():
+                for element in elements:
+                    if element is None:
+                        continue
+                    self.canvas.grid_element_renderer.erase_grid_element(
+                        element, layer_name
+                    )
 
         grid_width, grid_height = level.tilemap.grid_size
 
@@ -138,21 +167,6 @@ class CanvasClickHandler:
             if not added_positions:
                 continue
             for x, y in added_positions:
-                self._create_wall_at((x, y))
+                self.walls.create_autotile_tile_at((x, y), "wall")
 
         self.canvas.refresh()
-
-    def _create_wall_at(self, grid_pos: tuple[int, int]):
-        tile = AutotileTile(position=grid_pos, autotile_object="wall")
-        self.walls.add_tile(tile)
-        return tile
-
-    def _create_floor_at(self, grid_pos: tuple[int, int]):
-        tile = Tile(position=grid_pos, display=(0, 0))
-        self.floor.add_tile(tile)
-        return tile
-
-    def _remove_tile(self, tile: "Tile", layer_name: str):
-        """Remove a tile from a tilemap layer."""
-        layer = level.tilemap.get_layer(layer_name)
-        layer.remove_tile(tile)

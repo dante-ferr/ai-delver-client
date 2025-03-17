@@ -1,23 +1,19 @@
-from typing import TYPE_CHECKING, Callable
-
-if TYPE_CHECKING:
-    from editor.level.components.sidebar.layers_panel import LayerContainer
+from typing import Callable, Any
 
 
 class LevelSelector:
     def __init__(self):
-        self._selections: dict[str, str] = {}
+        self._selections: dict[str, Any] = {}
         self._selection_callbacks: dict[str, Callable[[str], None]] = {}
 
-    def set_selection(self, selection_name: str, selection_value: str):
-        # print(f"Setting selection {selection_name} to {selection_value}")
+    def set_selection(self, selection_name: str, selection_value: Any):
         self._selections[selection_name] = selection_value
 
         callback = self._selection_callbacks.get(selection_name)
         if callback is not None:
             callback(selection_value)
 
-    def get_selection(self, selection_name: str) -> str:
+    def get_selection(self, selection_name: str) -> Any:
         return self._selections[selection_name]
 
     def set_select_callback(self, selection_name: str, callback: Callable[[str], None]):

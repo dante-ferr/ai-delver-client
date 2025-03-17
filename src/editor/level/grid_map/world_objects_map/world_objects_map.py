@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
     from .world_objects_layer import WorldObjectsLayer
+    from editor.level.canvas_object import CanvasObject
 
 
 class WorldObjectsMap(GridMap):
@@ -18,3 +19,14 @@ class WorldObjectsMap(GridMap):
     def get_layer(self, name: str):
         """Get a layer by its name."""
         return cast("WorldObjectsLayer", super().get_layer(name))
+
+    @property
+    def canvas_objects(self):
+        canvas_objects: dict[str, "CanvasObject"] = {}
+
+        for layer in self.layers:
+            layer = cast("WorldObjectsLayer", layer)
+            for canvas_object in layer.canvas_object_manager.canvas_objects.values():
+                canvas_objects[canvas_object.name] = canvas_object
+
+        return canvas_objects

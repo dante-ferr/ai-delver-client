@@ -2,11 +2,11 @@ import pickle
 import os
 import json
 from pytiling import Tileset, AutotileTile, Tile
-from .editor_tilemap.editor_tilemap_layer import EditorTilemapLayer
-from .world_objects_map import WorldObjectsMap, WorldObjectsLayer
-from typing import TYPE_CHECKING
+from .grid_map.editor_tilemap.editor_tilemap_layer import EditorTilemapLayer
+from .grid_map.world_objects_map import WorldObjectsMap, WorldObjectsLayer
+from typing import TYPE_CHECKING, Callable
 from editor.level.canvas_object import CanvasObject
-from .editor_tilemap import EditorTilemap
+from .grid_map.editor_tilemap import EditorTilemap
 
 if TYPE_CHECKING:
     from .level import Level
@@ -52,10 +52,10 @@ class LevelFactory:
         from .level import Level
 
         self.tilemap = self._create_tilemap()
-        world_objects_map = self._create_entity_map()
-        self._level = Level(self.tilemap, world_objects_map)
+        self.world_objects_map = self._create_entity_map()
+        self._level = Level(self.tilemap, self.world_objects_map)
 
-        self._create_canvas_objects(self.tilemap, world_objects_map)
+        self._create_canvas_objects()
 
     def _create_tilemap(self):
         layers = {
@@ -94,7 +94,7 @@ class LevelFactory:
         )
 
         for x, y in tilemap.get_edge_positions():
-            tile = AutotileTile(position=(x, y), autotile_object="wall")
+            tile = AutotileTile(position=(x, y), name="wall")
             walls.add_tile(tile, apply_formatting=False)
 
         walls.formatter.format_all_tiles()
@@ -115,21 +115,53 @@ class LevelFactory:
 
         return game_objects_map
 
-    def _create_canvas_objects(
-        self, tilemap: "EditorTilemap", world_objects_map: "WorldObjectsMap"
+    def _create_canvas_objects(self):
+        self._add_tile_canvas_object_to_layer("floor", "floor", (0, 0))
+        self._add_autotile_canvas_object_to_layer("wall", "walls")
+        self._add_entity_canvas_object_to_layer("delver", "essentials", unique=True)
+
+    def _add_autotile_canvas_object_to_layer(
+        self, canvas_object_name: str, layer_name: str, **args
     ):
-        floor = tilemap.get_layer("floor")
-        floor.add_canvas_object(self._create_canvas_object("floor"))
+        layer = self.tilemap.get_layer(layer_name)
+        layer.canvas_object_manager.add_canvas_object(
+            self._create_canvas_object(
+                canvas_object_name,
+                lambda position: layer.create_autotile_tile_at(
+                    position, canvas_object_name, **args
+                ),
+            )
+        )
 
-        walls = tilemap.get_layer("walls")
-        walls.add_canvas_object(self._create_canvas_object("wall"))
+    def _add_tile_canvas_object_to_layer(
+        self, canvas_object_name: str, layer_name: str, display: tuple[int, int], **args
+    ):
+        layer = self.tilemap.get_layer(layer_name)
+        layer.canvas_object_manager.add_canvas_object(
+            self._create_canvas_object(
+                canvas_object_name,
+                lambda position: layer.create_tile_at(
+                    position, display, canvas_object_name, **args
+                ),
+            )
+        )
 
-        essentials = world_objects_map.get_layer("essentials")
-        essentials.add_canvas_object(self._create_canvas_object("delver"))
+    def _add_entity_canvas_object_to_layer(
+        self, object_name: str, layer_name: str, **args
+    ):
+        layer = self.world_objects_map.get_layer(layer_name)
+        layer.canvas_object_manager.add_canvas_object(
+            self._create_canvas_object(
+                object_name,
+                lambda position: layer.create_world_object_at(
+                    position, object_name, **args
+                ),
+            )
+        )
 
-    def _create_canvas_object(self, canvas_object_name: str):
+    def _create_canvas_object(self, canvas_object_name: str, click_callback: Callable):
         path = "assets/img/representations/" + canvas_object_name + ".png"
-        return CanvasObject(canvas_object_name, path)
+        return CanvasObject(canvas_object_name, path, click_callback)
 
     @property
     def level(self) -> "Level":
