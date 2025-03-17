@@ -44,7 +44,11 @@ class LevelCanvas(ctk.CTkCanvas):
     def refresh(self):
         self.grid_element_renderer.erase_all_grid_elements()
         self.grid_element_renderer.draw_all_grid_elements()
-        self._draw_grid_lines()
+
+        if level.toggler.vars["grid_lines"].get():
+            self._draw_grid_lines()
+        else:
+            self.delete("line")
         self._draw_border()
 
     def _handle_tile_format(self, tile: "Tile"):

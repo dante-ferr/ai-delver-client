@@ -29,7 +29,7 @@ class CanvasGridElementRenderer:
 
     def erase_all_grid_elements(self):
         """Erase all tiles on the canvas."""
-        self.canvas.delete("tile")
+        self.canvas.delete("grid_element")
 
     def draw_all_grid_elements(self):
         """Draw all tiles on the canvas."""
