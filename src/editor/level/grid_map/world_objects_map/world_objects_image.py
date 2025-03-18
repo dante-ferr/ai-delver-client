@@ -17,5 +17,4 @@ class WorldObjectsImage:
             self.images[canvas_object.name] = ImageTk.PhotoImage(canvas_object.image)
 
     def get_image(self, canvas_object_name: str) -> ctk.CTkImage:
-        print(canvas_object_name)
         return cast("ctk.CTkImage", self.images[canvas_object_name])

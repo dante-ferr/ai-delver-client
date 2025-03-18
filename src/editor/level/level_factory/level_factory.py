@@ -2,14 +2,14 @@ import pickle
 import os
 import json
 from pytiling import Tileset, AutotileTile, Tile
-from .grid_map.editor_tilemap.editor_tilemap_layer import EditorTilemapLayer
-from .grid_map.world_objects_map import WorldObjectsMap, WorldObjectsLayer
+from ..grid_map.editor_tilemap.editor_tilemap_layer import EditorTilemapLayer
+from ..grid_map.world_objects_map import WorldObjectsMap, WorldObjectsLayer
 from typing import TYPE_CHECKING, Callable
 from editor.level.canvas_object import CanvasObject
-from .grid_map.editor_tilemap import EditorTilemap
+from ..grid_map.editor_tilemap import EditorTilemap
 
 if TYPE_CHECKING:
-    from .level import Level
+    from ..level import Level
 
 with open(("src/editor/config.json"), "r") as file:
     editor_config_data = json.load(file)
@@ -49,9 +49,9 @@ class LevelFactory:
             self._create_level()
 
     def _create_level(self):
-        from .level import Level
+        from ..level import Level
 
-        self.tilemap = self._create_tilemap()
+        self._create_tilemap()
         self.world_objects_map = self._create_entity_map()
         self._level = Level(self.tilemap, self.world_objects_map)
 
@@ -71,38 +71,30 @@ class LevelFactory:
             ),
         }
 
-        tilemap = EditorTilemap(TILE_SIZE, MAP_SIZE, MIN_GRID_SIZE, MAX_GRID_SIZE)
+        self.tilemap = EditorTilemap(TILE_SIZE, MAP_SIZE, MIN_GRID_SIZE, MAX_GRID_SIZE)
         for layer_name in layer_order:
             if layer_name in tilemap_layer_names:
-                tilemap.add_layer(layers[layer_name])
+                self.tilemap.add_layer(layers[layer_name])
 
-        tilemap.add_layer_concurrence(layers["walls"], layers["floor"])
+        self.tilemap.add_layer_concurrence(layers["walls"], layers["floor"])
 
-        self._create_starting_tiles(tilemap)
-        return tilemap
+        self._create_starting_tiles()
 
-    def _create_starting_tiles(self, tilemap: EditorTilemap):
-        walls = tilemap.get_layer("walls")
-        floor = tilemap.get_layer("floor")
+    def _create_starting_tiles(self):
 
-        center = (MAP_SIZE[0] // 2, MAP_SIZE[1] // 2)
+        walls = self.tilemap.get_layer("walls")
+        floor = self.tilemap.get_layer("floor")
 
-        floor.for_grid_position(
-            lambda x, y: floor.add_tile(
-                Tile(position=(x, y), display=(0, 0)), apply_formatting=False
-            )
-        )
+        def _create_floor_callback(position: tuple[int, int]):
+            floor.create_basic_floor_at(position, apply_formatting=False)
 
-        for x, y in tilemap.get_edge_positions():
-            tile = AutotileTile(
-                position=(x, y), name="wall", default_shallow_tile_variations=True
-            )
-            walls.add_tile(tile, apply_formatting=False)
+        floor.for_grid_position(_create_floor_callback)
 
+        for position in self.tilemap.get_edge_positions():
+            walls.create_basic_wall_at(position, apply_formatting=False)
+
+        floor.formatter.format_all_tiles()
         walls.formatter.format_all_tiles()
-
-        starting_floor_tile = Tile(position=center, display=(0, 0))
-        floor.add_tile(starting_floor_tile, apply_formatting=True)
 
         # for tile in walls.get_edge_tiles():
         #     tile.locked = True
@@ -118,8 +110,26 @@ class LevelFactory:
         return game_objects_map
 
     def _create_canvas_objects(self):
-        self._add_tile_canvas_object_to_layer("floor", "floor", (0, 0))
-        self._add_autotile_canvas_object_to_layer("wall", "walls")
+        floor_layer = self.tilemap.get_layer("floor")
+        floor_layer.canvas_object_manager.add_canvas_object(
+            self._create_canvas_object(
+                "floor",
+                lambda position: floor_layer.create_basic_floor_at(
+                    position, apply_formatting=True
+                ),
+            )
+        )
+
+        walls_layer = self.tilemap.get_layer("walls")
+        walls_layer.canvas_object_manager.add_canvas_object(
+            self._create_canvas_object(
+                "wall",
+                lambda position: walls_layer.create_basic_wall_at(
+                    position, apply_formatting=True
+                ),
+            )
+        )
+
         self._add_entity_canvas_object_to_layer("delver", "essentials", unique=True)
 
         self._add_canvas_object_variations_to_layer(
@@ -143,7 +153,7 @@ class LevelFactory:
                 ):
                     layer.remove_element(element)
 
-                layer.create_world_object_at(position, variation, **args)
+                return layer.create_world_object_at(position, variation, **args)
 
             layer.canvas_object_manager.add_canvas_object(
                 self._create_canvas_object(
@@ -152,32 +162,6 @@ class LevelFactory:
                     path=f"assets/img/representations/{canvas_object_name}/{variation}.png",
                 )
             )
-
-    def _add_autotile_canvas_object_to_layer(
-        self, canvas_object_name: str, layer_name: str, **args
-    ):
-        layer = self.tilemap.get_layer(layer_name)
-        layer.canvas_object_manager.add_canvas_object(
-            self._create_canvas_object(
-                canvas_object_name,
-                lambda position: layer.create_autotile_tile_at(
-                    position, canvas_object_name, **args
-                ),
-            )
-        )
-
-    def _add_tile_canvas_object_to_layer(
-        self, canvas_object_name: str, layer_name: str, display: tuple[int, int], **args
-    ):
-        layer = self.tilemap.get_layer(layer_name)
-        layer.canvas_object_manager.add_canvas_object(
-            self._create_canvas_object(
-                canvas_object_name,
-                lambda position: layer.create_tile_at(
-                    position, display, canvas_object_name, **args
-                ),
-            )
-        )
 
     def _add_entity_canvas_object_to_layer(
         self, object_name: str, layer_name: str, **args

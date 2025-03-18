@@ -168,7 +168,7 @@ class CanvasClickHandler:
             if not added_positions:
                 continue
             for x, y in added_positions:
-                self.walls.create_autotile_tile_at((x, y), "wall")
+                self.walls.create_basic_wall_at((x, y), apply_formatting=True)
 
         self.canvas.refresh()
 

@@ -1,4 +1,4 @@
-from .level_factory import LevelFactory
+from .level_factory.level_factory import LevelFactory
 from typing import TYPE_CHECKING, Literal, Any, Callable
 from .level_selector import LevelSelector
 from .level_toggler import LevelToggler
