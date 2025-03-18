@@ -94,7 +94,9 @@ class LevelFactory:
         )
 
         for x, y in tilemap.get_edge_positions():
-            tile = AutotileTile(position=(x, y), name="wall")
+            tile = AutotileTile(
+                position=(x, y), name="wall", default_shallow_tile_variations=True
+            )
             walls.add_tile(tile, apply_formatting=False)
 
         walls.formatter.format_all_tiles()
@@ -119,6 +121,37 @@ class LevelFactory:
         self._add_tile_canvas_object_to_layer("floor", "floor", (0, 0))
         self._add_autotile_canvas_object_to_layer("wall", "walls")
         self._add_entity_canvas_object_to_layer("delver", "essentials", unique=True)
+
+        self._add_canvas_object_variations_to_layer(
+            "goal",
+            "essentials",
+            ["battery_snack", "oil_drink", "uranium_cake"],
+            unique=True,
+        )
+
+    def _add_canvas_object_variations_to_layer(
+        self, canvas_object_name: str, layer_name: str, variations: list[str], **args
+    ):
+        layer = self.world_objects_map.get_layer(layer_name)
+
+        for variation in variations:
+
+            def _callback(position: tuple[int, int], variation=variation):
+                nonlocal layer
+                for element in layer.get_elements(
+                    *[v for v in variations if v != variation]
+                ):
+                    layer.remove_element(element)
+
+                layer.create_world_object_at(position, variation, **args)
+
+            layer.canvas_object_manager.add_canvas_object(
+                self._create_canvas_object(
+                    variation,
+                    _callback,
+                    path=f"assets/img/representations/{canvas_object_name}/{variation}.png",
+                )
+            )
 
     def _add_autotile_canvas_object_to_layer(
         self, canvas_object_name: str, layer_name: str, **args
@@ -159,8 +192,11 @@ class LevelFactory:
             )
         )
 
-    def _create_canvas_object(self, canvas_object_name: str, click_callback: Callable):
-        path = "assets/img/representations/" + canvas_object_name + ".png"
+    def _create_canvas_object(
+        self, canvas_object_name: str, click_callback: Callable, path: str | None = None
+    ):
+        if path is None:
+            path = "assets/img/representations/" + canvas_object_name + ".png"
         return CanvasObject(canvas_object_name, path, click_callback)
 
     @property

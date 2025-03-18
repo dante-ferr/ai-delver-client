@@ -72,51 +72,52 @@ class CanvasClickHandler:
             return
         self.drawn_tile_positions.append(grid_pos)
 
-        layer_name = level.selector.get_selection("layer")
-        canvas_object_name = cast(
-            str, level.selector.get_selection(layer_name + ".canvas_object")
+        self.layer_name = level.selector.get_selection("layer")
+        self.canvas_object_name = cast(
+            str, level.selector.get_selection(self.layer_name + ".canvas_object")
         )
-        tool_name = level.selector.get_selection("tool")
+        self.tool_name = level.selector.get_selection("tool")
 
-        if canvas_object_name == "wall" or canvas_object_name == "floor":
-            self._handle_place_wall_or_floor(
-                grid_pos, layer_name, canvas_object_name, tool_name
-            )
+        if self.layer_name in ("walls", "floor") and self.tool_name in (
+            "pencil",
+            "eraser",
+        ):
+            self._handle_place_wall_or_floor(grid_pos)
         else:
-            if tool_name == "pencil":
-                level.get_layer(layer_name).canvas_object_manager.get_canvas_object(
-                    canvas_object_name
-                ).click_callback(grid_pos)
+            self._handle_place_element(grid_pos)
 
     def _handle_place_wall_or_floor(
         self,
         grid_pos: tuple[int, int],
-        layer_name: str,
-        canvas_object_name: str,
-        tool_name: str,
     ):
-        using_wall_tool = layer_name == "walls" and canvas_object_name == "wall"
-        using_floor_tool = layer_name == "floor" and canvas_object_name == "floor"
-
-        place_autotile_wall = (using_wall_tool and tool_name == "pencil") or (
-            using_floor_tool and tool_name == "eraser"
+        using_wall_tool = (
+            self.layer_name == "walls" and self.canvas_object_name == "wall"
         )
-        place_floor = (using_floor_tool and tool_name == "pencil") or (
-            using_wall_tool and tool_name == "eraser"
+        using_floor_tool = (
+            self.layer_name == "floor" and self.canvas_object_name == "floor"
         )
 
-        if place_autotile_wall:
+        place_basic_wall = (using_wall_tool and self.tool_name == "pencil") or (
+            self.layer_name == "floor" and self.tool_name == "eraser"
+        )
+        place_basic_floor = (using_floor_tool and self.tool_name == "pencil") or (
+            self.layer_name == "walls" and self.tool_name == "eraser"
+        )
+
+        if place_basic_wall:
             new_tile = self.walls.canvas_object_manager.get_canvas_object(
                 "wall"
             ).click_callback(grid_pos)
 
             self._reduce_grid_size_if_needed(new_tile)
-        elif place_floor:
+        elif place_basic_floor:
             new_tile = self.floor.canvas_object_manager.get_canvas_object(
                 "floor"
             ).click_callback(grid_pos)
 
             self._expand_grid_size_if_needed(new_tile)
+        else:
+            self._handle_place_element(grid_pos)
 
     def _reduce_grid_size_if_needed(self, new_tile: "Tile"):
         reduced = False
@@ -170,3 +171,11 @@ class CanvasClickHandler:
                 self.walls.create_autotile_tile_at((x, y), "wall")
 
         self.canvas.refresh()
+
+    def _handle_place_element(self, grid_pos: tuple[int, int]):
+        if self.tool_name == "pencil":
+            level.get_layer(self.layer_name).canvas_object_manager.get_canvas_object(
+                self.canvas_object_name
+            ).click_callback(grid_pos)
+        elif self.tool_name == "eraser":
+            level.get_layer(self.layer_name).remove_element_at(grid_pos)

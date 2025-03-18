@@ -45,7 +45,9 @@ class Game:
         self.controls.append_camera(self.camera)
 
         def create_tile_callback(grid_x, grid_y):
-            tile = AutotileTile((grid_x, grid_y), "wall")
+            tile = AutotileTile(
+                (grid_x, grid_y), "wall", default_shallow_tile_variations=True
+            )
             return tile
 
         self.window.push_handlers(
