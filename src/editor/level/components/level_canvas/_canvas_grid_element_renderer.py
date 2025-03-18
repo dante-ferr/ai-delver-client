@@ -35,6 +35,8 @@ class CanvasGridElementRenderer:
         """Draw all tiles on the canvas."""
         for tile in level.tilemap.all_tiles:
             self.draw_tile(tile)
+        for world_object in level.world_objects_map.all_world_objects:
+            self.draw_world_object(world_object)
 
     def draw_tile(self, tile: "Tile"):
         """Draw a tile on the canvas."""

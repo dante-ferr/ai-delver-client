@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, cast
 if TYPE_CHECKING:
     from .world_objects_layer import WorldObjectsLayer
     from editor.level.canvas_object import CanvasObject
+    from .world_object import WorldObjectRepresentation
 
 
 class WorldObjectsMap(GridMap):
@@ -30,3 +31,7 @@ class WorldObjectsMap(GridMap):
                 canvas_objects[canvas_object.name] = canvas_object
 
         return canvas_objects
+
+    @property
+    def all_world_objects(self):
+        return cast(list["WorldObjectRepresentation"], self.all_elements)

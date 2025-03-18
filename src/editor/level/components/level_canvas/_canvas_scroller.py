@@ -48,11 +48,11 @@ class CanvasScroller:
         canvas_width, canvas_height = self.canvas_size
         level_width, level_height = level.size
 
-        min_x = -level_width // 2
-        max_x = canvas_width - level_width // 2
+        min_x = -level_width + canvas_width // 2
+        max_x = canvas_width // 2
 
-        min_y = -level_height // 2
-        max_y = canvas_height - level_height // 2
+        min_y = -level_height + canvas_height // 2
+        max_y = canvas_height // 2
 
         x = max(min_x, min(max_x, x))
         y = max(min_y, min(max_y, y))

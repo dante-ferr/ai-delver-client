@@ -38,8 +38,8 @@ class Level:
     def size(self):
         tile_width, tile_height = self.tilemap.tile_size
         return (
-            self.grid_size[1] * tile_width,
-            self.grid_size[0] * tile_height,
+            self.grid_size[0] * tile_width,
+            self.grid_size[1] * tile_height,
         )
 
     @property

@@ -97,9 +97,9 @@ class LevelCanvas(ctk.CTkCanvas):
         map_width, map_height = self.map_size
 
         for x in range(0, map_width, tile_width):
-            self.create_line(0, x, map_height, x, fill="gray", tags="line")
+            self.create_line(x, 0, x, map_height, fill="gray", tags="line")
         for y in range(0, map_height, tile_height):
-            self.create_line(y, 0, y, map_width, fill="gray", tags="line")
+            self.create_line(0, y, map_width, y, fill="gray", tags="line")
 
     def _draw_border(self):
         """Draw borders on the canvas."""
@@ -107,7 +107,7 @@ class LevelCanvas(ctk.CTkCanvas):
 
         map_width, map_height = self.map_size
         self.create_rectangle(
-            0, 0, map_height, map_width, outline="gray", width=2, tags="border"
+            0, 0, map_width, map_height, outline="gray", width=2, tags="border"
         )
 
     def items_with_tags(self, *tags):
