@@ -5,7 +5,7 @@ import os
 
 if TYPE_CHECKING:
     from .editor_tilemap_layer import EditorTilemapLayer
-    from pytiling import Tile, GridElement, GridLayer
+    from pytiling import Tile, GridElement, GridLayer, AutotileTile
     from editor.level.components.level_canvas import LevelCanvas
     from ..mixed_map import MixedMap
 
@@ -108,5 +108,12 @@ class EditorTilemap(Tilemap):
             added_positions = self.mixed_map.expand_towards(edge)
             if not added_positions:
                 continue
+
+            fill_tiles: list["AutotileTile"] = []
             for x, y in added_positions:
-                self.create_basic_wall_at((x, y), apply_formatting=True)
+                tile = self.create_basic_wall_at((x, y), apply_formatting=False)
+                if tile:
+                    fill_tiles.append(tile)
+
+            for tile in fill_tiles:
+                tile.format()

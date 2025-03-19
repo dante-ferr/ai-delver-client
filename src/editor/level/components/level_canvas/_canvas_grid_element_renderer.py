@@ -6,8 +6,9 @@ from editor.level.grid_map.world_objects_map import (
     WorldObjectsImage,
 )
 
+
 if TYPE_CHECKING:
-    from pytiling import Tileset, Tile, GridElement
+    from pytiling import Tileset, Tile, GridElement, GridMap
     from editor.level.grid_map.world_objects_map.world_object import (
         WorldObjectRepresentation,
     )
@@ -18,14 +19,31 @@ class CanvasGridElementRenderer:
     def __init__(self, canvas: "LevelCanvas"):
         self.canvas = canvas
 
+        self._add_callbacks()
+
         self._initialize_tileset_images()
         self.world_objects_image = WorldObjectsImage()
+
+    def _add_callbacks(self):
+        level.map.tilemap.add_format_callback_to_all_layers(self.draw_tile)
+        level.map.tilemap.add_create_element_callback_to_all_layers(self.draw_tile)
+
+        level.map.add_remove_element_callback_to_all_layers(self.erase_grid_element)
+
+        level.map.world_objects_map.add_create_element_callback_to_all_layers(
+            self.draw_world_object
+        )
 
     def _initialize_tileset_images(self):
         """Create a dictionary of numpy 2d arrays of tileset images."""
         self.tileset_images: dict[Tileset, TilesetImage] = {}
         for tileset in level.map.tilemap.tilesets:
             self.tileset_images[tileset] = TilesetImage(tileset)
+
+    def handle_reduction(self, removed_positions: "GridMap.RemovedPositions"):
+        for position in removed_positions:
+            relative_position = self.canvas.get_relative_grid_pos(position)
+            self.canvas.delete(f"position={relative_position}")
 
     def erase_all_grid_elements(self):
         """Erase all tiles on the canvas."""
@@ -51,12 +69,13 @@ class CanvasGridElementRenderer:
 
     def _draw_grid_element(self, element: "GridElement", image: "ctk.CTkImage | None"):
         """Draw a grid element on the canvas"""
-        layer = element.layer
-        grid_x, grid_y = element.position
-        x = grid_x * level.map.tile_size[0]
-        y = grid_y * level.map.tile_size[1]
+        canvas_grid_x, canvas_grid_y = self.canvas.get_relative_grid_pos(
+            element.position
+        )
+        x = canvas_grid_x * level.map.tile_size[0]
+        y = canvas_grid_y * level.map.tile_size[1]
 
-        self.erase_grid_element(element, layer.name)
+        self.erase_grid_element(element)
 
         self.canvas.create_image(
             x, y, image=image, anchor="nw", tags=self._get_grid_element_tags(element)
@@ -64,7 +83,11 @@ class CanvasGridElementRenderer:
 
         self.canvas.update_draw_order()
 
-    def erase_grid_element(self, element: "GridElement", layer_name: str):
+    def erase_grid_element(
+        self,
+        element: "GridElement",
+        layer_name: str | Literal["element's"] = "element's",
+    ):
         """Erase a grid element from the canvas only if it has both the position and layer tags."""
         for item in self.canvas.items_with_tags(
             *self._get_grid_element_tags(element, layer_name)
@@ -77,14 +100,16 @@ class CanvasGridElementRenderer:
         layer_name: str | Literal["element's"] = "element's",
     ):
         """Return the tag for a grid element."""
-        grid_x, grid_y = element.position
+        canvas_grid_x, canvas_grid_y = self.canvas.get_relative_grid_pos(
+            element.position
+        )
 
-        position_tag = f"{(grid_x, grid_y)}"
+        position_tag = f"position={(canvas_grid_x, canvas_grid_y)}"
         if layer_name == "element's":
             layer = element.layer
-            layer_tag = f"layer_{layer.name}"
+            layer_tag = f"layer={layer.name}"
         else:
-            layer_tag = f"layer_{layer_name}"
+            layer_tag = f"layer={layer_name}"
 
         element_name_tag = f"element_{element.__class__.__name__}"
         grid_element_tag = "grid_element"

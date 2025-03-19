@@ -4,9 +4,11 @@ from typing import TYPE_CHECKING
 from ._canvas_click_handler import CanvasClickHandler
 from ._canvas_scroller import CanvasScroller
 from ._canvas_grid_element_renderer import CanvasGridElementRenderer
+from ._canvas_overlay import CanvasOverlay
+from pytiling import opposite_directions, direction_vectors, Direction
 
 if TYPE_CHECKING:
-    from pytiling import Tile
+    from pytiling import Tile, Direction, GridMap
     from editor.level.grid_map.world_objects_map.world_object import (
         WorldObjectRepresentation,
     )
@@ -20,64 +22,63 @@ class LevelCanvas(ctk.CTkCanvas):
 
         self._add_callbacks()
 
-        self.grid_element_renderer = CanvasGridElementRenderer(self)
-
         self.click_handler = CanvasClickHandler(self)
+        self.grid_element_renderer = CanvasGridElementRenderer(self)
+        self.overlay = CanvasOverlay(self)
         self.scroller = CanvasScroller(self)
+
+        self.draw_offset: tuple[int, int] = (0, 0)
 
         self.refresh()
 
+    def shift_offset_towards(self, direction: Direction, size: int):
+        self.draw_offset = (
+            self.draw_offset[0]
+            + (direction_vectors[direction][0] * size) * level.map.tile_size[0],
+            self.draw_offset[1]
+            + (direction_vectors[direction][1] * size) * level.map.tile_size[1],
+        )
+
     def _add_callbacks(self):
-        level.map.add_size_change_callback(self.refresh)
+        # level.map.add_size_change_callback(self.refresh)
+        level.map.add_expansion_callback(self._expansion_callback)
+        level.map.add_reduction_callback(self._reduction_callback)
 
-        level.map.tilemap.add_format_callback_to_all_layers(self._handle_tile_format)
-        level.map.tilemap.add_create_element_callback_to_all_layers(
-            self._handle_tile_create
-        )
-        level.map.tilemap.add_remove_element_callback_to_all_layers(
-            self._handle_tile_remove
-        )
+    def _expansion_callback(
+        self, direction: Direction, size: int, new_positions: "GridMap.NewPositions"
+    ):
+        if direction in ("top", "left"):
+            self.shift_offset_towards(direction, size)
 
-        level.map.world_objects_map.add_create_element_callback_to_all_layers(
-            self._handle_world_object_create
-        )
-        level.map.world_objects_map.add_remove_element_callback_to_all_layers(
-            self._handle_world_object_remove
-        )
+        self.overlay.handle_expansion(new_positions)
+        self._on_map_size_change()
 
-        level.toggler.set_toggle_callback("grid_lines", self._handle_grid_lines_toggle)
+    def _reduction_callback(
+        self,
+        direction: Direction,
+        size: int,
+        removed_positions: "GridMap.RemovedPositions",
+    ):
+        self.grid_element_renderer.handle_reduction(removed_positions)
+        self.overlay.handle_reduction(removed_positions)
+
+        if direction in ("top", "left"):
+            self.shift_offset_towards(opposite_directions[direction], size)
+
+        self._on_map_size_change()
+
+    def _on_map_size_change(self):
+        self.overlay.draw_border()
 
     def refresh(self):
         self.grid_element_renderer.erase_all_grid_elements()
         self.grid_element_renderer.draw_all_grid_elements()
 
         if level.toggler.vars["grid_lines"].get():
-            self._draw_grid_lines()
+            self.overlay.draw_grid_lines()
         else:
             self.delete("line")
-        self._draw_border()
-
-    def _handle_tile_format(self, tile: "Tile"):
-        """Handle the tile format."""
-        self.grid_element_renderer.draw_tile(tile)
-
-    def _handle_tile_create(self, tile: "Tile"):
-        """Handle the tile format."""
-        self.grid_element_renderer.draw_tile(tile)
-
-    def _handle_tile_remove(self, tile: "Tile", layer_name: str):
-        """Handle the tile removal."""
-        self.grid_element_renderer.erase_grid_element(tile, layer_name)
-
-    def _handle_world_object_create(self, entity: "WorldObjectRepresentation"):
-        """Handle the world object creation."""
-        self.grid_element_renderer.draw_world_object(entity)
-
-    def _handle_world_object_remove(
-        self, entity: "WorldObjectRepresentation", layer_name: str
-    ):
-        """Handle the world object removal."""
-        self.grid_element_renderer.erase_grid_element(entity, layer_name)
+        self.overlay.draw_border()
 
     def update_draw_order(self):
         """Ensure layers are drawn in the correct Z-index order."""
@@ -87,34 +88,6 @@ class LevelCanvas(ctk.CTkCanvas):
             self.tag_raise(f"layer_{layer_name}")
         self.tag_raise("line")
         self.tag_raise("border")
-
-    def _handle_grid_lines_toggle(self, value: bool):
-        """Handle the grid lines toggle."""
-        if value:
-            self._draw_grid_lines()
-        else:
-            self.delete("line")
-
-    def _draw_grid_lines(self):
-        """Draw grid lines on the canvas with inverted axes."""
-        self.delete("line")
-
-        tile_width, tile_height = level.map.tile_size
-        map_width, map_height = self.map_size
-
-        for x in range(0, map_width, tile_width):
-            self.create_line(x, 0, x, map_height, fill="gray", tags="line")
-        for y in range(0, map_height, tile_height):
-            self.create_line(0, y, map_width, y, fill="gray", tags="line")
-
-    def _draw_border(self):
-        """Draw borders on the canvas."""
-        self.delete("border")
-
-        map_width, map_height = self.map_size
-        self.create_rectangle(
-            0, 0, map_width, map_height, outline="gray", width=2, tags="border"
-        )
 
     def items_with_tags(self, *tags):
         """Return a list of items that have all the given tags."""
@@ -128,8 +101,17 @@ class LevelCanvas(ctk.CTkCanvas):
 
         return list(items_with_all_tags)
 
-    def translate_mouse_coords(self, coords: tuple[int, int]) -> tuple[int, int]:
-        return (coords[0] - self.scroller.last_x, coords[1] - self.scroller.last_y)
+    def get_absolute_grid_pos(self, coords: tuple[int, int]) -> tuple[int, int]:
+        return (
+            coords[0] - (self.draw_offset[0] // level.map.tile_size[0]),
+            coords[1] - (self.draw_offset[1] // level.map.tile_size[1]),
+        )
+
+    def get_relative_grid_pos(self, coords: tuple[int, int]) -> tuple[int, int]:
+        return (
+            coords[0] + (self.draw_offset[0] // level.map.tile_size[0]),
+            coords[1] + (self.draw_offset[1] // level.map.tile_size[1]),
+        )
 
     @property
     def grid_lines(self):

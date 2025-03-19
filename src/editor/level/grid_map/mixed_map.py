@@ -64,9 +64,6 @@ class MixedMap(GridMap):
         self.world_objects_map.grid_size = value
         self._grid_size = self.clamp_size(value)
 
-        for callback in self.size_change_callbacks:
-            callback()
-
     @property
     def canvas_objects(self):
         canvas_objects: dict[str, "CanvasObject"] = {}

@@ -1,9 +1,13 @@
 import customtkinter as ctk
 from editor.level import level
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .level_canvas import LevelCanvas
 
 
 class CanvasScroller:
-    def __init__(self, canvas: ctk.CTkCanvas):
+    def __init__(self, canvas: "LevelCanvas"):
         self.canvas = canvas
         self.canvas.update_idletasks()
         self.canvas.after(100, self._center_canvas)
@@ -45,14 +49,18 @@ class CanvasScroller:
 
     def _clamp_scroll_position(self, x, y):
         """Clamp the scroll position to the canvas boundaries."""
+        canvas_offset_x, canvas_offset_y = (
+            self.canvas.draw_offset[0],
+            self.canvas.draw_offset[1],
+        )
         canvas_width, canvas_height = self.canvas_size
         level_width, level_height = level.map.size
 
-        min_x = -level_width + canvas_width // 2
-        max_x = canvas_width // 2
+        min_x = -canvas_offset_x + -level_width + canvas_width // 2
+        max_x = -canvas_offset_x + canvas_width // 2
 
-        min_y = -level_height + canvas_height // 2
-        max_y = canvas_height // 2
+        min_y = -canvas_offset_y + -level_height + canvas_height // 2
+        max_y = -canvas_offset_y + canvas_height // 2
 
         x = max(min_x, min(max_x, x))
         y = max(min_y, min(max_y, y))
