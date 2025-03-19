@@ -117,3 +117,22 @@ class EditorTilemap(Tilemap):
 
             for tile in fill_tiles:
                 tile.format()
+
+        self.lock_boundary_walls_if_needed()
+
+    def lock_boundary_walls_if_needed(self):
+        walls = self.get_layer("walls")
+        elements: list["GridElement | None"] = []
+
+        if self.grid_size[0] == self.max_grid_size[0]:
+            elements += walls.get_edge_elements("left") + walls.get_edge_elements(
+                "right"
+            )
+        if self.grid_size[1] == self.max_grid_size[1]:
+            elements += walls.get_edge_elements("top") + walls.get_edge_elements(
+                "bottom"
+            )
+
+        for element in elements:
+            if element is not None:
+                element.locked = True

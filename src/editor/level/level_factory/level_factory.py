@@ -85,6 +85,7 @@ class LevelFactory:
         self.tilemap.add_layer_concurrence("walls", "floor")
 
         self._create_starting_tiles()
+        self.tilemap.lock_boundary_walls_if_needed()
 
     def _create_starting_tiles(self):
         # def _create_floor_callback(position: tuple[int, int]):
