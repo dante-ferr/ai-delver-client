@@ -11,10 +11,8 @@ class CanvasClickHandler:
     def __init__(self, canvas: "LevelCanvas"):
         self.canvas = canvas
 
-        self.floor = level.tilemap.get_layer("floor")
-        self.walls = level.tilemap.get_layer("walls")
-        # print(f"Floor grid: {self.floor.grid}")
-        # print(f"Walls grid: {self.walls.grid}")
+        self.floor = level.map.tilemap.get_layer("floor")
+        self.walls = level.map.tilemap.get_layer("walls")
 
         self._bind_click_hold_events()
 
@@ -58,10 +56,10 @@ class CanvasClickHandler:
     ) -> Optional[tuple[int, int]]:
         """Convert mouse coordinates to grid coordinates, adjusting for scroll."""
         x, y = self.canvas.translate_mouse_coords(mouse_position)
-        tile_width, tile_height = level.tile_size
+        tile_width, tile_height = level.map.tile_size
         grid_x = x // tile_width
         grid_y = y // tile_height
-        if level.tilemap.position_is_valid((grid_x, grid_y)):
+        if level.map.position_is_valid((grid_x, grid_y)):
             return (grid_x, grid_y)
 
         return None
@@ -82,7 +80,9 @@ class CanvasClickHandler:
             "pencil",
             "eraser",
         ):
-            self._handle_place_wall_or_floor(grid_pos)
+            self._handle_place_element(
+                grid_pos
+            )  # self._handle_place_wall_or_floor(grid_pos)
         else:
             self._handle_place_element(grid_pos)
 
@@ -108,74 +108,21 @@ class CanvasClickHandler:
             new_tile = self.walls.canvas_object_manager.get_canvas_object(
                 "wall"
             ).click_callback(grid_pos)
-
-            self._reduce_grid_size_if_needed(new_tile)
         elif place_basic_floor:
             new_tile = self.floor.canvas_object_manager.get_canvas_object(
                 "floor"
             ).click_callback(grid_pos)
-
-            self._expand_grid_size_if_needed(new_tile)
         else:
             self._handle_place_element(grid_pos)
 
-    def _reduce_grid_size_if_needed(self, new_tile: "Tile"):
-        reduced = False
-        tile_x, tile_y = new_tile.position
-
-        def _process_line(edge, walls=self.walls, level=level):
-            nonlocal reduced
-
-            full_of_walls = all(
-                tile is not None and tile.name == "wall"
-                for tile in walls.get_edge_tiles(edge, retreat=1)
-            )
-
-            if not full_of_walls:
-                return
-            deleted_elements = level.reduce_towards(edge)
-            if not deleted_elements:
-                return
-            reduced = True
-
-            for layer_name, elements in deleted_elements.items():
-                for element in elements:
-                    if element is None:
-                        continue
-                    self.canvas.grid_element_renderer.erase_grid_element(
-                        element, layer_name
-                    )
-
-        grid_width, grid_height = level.tilemap.grid_size
-
-        if tile_x == 1:
-            _process_line("left")
-        if tile_x == grid_width - 2:
-            _process_line("right")
-        if tile_y == 1:
-            _process_line("top")
-        if tile_y == grid_height - 2:
-            _process_line("bottom")
-
-        if reduced:
-            self.canvas.refresh()
-
-    def _expand_grid_size_if_needed(self, new_tile: "Tile"):
-        if new_tile.edges is None:
-            return
-        for edge in new_tile.edges:
-            added_positions = level.expand_towards(edge)
-            if not added_positions:
-                continue
-            for x, y in added_positions:
-                self.walls.create_basic_wall_at((x, y), apply_formatting=True)
-
-        self.canvas.refresh()
-
     def _handle_place_element(self, grid_pos: tuple[int, int]):
         if self.tool_name == "pencil":
-            level.get_layer(self.layer_name).canvas_object_manager.get_canvas_object(
+            level.map.get_layer(
+                self.layer_name
+            ).canvas_object_manager.get_canvas_object(
                 self.canvas_object_name
-            ).click_callback(grid_pos)
+            ).click_callback(
+                grid_pos
+            )
         elif self.tool_name == "eraser":
-            level.get_layer(self.layer_name).remove_element_at(grid_pos)
+            level.map.get_layer(self.layer_name).remove_element_at(grid_pos)

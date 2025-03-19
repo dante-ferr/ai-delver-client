@@ -24,7 +24,7 @@ class CanvasGridElementRenderer:
     def _initialize_tileset_images(self):
         """Create a dictionary of numpy 2d arrays of tileset images."""
         self.tileset_images: dict[Tileset, TilesetImage] = {}
-        for tileset in level.tilemap.tilesets:
+        for tileset in level.map.tilemap.tilesets:
             self.tileset_images[tileset] = TilesetImage(tileset)
 
     def erase_all_grid_elements(self):
@@ -33,9 +33,9 @@ class CanvasGridElementRenderer:
 
     def draw_all_grid_elements(self):
         """Draw all tiles on the canvas."""
-        for tile in level.tilemap.all_tiles:
+        for tile in level.map.tilemap.all_tiles:
             self.draw_tile(tile)
-        for world_object in level.world_objects_map.all_world_objects:
+        for world_object in level.map.world_objects_map.all_world_objects:
             self.draw_world_object(world_object)
 
     def draw_tile(self, tile: "Tile"):
@@ -53,8 +53,8 @@ class CanvasGridElementRenderer:
         """Draw a grid element on the canvas"""
         layer = element.layer
         grid_x, grid_y = element.position
-        x = grid_x * level.tile_size[0]
-        y = grid_y * level.tile_size[1]
+        x = grid_x * level.map.tile_size[0]
+        y = grid_y * level.map.tile_size[1]
 
         self.erase_grid_element(element, layer.name)
 

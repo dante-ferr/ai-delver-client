@@ -57,7 +57,7 @@ class LayersPanel(ctk.CTkFrame):
     def _create_layer_containers(self):
         layer_containers: list[LayerContainer] = []
 
-        for layer in level.layers[::-1]:
+        for layer in level.map.layers[::-1]:
             layer_containers.append(self._create_layer_container(layer))
 
         return layer_containers

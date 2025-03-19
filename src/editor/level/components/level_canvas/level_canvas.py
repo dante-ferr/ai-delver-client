@@ -18,21 +18,7 @@ class LevelCanvas(ctk.CTkCanvas):
 
         self.configure(bg="black")
 
-        level.tilemap.add_format_callback_to_all_layers(self._handle_tile_format)
-        level.tilemap.add_create_element_callback_to_all_layers(
-            self._handle_tile_create
-        )
-        level.tilemap.add_remove_element_callback_to_all_layers(
-            self._handle_tile_remove
-        )
-        level.world_objects_map.add_create_element_callback_to_all_layers(
-            self._handle_world_object_create
-        )
-        level.world_objects_map.add_remove_element_callback_to_all_layers(
-            self._handle_world_object_remove
-        )
-
-        level.toggler.set_toggle_callback("grid_lines", self._handle_grid_lines_toggle)
+        self._add_callbacks()
 
         self.grid_element_renderer = CanvasGridElementRenderer(self)
 
@@ -40,6 +26,26 @@ class LevelCanvas(ctk.CTkCanvas):
         self.scroller = CanvasScroller(self)
 
         self.refresh()
+
+    def _add_callbacks(self):
+        level.map.add_size_change_callback(self.refresh)
+
+        level.map.tilemap.add_format_callback_to_all_layers(self._handle_tile_format)
+        level.map.tilemap.add_create_element_callback_to_all_layers(
+            self._handle_tile_create
+        )
+        level.map.tilemap.add_remove_element_callback_to_all_layers(
+            self._handle_tile_remove
+        )
+
+        level.map.world_objects_map.add_create_element_callback_to_all_layers(
+            self._handle_world_object_create
+        )
+        level.map.world_objects_map.add_remove_element_callback_to_all_layers(
+            self._handle_world_object_remove
+        )
+
+        level.toggler.set_toggle_callback("grid_lines", self._handle_grid_lines_toggle)
 
     def refresh(self):
         self.grid_element_renderer.erase_all_grid_elements()
@@ -75,7 +81,7 @@ class LevelCanvas(ctk.CTkCanvas):
 
     def update_draw_order(self):
         """Ensure layers are drawn in the correct Z-index order."""
-        layers = level.layers
+        layers = level.map.layers
 
         for layer_name in layers:
             self.tag_raise(f"layer_{layer_name}")
@@ -93,7 +99,7 @@ class LevelCanvas(ctk.CTkCanvas):
         """Draw grid lines on the canvas with inverted axes."""
         self.delete("line")
 
-        tile_width, tile_height = level.tile_size
+        tile_width, tile_height = level.map.tile_size
         map_width, map_height = self.map_size
 
         for x in range(0, map_width, tile_width):
@@ -131,4 +137,4 @@ class LevelCanvas(ctk.CTkCanvas):
 
     @property
     def map_size(self):
-        return level.size
+        return level.map.size

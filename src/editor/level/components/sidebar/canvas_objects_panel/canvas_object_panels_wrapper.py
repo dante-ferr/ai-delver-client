@@ -18,7 +18,7 @@ class CanvasObjectPanelsWrapper(ctk.CTkFrame):
     def _create_canvas_objects_panels(self):
         canvas_objects_panels: dict[str, CanvasObjectsPanel] = {}
 
-        for layer in level.layers:
+        for layer in level.map.layers:
             panel = CanvasObjectsPanel(self, layer, max_height=400)
             canvas_objects_panels[layer.name] = panel
 

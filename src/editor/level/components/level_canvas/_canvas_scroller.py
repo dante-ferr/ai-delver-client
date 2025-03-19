@@ -46,7 +46,7 @@ class CanvasScroller:
     def _clamp_scroll_position(self, x, y):
         """Clamp the scroll position to the canvas boundaries."""
         canvas_width, canvas_height = self.canvas_size
-        level_width, level_height = level.size
+        level_width, level_height = level.map.size
 
         min_x = -level_width + canvas_width // 2
         max_x = canvas_width // 2
@@ -61,7 +61,7 @@ class CanvasScroller:
 
     def _center_canvas(self):
         canvas_width, canvas_height = self.canvas_size
-        level_width, level_height = level.size
+        level_width, level_height = level.map.size
         canvas_center_x = canvas_width // 2 - level_width // 2
         canvas_center_y = canvas_height // 2 - level_height // 2
 

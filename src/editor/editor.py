@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from .level.components.level_editor import LevelEditor
 from .theme import theme
+from .level import level
 
 ctk.set_appearance_mode("Dark")
 ctk.set_default_color_theme(theme.path)

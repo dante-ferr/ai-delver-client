@@ -7,6 +7,7 @@ from ..grid_map.world_objects_map import WorldObjectsMap, WorldObjectsLayer
 from typing import TYPE_CHECKING, Callable
 from editor.level.canvas_object import CanvasObject
 from ..grid_map.editor_tilemap import EditorTilemap
+from ..grid_map import MixedMap
 
 if TYPE_CHECKING:
     from ..level import Level
@@ -51,13 +52,19 @@ class LevelFactory:
     def _create_level(self):
         from ..level import Level
 
-        self._create_tilemap()
-        self.world_objects_map = self._create_entity_map()
-        self._level = Level(self.tilemap, self.world_objects_map)
+        mixed_map = MixedMap(TILE_SIZE, MAP_SIZE, MIN_GRID_SIZE, MAX_GRID_SIZE)
+        self.tilemap = mixed_map.tilemap
+        self.world_objects_map = mixed_map.world_objects_map
+        self._configure_tilemap()
+        self._configure_world_objects_map()
+        mixed_map.populate_layers()
+
+        self._level = Level(mixed_map)
+        self._level.map.add_layer_concurrence("walls", "essentials")
 
         self._create_canvas_objects()
 
-    def _create_tilemap(self):
+    def _configure_tilemap(self):
         layers = {
             "floor": EditorTilemapLayer(
                 "floor",
@@ -71,50 +78,41 @@ class LevelFactory:
             ),
         }
 
-        self.tilemap = EditorTilemap(TILE_SIZE, MAP_SIZE, MIN_GRID_SIZE, MAX_GRID_SIZE)
         for layer_name in layer_order:
             if layer_name in tilemap_layer_names:
                 self.tilemap.add_layer(layers[layer_name])
 
-        self.tilemap.add_layer_concurrence(layers["walls"], layers["floor"])
+        self.tilemap.add_layer_concurrence("walls", "floor")
 
         self._create_starting_tiles()
 
     def _create_starting_tiles(self):
+        # def _create_floor_callback(position: tuple[int, int]):
+        #     self.tilemap.create_basic_floor_at(position, apply_formatting=False)
 
-        walls = self.tilemap.get_layer("walls")
-        floor = self.tilemap.get_layer("floor")
-
-        def _create_floor_callback(position: tuple[int, int]):
-            floor.create_basic_floor_at(position, apply_formatting=False)
-
-        floor.for_grid_position(_create_floor_callback)
+        # self.tilemap.for_grid_position(_create_floor_callback)
+        for x in range(1, self.tilemap.grid_size[0] - 1):
+            for y in range(1, self.tilemap.grid_size[1] - 1):
+                self.tilemap.create_basic_floor_at((x, y), apply_formatting=False)
 
         for position in self.tilemap.get_edge_positions():
-            walls.create_basic_wall_at(position, apply_formatting=False)
+            self.tilemap.create_basic_wall_at(position, apply_formatting=False)
 
-        floor.formatter.format_all_tiles()
-        walls.formatter.format_all_tiles()
+        self.tilemap.format_all_tiles()
 
         # for tile in walls.get_edge_tiles():
         #     tile.locked = True
 
-    def _create_entity_map(self):
+    def _configure_world_objects_map(self):
         essentials = WorldObjectsLayer("essentials", "assets/svg/important.svg")
-
-        game_objects_map = WorldObjectsMap(
-            TILE_SIZE, MAP_SIZE, MIN_GRID_SIZE, MAX_GRID_SIZE
-        )
-        game_objects_map.add_layer(essentials)
-
-        return game_objects_map
+        self.world_objects_map.add_layer(essentials)
 
     def _create_canvas_objects(self):
         floor_layer = self.tilemap.get_layer("floor")
         floor_layer.canvas_object_manager.add_canvas_object(
             self._create_canvas_object(
                 "floor",
-                lambda position: floor_layer.create_basic_floor_at(
+                lambda position: self.tilemap.create_basic_floor_at(
                     position, apply_formatting=True
                 ),
             )
@@ -124,7 +122,7 @@ class LevelFactory:
         walls_layer.canvas_object_manager.add_canvas_object(
             self._create_canvas_object(
                 "wall",
-                lambda position: walls_layer.create_basic_wall_at(
+                lambda position: self.tilemap.create_basic_wall_at(
                     position, apply_formatting=True
                 ),
             )
