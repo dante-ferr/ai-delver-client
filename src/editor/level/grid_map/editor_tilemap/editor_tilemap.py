@@ -33,20 +33,13 @@ class EditorTilemap(Tilemap):
         """Add a layer to the tilemap."""
         super().add_layer(layer, position)
 
-        if layer.name == "walls":
-
-            def _callback(tile: "Tile", _):
-                if tile.name == "wall":
-                    self.create_basic_floor_at(tile.position, apply_formatting=True)
-
-            layer.add_remove_element_callback(_callback)
-        elif layer.name == "floor":
-
-            def _callback(tile: "Tile", _):
-                if tile.name == "floor":
-                    self.create_basic_wall_at(tile.position, apply_formatting=True)
-
-            layer.add_remove_element_callback(_callback)
+    def check_erase(self, element: "GridElement", layer_name: str):
+        if layer_name == "walls":
+            if element.name == "wall":
+                self.create_basic_floor_at(element.position, apply_formatting=True)
+        elif layer_name == "floor":
+            if element.name == "floor":
+                self.create_basic_wall_at(element.position, apply_formatting=True)
 
     def get_layer(self, name: str) -> "EditorTilemapLayer":
         """Get a layer by its name."""
