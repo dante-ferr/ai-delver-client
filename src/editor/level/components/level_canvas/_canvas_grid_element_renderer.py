@@ -1,10 +1,8 @@
-from editor.level.grid_map.editor_tilemap import TilesetImage
+from ._tileset_image import TilesetImage
 from typing import Literal, TYPE_CHECKING, cast
 import customtkinter as ctk
 from editor.level import level
-from editor.level.grid_map.world_objects_map import (
-    WorldObjectsImage,
-)
+from ._world_objects_image import WorldObjectsImage
 
 
 if TYPE_CHECKING:
@@ -33,6 +31,7 @@ class CanvasGridElementRenderer:
         level.map.world_objects_map.on_layer_event(
             "element_created", self._handle_world_object_created
         )
+        pass
 
     def _handle_tile_created(self, sender, element: "GridElement"):
         self.draw_tile(cast("Tile", element))

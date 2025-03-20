@@ -43,6 +43,8 @@ class EditorTilemap(Tilemap):
         return cast("EditorTilemapLayer", super().get_layer(name))
 
     def create_basic_wall_at(self, position: tuple[int, int], **args):
+        if not self.position_is_valid(position):
+            return
         walls = self.get_layer("walls")
         tile = walls.create_autotile_tile_at(
             position,
@@ -58,6 +60,8 @@ class EditorTilemap(Tilemap):
     def create_basic_floor_at(
         self, position: tuple[int, int], apply_formatting=False, **args
     ):
+        if not self.position_is_valid(position):
+            return
         floor = self.get_layer("floor")
         tile = floor.create_tile_at(position, (0, 0), "floor", **args)
         if tile is not None:

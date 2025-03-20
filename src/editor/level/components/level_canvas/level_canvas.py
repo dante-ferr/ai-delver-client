@@ -8,10 +8,7 @@ from ._canvas_overlay import CanvasOverlay
 from pytiling import opposite_directions, direction_vectors, Direction
 
 if TYPE_CHECKING:
-    from pytiling import Tile, Direction, GridMap
-    from editor.level.grid_map.world_objects_map.world_object import (
-        WorldObjectRepresentation,
-    )
+    from pytiling import Direction, GridMap
 
 
 class LevelCanvas(ctk.CTkCanvas):
@@ -42,6 +39,7 @@ class LevelCanvas(ctk.CTkCanvas):
     def _add_event_listeners(self):
         level.map.events["expanded"].connect(self._expansion_callback, weak=True)
         level.map.events["reducted"].connect(self._reduction_callback, weak=True)
+        pass
 
     def _expansion_callback(
         self,

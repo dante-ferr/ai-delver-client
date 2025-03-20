@@ -1,3 +1,3 @@
-from .level_factory import LevelFactory
+from .level_factory import level
 
-__all__ = ["LevelFactory"]
+__all__ = ["level"]

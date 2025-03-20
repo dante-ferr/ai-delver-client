@@ -27,7 +27,7 @@ class LevelEditor(ctk.CTkFrame):
         canvas.grid(row=1, column=0, sticky="nsew")
 
         sidebar = Sidebar(self)
-        sidebar.grid(row=0, column=1, sticky="ns", padx=20)
+        sidebar.grid(row=0, column=1, sticky="ns", padx=20, pady=32)
 
     def save_level(self):
         print("Level saved")

@@ -1,4 +1,4 @@
-import pickle
+import dill
 import os
 import json
 from pytiling import Tileset, AutotileTile, Tile
@@ -16,7 +16,6 @@ if TYPE_CHECKING:
 with open(("src/editor/config.json"), "r") as file:
     editor_config_data = json.load(file)
 
-LEVEL_FILENAME = "editor/level_editor/saves/levels/level.pkl"
 MAP_SIZE = (
     editor_config_data["start_map_width"],
     editor_config_data["start_map_height"],
@@ -31,6 +30,8 @@ with open("src/config.json", "r") as file:
 layer_order: list[str] = general_config_data["layer_order"]
 tilemap_layer_names: list[str] = general_config_data["tilemap_layer_names"]
 
+LEVEL_FILENAME = "data/level_saves/level.pkl"
+
 
 class LevelFactory:
     def __init__(self):
@@ -41,7 +42,7 @@ class LevelFactory:
         if os.path.exists(LEVEL_FILENAME):
             try:
                 with open(LEVEL_FILENAME, "rb") as file:
-                    self.level = pickle.load(file)
+                    self.level = dill.load(file)
                 print("Loaded existing instance.")
             except Exception as e:
                 print(f"Error loading instance: {e}. Creating a new one.")
@@ -111,3 +112,6 @@ class LevelFactory:
     @level.setter
     def level(self, level: "Level"):
         self._level = level
+
+
+level = LevelFactory().level

@@ -2,6 +2,7 @@ import customtkinter as ctk
 from .tools_frame.tools_frame import ToolsFrame
 from .layers_panel.layers_panel import LayersPanel
 from .canvas_objects_panel import CanvasObjectPanelsWrapper
+from ._title_textbox import TitleTextbox
 
 
 class Sidebar(ctk.CTkFrame):
@@ -9,6 +10,9 @@ class Sidebar(ctk.CTkFrame):
         super().__init__(parent, fg_color="transparent")
 
         self.pack_propagate(False)
+
+        title_textbox = TitleTextbox(self)
+        title_textbox.pack(padx=0, pady=0, fill="x")
 
         tools_frame_container = ctk.CTkFrame(self, fg_color="transparent")
         tools_frame_container.pack(pady=8, fill="x")
