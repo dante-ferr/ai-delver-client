@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "23ac0f720618b4a776adcb03fb61330cc7a4b608f0fdf4c17d42cd5d10d45108"
+            "sha256": "db7ceeb9c5eba24a6c48895c909de953f7944d9d90ad38d50007dd41f3a23a3a"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -16,6 +16,15 @@
         ]
     },
     "default": {
+        "blinker": {
+            "hashes": [
+                "sha256:b4ce2265a7abece45e7cc896e98dbebe6cead56bcf805a3d23136d145f5445bf",
+                "sha256:ba0efaa9080b619ff2f3459d1d500c57bddea4a6b424b60a91141db6fd2f08bc"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.9'",
+            "version": "==1.9.0"
+        },
         "cairocffi": {
             "hashes": [
                 "sha256:2e48ee864884ec4a3a34bfa8c9ab9999f688286eb714a15a43ec9d068c36557b",

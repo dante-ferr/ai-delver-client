@@ -20,7 +20,7 @@ class LevelCanvas(ctk.CTkCanvas):
 
         self.configure(bg="black")
 
-        self._add_callbacks()
+        self._add_event_listeners()
 
         self.click_handler = CanvasClickHandler(self)
         self.grid_element_renderer = CanvasGridElementRenderer(self)
@@ -39,13 +39,16 @@ class LevelCanvas(ctk.CTkCanvas):
             + (direction_vectors[direction][1] * size) * level.map.tile_size[1],
         )
 
-    def _add_callbacks(self):
-        # level.map.add_size_change_callback(self.refresh)
-        level.map.add_expansion_callback(self._expansion_callback)
-        level.map.add_reduction_callback(self._reduction_callback)
+    def _add_event_listeners(self):
+        level.map.events["expanded"].connect(self._expansion_callback, weak=True)
+        level.map.events["reducted"].connect(self._reduction_callback, weak=True)
 
     def _expansion_callback(
-        self, direction: Direction, size: int, new_positions: "GridMap.NewPositions"
+        self,
+        sender,
+        direction: Direction,
+        size: int,
+        new_positions: "GridMap.NewPositions",
     ):
         if direction in ("top", "left"):
             self.shift_offset_towards(direction, size)
@@ -55,6 +58,7 @@ class LevelCanvas(ctk.CTkCanvas):
 
     def _reduction_callback(
         self,
+        sender,
         direction: Direction,
         size: int,
         removed_positions: "GridMap.RemovedPositions",

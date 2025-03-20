@@ -1,3 +1,4 @@
+import pickle
 from .level_factory.level_factory import LevelFactory
 from typing import TYPE_CHECKING
 from .level_selector import LevelSelector
@@ -15,6 +16,8 @@ with open("src/config.json", "r") as general_config_data:
 
 LAYER_ORDER = general_config["layer_order"]
 
+LEVEL_FILENAME = "data/level_saves/level_map.pkl"
+
 
 class Level:
     def __init__(
@@ -25,6 +28,10 @@ class Level:
 
         self.selector = LevelSelector()
         self.toggler = LevelToggler()
+
+    def save(self):
+        with open(LEVEL_FILENAME, "wb") as file:
+            pickle.dump(self.map, file)
 
 
 level = LevelFactory().level

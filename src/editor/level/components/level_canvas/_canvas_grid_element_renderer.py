@@ -1,5 +1,5 @@
 from editor.level.grid_map.editor_tilemap import TilesetImage
-from typing import Literal, TYPE_CHECKING
+from typing import Literal, TYPE_CHECKING, cast
 import customtkinter as ctk
 from editor.level import level
 from editor.level.grid_map.world_objects_map import (
@@ -19,20 +19,32 @@ class CanvasGridElementRenderer:
     def __init__(self, canvas: "LevelCanvas"):
         self.canvas = canvas
 
-        self._add_callbacks()
+        self._add_event_listeners()
 
         self._initialize_tileset_images()
         self.world_objects_image = WorldObjectsImage()
 
-    def _add_callbacks(self):
-        level.map.tilemap.add_format_callback_to_all_layers(self.draw_tile)
-        level.map.tilemap.add_create_element_callback_to_all_layers(self.draw_tile)
+    def _add_event_listeners(self):
+        level.map.tilemap.on_layer_event("element_created", self._handle_tile_created)
+        level.map.tilemap.on_layer_event("tile_formatted", self._handle_tile_formatted)
 
-        level.map.add_remove_element_callback_to_all_layers(self.erase_grid_element)
+        level.map.on_layer_event("element_removed", self._handle_element_removed)
 
-        level.map.world_objects_map.add_create_element_callback_to_all_layers(
-            self.draw_world_object
+        level.map.world_objects_map.on_layer_event(
+            "element_created", self._handle_world_object_created
         )
+
+    def _handle_tile_created(self, sender, element: "GridElement"):
+        self.draw_tile(cast("Tile", element))
+
+    def _handle_tile_formatted(self, sender, tile: "Tile"):
+        self.draw_tile(tile)
+
+    def _handle_element_removed(self, sender, element: "GridElement", layer_name: str):
+        self.erase_grid_element(element, layer_name)
+
+    def _handle_world_object_created(self, sender, element: "GridElement"):
+        self.draw_world_object(cast("WorldObjectRepresentation", element))
 
     def _initialize_tileset_images(self):
         """Create a dictionary of numpy 2d arrays of tileset images."""
@@ -75,7 +87,7 @@ class CanvasGridElementRenderer:
         x = canvas_grid_x * level.map.tile_size[0]
         y = canvas_grid_y * level.map.tile_size[1]
 
-        self.erase_grid_element(element)
+        self.erase_grid_element(element=element)
 
         self.canvas.create_image(
             x, y, image=image, anchor="nw", tags=self._get_grid_element_tags(element)

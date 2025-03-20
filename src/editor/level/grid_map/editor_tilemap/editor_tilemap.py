@@ -6,7 +6,6 @@ import os
 if TYPE_CHECKING:
     from .editor_tilemap_layer import EditorTilemapLayer
     from pytiling import Tile, GridElement, GridLayer, AutotileTile
-    from editor.level.components.level_canvas import LevelCanvas
     from ..mixed_map import MixedMap
 
 
@@ -26,8 +25,6 @@ class EditorTilemap(Tilemap):
     ):
         super().__init__(tile_size, grid_size, min_grid_size, max_grid_size)
         self.mixed_map = mixed_map
-
-        self._level_canvas: "LevelCanvas | None" = None
 
     def add_layer(self, layer: "GridLayer", position: int | Literal["end"] = "end"):
         """Add a layer to the tilemap."""

@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
     from .world_objects_layer import WorldObjectsLayer
-    from editor.level.canvas_object import CanvasObject
     from .world_object import WorldObjectRepresentation
     from ..mixed_map import MixedMap
 

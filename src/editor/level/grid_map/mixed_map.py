@@ -1,7 +1,6 @@
 from pytiling import GridMap
 import json
-from functools import cached_property
-from typing import TYPE_CHECKING, Literal, cast
+from typing import TYPE_CHECKING, cast
 from .editor_tilemap import EditorTilemap
 from .world_objects_map import WorldObjectsMap
 

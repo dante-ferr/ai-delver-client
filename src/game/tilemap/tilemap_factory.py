@@ -33,8 +33,8 @@ def tilemap_factory():
 
     border_tracer = TilemapBorderTracer(walls)
 
-    border_tracer.add_create_tile_callback(
-        lambda tile: tilemap_renderer.update_debug_lines(border_tracer)
+    border_tracer.events["tile_created"].connect(
+        lambda sender, tile: tilemap_renderer.update_debug_lines(border_tracer)
     )
     tilemap_physics = PymunkTilemapPhysics(border_tracer, space)
 
