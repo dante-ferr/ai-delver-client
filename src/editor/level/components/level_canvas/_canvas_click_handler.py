@@ -82,21 +82,28 @@ class CanvasClickHandler:
         )
         self.selected_tool_name = level_loader.level.selector.get_selection("tool")
 
-        self._handle_place_element(canvas_grid_pos)
+        grid_pos = self.canvas.get_absolute_grid_pos(canvas_grid_pos)
+        self._handle_interaction(grid_pos)
 
-    def _handle_place_element(self, canvas_grid_pos: tuple[int, int]):
+    def _handle_interaction(self, grid_pos: tuple[int, int]):
         if self.selected_tool_name == "pencil":
             level_loader.level.map.get_layer(
                 self.selected_layer_name
             ).canvas_object_manager.get_canvas_object(
                 self.selected_canvas_object_name
-            ).click_callback(
-                self.canvas.get_absolute_grid_pos(canvas_grid_pos)
+            ).create_element_callback(
+                grid_pos
             )
+
         elif self.selected_tool_name == "eraser":
-            removed_element = level_loader.level.map.get_layer(
-                self.selected_layer_name
-            ).remove_element_at(canvas_grid_pos)
+            layer = level_loader.level.map.get_layer(self.selected_layer_name)
+            canvas_object = layer.canvas_object_manager.get_canvas_object(
+                self.selected_canvas_object_name
+            )
+            if canvas_object.remove_element_callback is None:
+                removed_element = layer.remove_element_at(grid_pos)
+            else:
+                removed_element = canvas_object.remove_element_callback(grid_pos)
 
             if removed_element is None:
                 return

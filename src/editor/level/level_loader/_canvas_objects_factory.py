@@ -16,7 +16,10 @@ class CanvasObjectsFactory:
         floor_layer.canvas_object_manager.add_canvas_object(
             self._create_canvas_object(
                 "floor",
-                lambda position: self.tilemap.create_basic_floor_at(
+                create_element_callback=lambda position: self.tilemap.create_basic_floor_at(
+                    position, apply_formatting=True
+                ),
+                remove_element_callback=lambda position: floor_layer.remove_tile_at(
                     position, apply_formatting=True
                 ),
             )
@@ -27,6 +30,9 @@ class CanvasObjectsFactory:
             self._create_canvas_object(
                 "wall",
                 lambda position: self.tilemap.create_basic_wall_at(
+                    position, apply_formatting=True
+                ),
+                remove_element_callback=lambda position: walls_layer.remove_tile_at(
                     position, apply_formatting=True
                 ),
             )
@@ -79,8 +85,17 @@ class CanvasObjectsFactory:
         )
 
     def _create_canvas_object(
-        self, canvas_object_name: str, click_callback: Callable, path: str | None = None
+        self,
+        canvas_object_name: str,
+        create_element_callback: Callable,
+        remove_element_callback: Callable | None = None,
+        path: str | None = None,
     ):
         if path is None:
             path = "assets/img/representations/" + canvas_object_name + ".png"
-        return CanvasObject(canvas_object_name, path, click_callback)
+        return CanvasObject(
+            canvas_object_name,
+            path,
+            create_element_callback=create_element_callback,
+            remove_element_callback=remove_element_callback,
+        )
