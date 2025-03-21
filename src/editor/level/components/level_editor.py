@@ -28,9 +28,3 @@ class LevelEditor(ctk.CTkFrame):
 
         sidebar = Sidebar(self)
         sidebar.grid(row=0, column=1, sticky="ns", padx=20, pady=32)
-
-    def save_level(self):
-        print("Level saved")
-
-    def load_level(self):
-        print("Level loaded")

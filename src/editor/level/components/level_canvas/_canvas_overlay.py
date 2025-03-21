@@ -1,4 +1,4 @@
-from editor.level import level
+from editor.level import level_loader
 from typing import TYPE_CHECKING
 from pytiling import Direction
 
@@ -11,7 +11,9 @@ class CanvasOverlay:
     def __init__(self, canvas: "LevelCanvas"):
         self.canvas = canvas
 
-        level.toggler.set_toggle_callback("grid_lines", self._handle_grid_lines_toggle)
+        level_loader.level.toggler.set_toggle_callback(
+            "grid_lines", self._handle_grid_lines_toggle
+        )
 
     def _handle_grid_lines_toggle(self, value: bool):
         """Handle the grid lines toggle."""
@@ -35,7 +37,7 @@ class CanvasOverlay:
 
         self.canvas.delete("line")
 
-        grid_width, grid_height = level.map.grid_size
+        grid_width, grid_height = level_loader.level.map.grid_size
 
         for grid_x in range(0, grid_width):
             for grid_y in range(0, grid_height):
@@ -46,7 +48,7 @@ class CanvasOverlay:
         if not self.grid_lines_activated:
             return
 
-        tile_width, tile_height = level.map.tile_size
+        tile_width, tile_height = level_loader.level.map.tile_size
         offset_x, offset_y = self.canvas.draw_offset
 
         grid_x, grid_y = grid_pos
@@ -78,7 +80,7 @@ class CanvasOverlay:
 
     @property
     def grid_lines_activated(self):
-        return level.toggler.vars["grid_lines"].get()
+        return level_loader.level.toggler.vars["grid_lines"].get()
 
     def erase_tile_lines(self, grid_pos: tuple[int, int]):
         """Erase micro lines around a tile."""

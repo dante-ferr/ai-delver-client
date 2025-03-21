@@ -2,7 +2,7 @@ import customtkinter as ctk
 from editor.components import SvgImage
 from editor.theme import theme
 from editor.utils.selection import populate_selection_manager, SelectionManager
-from editor.level import level
+from editor.level import level_loader
 
 
 class ToolBox(ctk.CTkFrame):
@@ -23,7 +23,7 @@ class ToolsFrame(ctk.CTkFrame):
         self._grid_tool_boxes()
 
         def _on_select(frame: "ToolBox"):
-            level.selector.set_selection("tool", frame.tool_name)
+            level_loader.level.selector.set_selection("tool", frame.tool_name)
 
         populate_selection_manager(
             SelectionManager(),

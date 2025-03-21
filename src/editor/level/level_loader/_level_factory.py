@@ -1,12 +1,8 @@
-import dill
-import os
 import json
-from pytiling import Tileset, AutotileTile, Tile
+from pytiling import Tileset
 from ..grid_map.editor_tilemap.editor_tilemap_layer import EditorTilemapLayer
-from ..grid_map.world_objects_map import WorldObjectsMap, WorldObjectsLayer
-from typing import TYPE_CHECKING, Callable
-from editor.level.canvas_object import CanvasObject
-from ..grid_map.editor_tilemap import EditorTilemap
+from ..grid_map.world_objects_map import WorldObjectsLayer
+from typing import TYPE_CHECKING
 from ..grid_map import MixedMap
 from ._canvas_objects_factory import CanvasObjectsFactory
 
@@ -30,28 +26,12 @@ with open("src/config.json", "r") as file:
 layer_order: list[str] = general_config_data["layer_order"]
 tilemap_layer_names: list[str] = general_config_data["tilemap_layer_names"]
 
-LEVEL_FILENAME = "data/level_saves/level.pkl"
-
 
 class LevelFactory:
     def __init__(self):
         self._level: "Level | None" = None
-        self._load_level()
 
-    def _load_level(self):
-        if os.path.exists(LEVEL_FILENAME):
-            try:
-                with open(LEVEL_FILENAME, "rb") as file:
-                    self.level = dill.load(file)
-                print("Loaded existing instance.")
-            except Exception as e:
-                print(f"Error loading instance: {e}. Creating a new one.")
-                self._create_level()
-        else:
-            print("File not found. Creating a new instance.")
-            self._create_level()
-
-    def _create_level(self):
+    def create_level(self):
         from ..level import Level
 
         mixed_map = MixedMap(TILE_SIZE, MAP_SIZE, MIN_GRID_SIZE, MAX_GRID_SIZE)
@@ -65,6 +45,7 @@ class LevelFactory:
         self.level.map.add_layer_concurrence("walls", "essentials")
 
         CanvasObjectsFactory(self.level).create_canvas_objects()
+        return self.level
 
     def _configure_tilemap(self):
         layers = {
@@ -112,6 +93,3 @@ class LevelFactory:
     @level.setter
     def level(self, level: "Level"):
         self._level = level
-
-
-level = LevelFactory().level

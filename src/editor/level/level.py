@@ -3,6 +3,7 @@ from .level_selector import LevelSelector
 from .level_toggler import LevelToggler
 import json
 import dill
+from pathlib import Path
 
 if TYPE_CHECKING:
     from .grid_map import MixedMap
@@ -12,7 +13,7 @@ with open("src/config.json", "r") as general_config_data:
 
 LAYER_ORDER = general_config["layer_order"]
 
-SAVE_FILENAME = "data/level_saves/level.pkl"
+SAVE_FOLDER_PATH = Path("data/level_saves")
 
 
 class Level:
@@ -48,6 +49,14 @@ class Level:
         self.selector = LevelSelector()
         self.toggler = LevelToggler()
 
+    @property
+    def same_name_saved(self):
+        return self.save_file_path.is_file()
+
     def save(self):
-        with open(SAVE_FILENAME, "wb") as file:
+        with open(self.save_file_path, "wb") as file:
             dill.dump(self, file)
+
+    @property
+    def save_file_path(self):
+        return SAVE_FOLDER_PATH / f"{self.name}.dill"

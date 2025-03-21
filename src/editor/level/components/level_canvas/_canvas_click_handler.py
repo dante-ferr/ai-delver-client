@@ -1,6 +1,6 @@
-from editor.level import level
 from typing import TYPE_CHECKING, Optional, cast
 from src.utils import bresenham_line
+from editor.level import level_loader
 
 if TYPE_CHECKING:
     from .level_canvas import LevelCanvas
@@ -10,8 +10,8 @@ class CanvasClickHandler:
     def __init__(self, canvas: "LevelCanvas"):
         self.canvas = canvas
 
-        self.floor = level.map.tilemap.get_layer("floor")
-        self.walls = level.map.tilemap.get_layer("walls")
+        self.floor = level_loader.level.map.tilemap.get_layer("floor")
+        self.walls = level_loader.level.map.tilemap.get_layer("walls")
 
         self._bind_click_hold_events()
 
@@ -42,7 +42,9 @@ class CanvasClickHandler:
             self.last_canvas_grid_pos, current_canvas_grid_pos
         )
         for pos in line_positions:
-            if level.map.position_is_valid(self.canvas.get_absolute_grid_pos(pos)):
+            if level_loader.level.map.position_is_valid(
+                self.canvas.get_absolute_grid_pos(pos)
+            ):
                 self._process_single_canvas_grid_position(pos)
 
         self.last_canvas_grid_pos = current_canvas_grid_pos
@@ -58,7 +60,7 @@ class CanvasClickHandler:
     ) -> Optional[tuple[int, int]]:
         """Convert mouse coordinates to grid coordinates, adjusting for scroll."""
         x, y = self.translate_mouse_coords(mouse_position)
-        tile_width, tile_height = level.map.tile_size
+        tile_width, tile_height = level_loader.level.map.tile_size
         canvas_grid_x, canvas_grid_y = (x // tile_width, y // tile_height)
 
         return (canvas_grid_x, canvas_grid_y)
@@ -71,18 +73,20 @@ class CanvasClickHandler:
             return
         self.drawn_tile_positions.append(canvas_grid_pos)
 
-        self.selected_layer_name = level.selector.get_selection("layer")
+        self.selected_layer_name = level_loader.level.selector.get_selection("layer")
         self.selected_canvas_object_name = cast(
             str,
-            level.selector.get_selection(self.selected_layer_name + ".canvas_object"),
+            level_loader.level.selector.get_selection(
+                self.selected_layer_name + ".canvas_object"
+            ),
         )
-        self.selected_tool_name = level.selector.get_selection("tool")
+        self.selected_tool_name = level_loader.level.selector.get_selection("tool")
 
         self._handle_place_element(canvas_grid_pos)
 
     def _handle_place_element(self, canvas_grid_pos: tuple[int, int]):
         if self.selected_tool_name == "pencil":
-            level.map.get_layer(
+            level_loader.level.map.get_layer(
                 self.selected_layer_name
             ).canvas_object_manager.get_canvas_object(
                 self.selected_canvas_object_name
@@ -90,13 +94,15 @@ class CanvasClickHandler:
                 self.canvas.get_absolute_grid_pos(canvas_grid_pos)
             )
         elif self.selected_tool_name == "eraser":
-            removed_element = level.map.get_layer(
+            removed_element = level_loader.level.map.get_layer(
                 self.selected_layer_name
             ).remove_element_at(canvas_grid_pos)
 
             if removed_element is None:
                 return
-            level.map.tilemap.check_erase(removed_element, self.selected_layer_name)
+            level_loader.level.map.tilemap.check_erase(
+                removed_element, self.selected_layer_name
+            )
 
     def translate_mouse_coords(self, coords: tuple[int, int]) -> tuple[int, int]:
         return (

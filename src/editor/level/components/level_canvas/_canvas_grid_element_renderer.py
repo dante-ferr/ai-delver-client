@@ -1,7 +1,7 @@
 from ._tileset_image import TilesetImage
 from typing import Literal, TYPE_CHECKING, cast
 import customtkinter as ctk
-from editor.level import level
+from editor.level import level_loader
 from ._world_objects_image import WorldObjectsImage
 
 
@@ -23,12 +23,18 @@ class CanvasGridElementRenderer:
         self.world_objects_image = WorldObjectsImage()
 
     def _add_event_listeners(self):
-        level.map.tilemap.on_layer_event("element_created", self._handle_tile_created)
-        level.map.tilemap.on_layer_event("tile_formatted", self._handle_tile_formatted)
+        level_loader.level.map.tilemap.on_layer_event(
+            "element_created", self._handle_tile_created
+        )
+        level_loader.level.map.tilemap.on_layer_event(
+            "tile_formatted", self._handle_tile_formatted
+        )
 
-        level.map.on_layer_event("element_removed", self._handle_element_removed)
+        level_loader.level.map.on_layer_event(
+            "element_removed", self._handle_element_removed
+        )
 
-        level.map.world_objects_map.on_layer_event(
+        level_loader.level.map.world_objects_map.on_layer_event(
             "element_created", self._handle_world_object_created
         )
         pass
@@ -48,7 +54,7 @@ class CanvasGridElementRenderer:
     def _initialize_tileset_images(self):
         """Create a dictionary of numpy 2d arrays of tileset images."""
         self.tileset_images: dict[Tileset, TilesetImage] = {}
-        for tileset in level.map.tilemap.tilesets:
+        for tileset in level_loader.level.map.tilemap.tilesets:
             self.tileset_images[tileset] = TilesetImage(tileset)
 
     def handle_reduction(self, removed_positions: "GridMap.RemovedPositions"):
@@ -62,9 +68,9 @@ class CanvasGridElementRenderer:
 
     def draw_all_grid_elements(self):
         """Draw all tiles on the canvas."""
-        for tile in level.map.tilemap.all_tiles:
+        for tile in level_loader.level.map.tilemap.all_tiles:
             self.draw_tile(tile)
-        for world_object in level.map.world_objects_map.all_world_objects:
+        for world_object in level_loader.level.map.world_objects_map.all_world_objects:
             self.draw_world_object(world_object)
 
     def draw_tile(self, tile: "Tile"):
@@ -83,8 +89,8 @@ class CanvasGridElementRenderer:
         canvas_grid_x, canvas_grid_y = self.canvas.get_relative_grid_pos(
             element.position
         )
-        x = canvas_grid_x * level.map.tile_size[0]
-        y = canvas_grid_y * level.map.tile_size[1]
+        x = canvas_grid_x * level_loader.level.map.tile_size[0]
+        y = canvas_grid_y * level_loader.level.map.tile_size[1]
 
         self.erase_grid_element(element=element)
 

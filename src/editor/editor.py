@@ -1,3 +1,4 @@
+from .level import level_loader
 import customtkinter as ctk
 from .level.components.level_editor import LevelEditor
 from .theme import theme
@@ -15,10 +16,18 @@ class App(ctk.CTk):
         self.attributes("-zoomed", True)
         self.minsize(width=800, height=600)
 
-        level_editor = LevelEditor(self)
-        level_editor.pack(expand=True, fill="both")
+        self.level_editor: LevelEditor | None = None
 
         self.bind("<Button-1>", self.clear_focus)
+
+        self.restart_level_editor()
+
+    def restart_level_editor(self):
+        if self.level_editor:
+            self.level_editor.pack_forget()
+
+        self.level_editor = LevelEditor(self)
+        self.level_editor.pack(expand=True, fill="both")
 
     def clear_focus(self, event):
         widget_under_cursor = self.winfo_containing(event.x_root, event.y_root)
@@ -48,3 +57,10 @@ class App(ctk.CTk):
             ctk.CTkButton,
         )
         return isinstance(widget, focusable_widgets)
+
+    @property
+    def level(self):
+        return level_loader.level
+
+
+app = App()

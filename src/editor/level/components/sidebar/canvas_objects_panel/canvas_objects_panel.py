@@ -1,5 +1,5 @@
 from editor.utils.selection import populate_selection_manager, SelectionManager
-from editor.level import level
+from editor.level import level_loader
 from .canvas_object_container import CanvasObjectContainer
 from typing import TYPE_CHECKING
 from editor.theme import theme
@@ -37,7 +37,7 @@ class CanvasObjectsPanel(MouseWheelScrollableFrame):
         )
 
         def _on_select(frame: "CanvasObjectContainer"):
-            level.selector.set_selection(
+            level_loader.level.selector.set_selection(
                 layer.name + ".canvas_object", frame.canvas_object.name
             )
 

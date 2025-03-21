@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from editor.level import level
+from editor.level import level_loader
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -54,7 +54,7 @@ class CanvasScroller:
             self.canvas.draw_offset[1],
         )
         canvas_width, canvas_height = self.canvas_size
-        level_width, level_height = level.map.size
+        level_width, level_height = level_loader.level.map.size
 
         min_x = -canvas_offset_x + -level_width + canvas_width // 2
         max_x = -canvas_offset_x + canvas_width // 2
@@ -69,7 +69,7 @@ class CanvasScroller:
 
     def _center_canvas(self):
         canvas_width, canvas_height = self.canvas_size
-        level_width, level_height = level.map.size
+        level_width, level_height = level_loader.level.map.size
         canvas_center_x = canvas_width // 2 - level_width // 2
         canvas_center_y = canvas_height // 2 - level_height // 2
 

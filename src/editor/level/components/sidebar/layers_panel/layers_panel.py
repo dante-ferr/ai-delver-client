@@ -3,7 +3,7 @@ from .layer_container import LayerContainer
 from editor.components.svg_image import SvgImage
 from editor.theme import theme
 from editor.utils.selection import populate_selection_manager, SelectionManager
-from editor.level import level
+from editor.level import level_loader
 from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
@@ -41,7 +41,7 @@ class LayersPanel(ctk.CTkFrame):
         self._pack_layer_containers()
 
         def _on_select(frame: "LayerContainer"):
-            level.selector.set_selection("layer", frame.layer_name)
+            level_loader.level.selector.set_selection("layer", frame.layer_name)
 
         populate_selection_manager(
             SelectionManager(),
@@ -57,7 +57,7 @@ class LayersPanel(ctk.CTkFrame):
     def _create_layer_containers(self):
         layer_containers: list[LayerContainer] = []
 
-        for layer in level.map.layers[::-1]:
+        for layer in level_loader.level.map.layers[::-1]:
             layer_containers.append(self._create_layer_container(layer))
 
         return layer_containers

@@ -9,6 +9,6 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 # game = Game()
 # game.run()
 
-from editor import App as EditorApp
+from editor import app as editor_app
 
-EditorApp().mainloop()
+editor_app.mainloop()

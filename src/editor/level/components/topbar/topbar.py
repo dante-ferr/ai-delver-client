@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from editor.level import level
+from editor.level import level_loader
 from .level_file_container import LevelFileContainer
 
 
@@ -11,7 +11,7 @@ class Topbar(ctk.CTkFrame):
         level_file_container.pack(side="left", padx=2, pady=2)
 
         grid_toggle_var = ctk.BooleanVar(value=True)
-        level.toggler.add_var(grid_toggle_var, "grid_lines")
+        level_loader.level.toggler.add_var(grid_toggle_var, "grid_lines")
         grid_toggle = ctk.CTkCheckBox(
             self,
             text="Grid",

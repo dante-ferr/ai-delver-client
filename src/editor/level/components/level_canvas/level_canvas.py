@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from editor.level import level
+from editor.level import level_loader
 from typing import TYPE_CHECKING
 from ._canvas_click_handler import CanvasClickHandler
 from ._canvas_scroller import CanvasScroller
@@ -31,14 +31,20 @@ class LevelCanvas(ctk.CTkCanvas):
     def shift_offset_towards(self, direction: Direction, size: int):
         self.draw_offset = (
             self.draw_offset[0]
-            + (direction_vectors[direction][0] * size) * level.map.tile_size[0],
+            + (direction_vectors[direction][0] * size)
+            * level_loader.level.map.tile_size[0],
             self.draw_offset[1]
-            + (direction_vectors[direction][1] * size) * level.map.tile_size[1],
+            + (direction_vectors[direction][1] * size)
+            * level_loader.level.map.tile_size[1],
         )
 
     def _add_event_listeners(self):
-        level.map.events["expanded"].connect(self._expansion_callback, weak=True)
-        level.map.events["reducted"].connect(self._reduction_callback, weak=True)
+        level_loader.level.map.events["expanded"].connect(
+            self._expansion_callback, weak=True
+        )
+        level_loader.level.map.events["reducted"].connect(
+            self._reduction_callback, weak=True
+        )
         pass
 
     def _expansion_callback(
@@ -76,7 +82,7 @@ class LevelCanvas(ctk.CTkCanvas):
         self.grid_element_renderer.erase_all_grid_elements()
         self.grid_element_renderer.draw_all_grid_elements()
 
-        if level.toggler.vars["grid_lines"].get():
+        if level_loader.level.toggler.vars["grid_lines"].get():
             self.overlay.draw_grid_lines()
         else:
             self.delete("line")
@@ -84,7 +90,7 @@ class LevelCanvas(ctk.CTkCanvas):
 
     def update_draw_order(self):
         """Ensure layers are drawn in the correct Z-index order."""
-        layers = level.map.layers
+        layers = level_loader.level.map.layers
 
         for layer_name in layers:
             self.tag_raise(f"layer_{layer_name}")
@@ -105,20 +111,20 @@ class LevelCanvas(ctk.CTkCanvas):
 
     def get_absolute_grid_pos(self, coords: tuple[int, int]) -> tuple[int, int]:
         return (
-            coords[0] - (self.draw_offset[0] // level.map.tile_size[0]),
-            coords[1] - (self.draw_offset[1] // level.map.tile_size[1]),
+            coords[0] - (self.draw_offset[0] // level_loader.level.map.tile_size[0]),
+            coords[1] - (self.draw_offset[1] // level_loader.level.map.tile_size[1]),
         )
 
     def get_relative_grid_pos(self, coords: tuple[int, int]) -> tuple[int, int]:
         return (
-            coords[0] + (self.draw_offset[0] // level.map.tile_size[0]),
-            coords[1] + (self.draw_offset[1] // level.map.tile_size[1]),
+            coords[0] + (self.draw_offset[0] // level_loader.level.map.tile_size[0]),
+            coords[1] + (self.draw_offset[1] // level_loader.level.map.tile_size[1]),
         )
 
     @property
     def grid_lines(self):
-        return level.toggler.vars["grid_lines"].get()
+        return level_loader.level.toggler.vars["grid_lines"].get()
 
     @property
     def map_size(self):
-        return level.map.size
+        return level_loader.level.map.size
