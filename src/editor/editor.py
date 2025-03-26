@@ -1,7 +1,9 @@
-from .level import level_loader
+from level import level_loader
 import customtkinter as ctk
-from .level.components.level_editor import LevelEditor
+from .components.level_editor import LevelEditor
 from .theme import theme
+import sys
+import os
 
 ctk.set_appearance_mode("Dark")
 ctk.set_default_color_theme(theme.path)
@@ -63,4 +65,8 @@ class App(ctk.CTk):
         return level_loader.level
 
 
-app = App()
+if not hasattr(sys.modules[__name__], "_app_initialized"):
+    app = App()
+    setattr(sys.modules[__name__], "_app_initialized", True)
+else:
+    app = sys.modules[__name__].app

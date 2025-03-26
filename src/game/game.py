@@ -1,71 +1,74 @@
 import json
 import pyglet
 from game.controls import Controls
-from typing import Any
-from .entities.player.player import Player
-from .tilemap.tilemap_factory import tilemap_factory
+from .level_setup import tilemap_renderer_factory
 from .camera import Camera, Camera
 from .space import space
-from pytiling import AutotileTile
-from .tilemap.create_tile_on_click import create_tile_on_click
-from src.utils import refine_texture
+from pyglet_dragonbones import config as pdb_config
+from .level_setup import entities_controller_factory
 
 with open("src/game/config.json", "r") as file:
     config_data = json.load(file)
 
-global_scale = config_data["global_scale"]
-window_width = config_data["window_width"]
-window_height = config_data["window_height"]
+pdb_config.fps = config_data["fps"]
 
 
 class Game:
-    entities: list[Any] = []
-
     def __init__(self):
-        self.window = pyglet.window.Window(window_width, window_height, resizable=False)
+        display = pyglet.display.get_display()
+        screen = display.get_screens()[0]
 
-        # Initialize player
-        player = Player(space=space)
-        player.set_angle(180)
-        player.position = (window_width / 2, window_height / 2)
-        self.player = player
-        self.entities.append(player)
+        self.window = pyglet.window.Window(fullscreen=False)
+
+        def _callback(dt):
+            self.window.maximize()
+            pyglet.clock.schedule_once(lambda dt: self._lock_window_size(), 0.01)
+
+        pyglet.clock.schedule_once(_callback, 0.1)
 
         # Initialize camera
+        self.entities_controller = entities_controller_factory(space)
+        self.delver = self.entities_controller.get_entity_by_name("delver")
+
         self.camera = Camera(self.window, start_zoom=0.5, min_zoom=0.25, max_zoom=2)
-        self.camera.start_following(player)
+        self.camera.start_following(self.delver)
 
         # Initialize tilemap
-        self.tilemap_renderer = tilemap_factory()
+        # self.tilemap_renderer = tilemap_factory()
+        self.tilemap_renderer = tilemap_renderer_factory()
 
         # Initialize controls
         self.keys = pyglet.window.key.KeyStateHandler()
         self.controls = Controls(self.keys)
-        self.controls.append_player(player)
+        self.controls.append_delver(self.delver)
         self.controls.append_camera(self.camera)
-
-        def create_tile_callback(grid_x, grid_y):
-            tile = AutotileTile(
-                (grid_x, grid_y), "wall", default_shallow_tile_variations=True
-            )
-            return tile
 
         self.window.push_handlers(
             self.keys,
-            create_tile_on_click(
-                self.tilemap_renderer.tilemap.get_layer("walls"),
-                create_tile_callback,
-                self.camera,
-                self.window,
-            ),
             on_mouse_scroll=self.controls.on_mouse_scroll,
         )
+
+    def _lock_window_size(self):
+        """Locks the window size completely (even on Linux)"""
+        width, height = self.window.width, self.window.height
+
+        self.window.set_minimum_size(width, height)
+        self.window.set_maximum_size(width, height)
+
+        self.window.set_size(width, height)
+
+        @self.window.event
+        def on_resize(new_width, new_height):
+            if new_width != width or new_height != height:
+                self.window.set_size(width, height)
+            return pyglet.event.EVENT_HANDLED
 
     def update(self, dt):
         self.window.clear()
 
-        self.tilemap_renderer.render_layer("walls")
-        self.player.update(dt)
+        self.tilemap_renderer.render_all_layers()
+
+        self.delver.update(dt)
         self.controls.update(dt)
 
         with self.camera:

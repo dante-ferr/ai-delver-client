@@ -1,14 +1,16 @@
 import sys
 import os
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(PROJECT_ROOT, "src"))
+sys.path.insert(0, os.path.join(PROJECT_ROOT, ".."))
 
-# from game.game import Game
+from game.game import Game
 
 
-# game = Game()
-# game.run()
+game = Game()
+game.run()
 
-from editor import app as editor_app
+# from editor import app
 
-editor_app.mainloop()
+# app.mainloop()

@@ -91,8 +91,8 @@ class Camera:
     def begin(self):
         self._apply_view_matrix_transformation()
 
-        self._execute_zoom()
         self._follow_entity()
+        self._execute_zoom()
 
     def end(self):
         self._restore_view_matrix()
@@ -137,6 +137,16 @@ class Camera:
         if not self.entity_being_followed:
             return
 
+        # self.target_position = (
+        #     (
+        #         -self.entity_being_followed.position[0] / self._zoom
+        #         + (self._window.width / 2) / self._zoom
+        #     ),
+        #     (
+        #         -self.entity_being_followed.position[1] / self._zoom
+        #         + (self._window.height / 2) / self._zoom
+        #     ),
+        # )
         self.target_position = (
             (-self.entity_being_followed.position[0] + self._window.width / 2)
             / self._zoom,

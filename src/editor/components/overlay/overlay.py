@@ -17,6 +17,8 @@ class Overlay(ctk.CTkToplevel):
         y = (self.winfo_screenheight() // 2) - (self.winfo_reqheight() // 2)
         self.geometry(f"+{x}+{y}")
 
+        # self.grab_set()
+
     def _close(self):
-        self.grab_release()
+        # self.grab_release()
         self.destroy()

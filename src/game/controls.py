@@ -2,10 +2,10 @@ from pyglet import window
 from typing import TYPE_CHECKING
 import math
 from pymunk import Vec2d
-from src.utils import vector_to_angle
+from utils import vector_to_angle
 
 if TYPE_CHECKING:
-    from .entities.player.player import Player
+    from .entities.delver.delver import Delver
 
 
 class Controls:
@@ -14,8 +14,8 @@ class Controls:
     def __init__(self, keys: window.key.KeyStateHandler):
         self.keys = keys
 
-    def append_player(self, player: "Player"):
-        self.player = player
+    def append_delver(self, delver: "Delver"):
+        self.delver = delver
 
     def append_camera(self, camera):
         self.camera = camera
@@ -23,7 +23,7 @@ class Controls:
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
         self._handle_zoom(scroll_y)
 
-    def _update_player_controls(self, dt):
+    def _update_delver_controls(self, dt):
         run_vector = [0, 0]
 
         if self.keys[window.key.RIGHT]:
@@ -36,9 +36,9 @@ class Controls:
             run_vector[1] -= 1
 
         if run_vector == [0, 0]:
-            self.player.stand()
+            self.delver.stand()
         else:
-            self.player.move(dt, vector_to_angle(run_vector))
+            self.delver.move(dt, vector_to_angle(run_vector))
 
     def _handle_zoom(self, scroll_y):
         if not self.camera:
@@ -47,4 +47,4 @@ class Controls:
         self.camera.zoom = self.camera.zoom + scroll_y * zoom_speed
 
     def update(self, dt):
-        self._update_player_controls(dt)
+        self._update_delver_controls(dt)
