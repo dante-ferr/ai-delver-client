@@ -5,7 +5,7 @@ from .level_setup import tilemap_renderer_factory
 from .camera import Camera, Camera
 from .space import space
 from pyglet_dragonbones import config as pdb_config
-from .level_setup import entities_controller_factory
+from .level_setup import world_objects_controller_factory
 
 with open("src/game/config.json", "r") as file:
     config_data = json.load(file)
@@ -29,8 +29,8 @@ class Game:
         pyglet.clock.schedule_once(_callback, 0.1)
 
         # Initialize camera
-        self.entities_controller = entities_controller_factory(space)
-        self.delver = self.entities_controller.get_entity_by_name("delver")
+        self.entities_controller = world_objects_controller_factory(space)
+        self.delver = self.entities_controller.get_world_object_by_name("delver")
 
         # Initialize tilemap
         # self.tilemap_renderer = tilemap_factory()
@@ -73,7 +73,8 @@ class Game:
 
         self.tilemap_renderer.render_all_layers()
 
-        self.delver.update(dt)
+        self.entities_controller.update_world_objects(dt)
+
         self.controls.update(dt)
 
         if self.camera is not None:

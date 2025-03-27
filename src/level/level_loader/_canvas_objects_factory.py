@@ -56,12 +56,20 @@ class CanvasObjectsFactory:
 
             def _callback(position: tuple[int, int], variation=variation):
                 nonlocal layer
+
                 for element in layer.get_elements(
                     *[v for v in variations if v != variation]
                 ):
                     layer.remove_element(element)
 
-                return layer.create_world_object_at(position, variation, **args)
+                world_object = layer.create_world_object_at(
+                    position,
+                    canvas_object_name,
+                    tags=[f"variation_{variation}"],
+                    **args,
+                )
+
+                return world_object
 
             layer.canvas_object_manager.add_canvas_object(
                 self._create_canvas_object(

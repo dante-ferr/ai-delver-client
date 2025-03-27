@@ -34,6 +34,7 @@ class Delver(SkeletalEntity):
         shape = pymunk.Circle(body, radius)
         shape.collision_type = 1
         space.add(body, shape)
+        super().__init__(body)
 
         body.setup_collision_handlers()
         body.max_velocity = self.move_speed

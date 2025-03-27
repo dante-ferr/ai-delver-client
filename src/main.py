@@ -7,7 +7,6 @@ sys.path.insert(0, os.path.join(PROJECT_ROOT, ".."))
 
 from game.game import Game
 
-
 game = Game()
 game.run()
 

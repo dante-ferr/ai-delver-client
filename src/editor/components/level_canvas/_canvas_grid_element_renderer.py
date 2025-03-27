@@ -81,7 +81,7 @@ class CanvasGridElementRenderer:
 
     def draw_world_object(self, world_object: "WorldObjectRepresentation"):
         """Draw a world object on the canvas"""
-        ctk_image = self.world_objects_image.get_image(world_object.name)
+        ctk_image = self.world_objects_image.get_image(world_object.canvas_object_name)
         self._draw_grid_element(world_object, ctk_image)
 
     def _draw_grid_element(self, element: "GridElement", image: "ctk.CTkImage | None"):

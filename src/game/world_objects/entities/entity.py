@@ -2,14 +2,18 @@ from utils import angle_to_vector
 import math
 from pymunk import Vec2d
 from typing import TYPE_CHECKING
+from ..world_object import WorldObject
+import pymunk
 
 if TYPE_CHECKING:
     from .entity_body import EntityBody
 
 
-class Entity:
-    body: "EntityBody"
+class Entity(WorldObject):
     move_speed = 200
+
+    def __init__(self, body: "EntityBody"):
+        self.body = body
 
     def move(self, dt: float, move_angle: float):
         """Make the entity move."""
@@ -57,4 +61,4 @@ class Entity:
 
     def update(self, dt):
         """Update the entity."""
-        pass
+        super().update(dt)
