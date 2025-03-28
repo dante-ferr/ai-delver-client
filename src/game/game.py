@@ -6,6 +6,8 @@ from .camera import Camera, Camera
 from .space import space
 from pyglet_dragonbones import config as pdb_config
 from .level_setup import world_objects_controller_factory
+from typing import cast
+from .world_objects.entities.delver import Delver
 
 with open("src/game/config.json", "r") as file:
     config_data = json.load(file)
@@ -28,9 +30,11 @@ class Game:
 
         pyglet.clock.schedule_once(_callback, 0.1)
 
-        # Initialize camera
-        self.entities_controller = world_objects_controller_factory(space)
-        self.delver = self.entities_controller.get_world_object_by_name("delver")
+        self.world_objects_controller = world_objects_controller_factory(space)
+        self.delver = cast(
+            "Delver", self.world_objects_controller.get_world_object("delver")
+        )
+        self.goal = self.world_objects_controller.get_world_object("goal")
 
         # Initialize tilemap
         # self.tilemap_renderer = tilemap_factory()
@@ -73,7 +77,10 @@ class Game:
 
         self.tilemap_renderer.render_all_layers()
 
-        self.entities_controller.update_world_objects(dt)
+        self.world_objects_controller.update_world_objects(dt)
+        self.world_objects_controller.draw_world_objects(dt)
+
+        self._check_collisions()
 
         self.controls.update(dt)
 
@@ -82,6 +89,10 @@ class Game:
                 pass
 
         space.step(dt)
+
+    def _check_collisions(self):
+        if self.delver.check_collision(self.goal):
+            pass
 
     def run(self):
         pyglet.clock.schedule_interval(

@@ -15,6 +15,10 @@ class Entity(WorldObject):
     def __init__(self, body: "EntityBody"):
         self.body = body
 
+    @property
+    def shape(self):
+        return next(iter(self.body.shapes))
+
     def move(self, dt: float, move_angle: float):
         """Make the entity move."""
         self.set_target_angle(-move_angle - 90)
@@ -61,4 +65,11 @@ class Entity(WorldObject):
 
     def update(self, dt):
         """Update the entity."""
+        self.bounding_box = (
+            self.body.position.x - self.shape.radius,
+            self.body.position.y - self.shape.radius,
+            self.body.position.x + self.shape.radius,
+            self.body.position.y + self.shape.radius,
+        )
+
         super().update(dt)

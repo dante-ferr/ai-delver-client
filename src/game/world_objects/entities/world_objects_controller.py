@@ -25,9 +25,13 @@ class WorldObjectsController:
         if unique_identifier is not None:
             setattr(self, unique_identifier, world_object)
 
-    def get_world_object_by_name(self, name: str):
+    def get_world_object(self, name: str) -> "WorldObject":
         return getattr(self, name)
 
     def update_world_objects(self, dt: float):
         for world_object in self.world_objects:
             world_object.update(dt)
+
+    def draw_world_objects(self, dt: float):
+        for world_object in self.world_objects:
+            world_object.draw(dt)
