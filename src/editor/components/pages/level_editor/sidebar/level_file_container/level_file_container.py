@@ -8,7 +8,7 @@ class LevelFileContainer(ctk.CTkFrame):
         super().__init__(parent, fg_color="transparent")
 
         save_button = SaveButton(self)
-        save_button.pack(side="left", padx=3.2, pady=0)
+        save_button.pack(side="left", padx=0, pady=0)
 
         load_button = LoadButton(self)
-        load_button.pack(padx=2, pady=0)
+        load_button.pack(padx=0, pady=0)

@@ -1,9 +1,9 @@
 from ..world_object import WorldObject
-from typing import Optional
+from typing import Optional, Any
 from pyglet import sprite, image
 from pyglet.image.animation import Animation
 from pyglet.graphics import Batch
-from level import level_loader
+from utils import refine_texture
 
 
 class Item(WorldObject):
@@ -20,25 +20,29 @@ class Item(WorldObject):
         self.size: tuple[int, int] = size
         self.sprite = self._create_sprite(sprite_path, animation)
 
-        self.compensated = False
-
         self._update_sprite_position()
 
     def _create_sprite(
         self, sprite_path: Optional[str], animation: Optional[Animation]
     ):
+
         if sprite_path:
             img = image.load(sprite_path)
             img.anchor_x = img.width // 2
             img.anchor_y = img.height // 2
 
-            return sprite.Sprite(img, batch=self.batch)
+            return self._get_sprite(img)
         elif animation:
             for frame in animation.frames:
                 frame.image.anchor_x = frame.image.width // 2
                 frame.image.anchor_y = frame.image.height // 2
 
-            return sprite.Sprite(animation, batch=self.batch)
+            return self._get_sprite(animation)
+
+    def _get_sprite(self, img: Any):
+        spr = sprite.Sprite(img, batch=self.batch)
+        refine_texture()
+        return spr
 
     def _compensate_offset_centering(self):
         self.position = (
@@ -53,15 +57,12 @@ class Item(WorldObject):
     @position.setter
     def position(self, position: tuple[float, float]):
         self._position = position
-        if not self.compensated:
-            self.compensated = True
-            self._compensate_offset_centering()
-        elif self.sprite:
+        if self.sprite:
             self._update_sprite_position()
 
     def _update_sprite_position(self):
         if self.sprite:
-            self.sprite.update(x=self._position[0], y=self._position[1])
+            self.sprite.update(x=self.position[0], y=self.position[1])
 
     def update(self, dt):
         """Update the item and its sprite if needed."""

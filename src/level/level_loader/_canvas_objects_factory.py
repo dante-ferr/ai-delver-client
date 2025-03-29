@@ -1,5 +1,7 @@
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING, Callable, cast
 from ..canvas_object import CanvasObject
+from ..grid_map.world_objects_map.world_objects_layer import WorldObjectsLayer
+from ..grid_map.mixed_map import MixedMap
 
 if TYPE_CHECKING:
     from ..level import Level
@@ -19,7 +21,7 @@ class CanvasObjectsFactory:
                 create_element_callback=lambda position: self.tilemap.create_basic_floor_at(
                     position, apply_formatting=True
                 ),
-                remove_element_callback=lambda position: floor_layer.remove_tile_at(
+                remove_element_callback=lambda position: self.tilemap.remove_floor_at(
                     position, apply_formatting=True
                 ),
             )
@@ -29,10 +31,10 @@ class CanvasObjectsFactory:
         walls_layer.canvas_object_manager.add_canvas_object(
             self._create_canvas_object(
                 "wall",
-                lambda position: self.tilemap.create_basic_wall_at(
+                create_element_callback=lambda position: self.tilemap.create_basic_wall_at(
                     position, apply_formatting=True
                 ),
-                remove_element_callback=lambda position: walls_layer.remove_tile_at(
+                remove_element_callback=lambda position: self.tilemap.remove_wall_at(
                     position, apply_formatting=True
                 ),
             )
@@ -54,7 +56,9 @@ class CanvasObjectsFactory:
 
         for variation in variations:
 
-            def _callback(position: tuple[int, int], variation=variation):
+            def _create_element_callback(
+                position: tuple[int, int], variation=variation
+            ):
                 nonlocal layer
 
                 for element in layer.get_elements(
@@ -62,19 +66,18 @@ class CanvasObjectsFactory:
                 ):
                     layer.remove_element(element)
 
-                world_object = layer.create_world_object_at(
+                return self._create_world_object_at(
                     position,
                     canvas_object_name,
+                    layer,
                     tags=[f"variation_{variation}"],
                     **args,
                 )
 
-                return world_object
-
             layer.canvas_object_manager.add_canvas_object(
                 self._create_canvas_object(
                     variation,
-                    _callback,
+                    _create_element_callback,
                     path=f"assets/img/representations/{canvas_object_name}/{variation}.png",
                 )
             )
@@ -86,11 +89,30 @@ class CanvasObjectsFactory:
         layer.canvas_object_manager.add_canvas_object(
             self._create_canvas_object(
                 object_name,
-                lambda position: layer.create_world_object_at(
-                    position, object_name, **args
+                lambda position: self._create_world_object_at(
+                    position, object_name, layer, **args
                 ),
             )
         )
+
+    def _create_world_object_at(
+        self,
+        position: tuple[int, int],
+        object_name: str,
+        layer: "WorldObjectsLayer",
+        **args,
+    ):
+        world_object = layer.create_world_object_at(
+            position,
+            object_name,
+            **args,
+        )
+
+        layer_grid_map = cast("MixedMap", layer.grid_map)
+        if not layer_grid_map.tilemap.get_layer("floor").has_element_at(position):
+            layer_grid_map.tilemap.create_basic_floor_at(position)
+
+        return world_object
 
     def _create_canvas_object(
         self,

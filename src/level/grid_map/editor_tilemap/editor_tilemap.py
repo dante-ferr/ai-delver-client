@@ -30,21 +30,11 @@ class EditorTilemap(Tilemap):
         """Add a layer to the tilemap."""
         super().add_layer(layer, position)
 
-    def check_erase(self, element: "GridElement", layer_name: str):
-        if layer_name == "walls":
-            if element.name == "wall":
-                self.create_basic_floor_at(element.position, apply_formatting=True)
-        elif layer_name == "floor":
-            if element.name == "floor":
-                self.create_basic_wall_at(element.position, apply_formatting=True)
-
     def get_layer(self, name: str) -> "EditorTilemapLayer":
         """Get a layer by its name."""
         return cast("EditorTilemapLayer", super().get_layer(name))
 
     def create_basic_wall_at(self, position: tuple[int, int], **args):
-        if not self.position_is_valid(position):
-            return
         walls = self.get_layer("walls")
         tile = walls.create_autotile_tile_at(
             position,
@@ -60,8 +50,6 @@ class EditorTilemap(Tilemap):
     def create_basic_floor_at(
         self, position: tuple[int, int], apply_formatting=False, **args
     ):
-        if not self.position_is_valid(position):
-            return
         floor = self.get_layer("floor")
         tile = floor.create_tile_at(position, (0, 0), "floor", **args)
         if tile is not None:
@@ -72,6 +60,18 @@ class EditorTilemap(Tilemap):
             self._expand_grid_size_if_needed(tile)
 
         return tile
+
+    def remove_wall_at(self, position: tuple[int, int], apply_formatting=False):
+        walls = self.get_layer("walls")
+        walls.remove_tile_at(position, apply_formatting)
+
+        self.create_basic_floor_at(position, apply_formatting=apply_formatting)
+
+    def remove_floor_at(self, position: tuple[int, int], apply_formatting=False):
+        floor = self.get_layer("floor")
+        floor.remove_tile_at(position, apply_formatting)
+
+        self.create_basic_wall_at(position, apply_formatting=apply_formatting)
 
     def _reduce_grid_size_if_needed(self, new_tile: "Tile"):
         tile_x, tile_y = new_tile.position

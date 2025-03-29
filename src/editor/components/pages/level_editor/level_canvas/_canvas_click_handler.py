@@ -67,8 +67,6 @@ class CanvasClickHandler:
 
         return (canvas_grid_x, canvas_grid_y)
 
-        return None
-
     def _process_single_canvas_grid_position(self, canvas_grid_pos: tuple[int, int]):
         """Process a single grid position if it's valid and not already processed."""
         if canvas_grid_pos in self.drawn_tile_positions:
@@ -88,6 +86,9 @@ class CanvasClickHandler:
         self._handle_interaction(grid_pos)
 
     def _handle_interaction(self, grid_pos: tuple[int, int]):
+        if not level_loader.level.map.position_is_valid(grid_pos):
+            return
+
         if self.selected_tool_name == "pencil":
             level_loader.level.map.get_layer(
                 self.selected_layer_name
@@ -96,7 +97,6 @@ class CanvasClickHandler:
             ).create_element_callback(
                 grid_pos
             )
-
         elif self.selected_tool_name == "eraser":
             layer = level_loader.level.map.get_layer(self.selected_layer_name)
             canvas_object = layer.canvas_object_manager.get_canvas_object(
@@ -109,9 +109,6 @@ class CanvasClickHandler:
 
             if removed_element is None:
                 return
-            level_loader.level.map.tilemap.check_erase(
-                removed_element, self.selected_layer_name
-            )
 
     def translate_mouse_coords(self, coords: tuple[int, int]) -> tuple[int, int]:
         return (

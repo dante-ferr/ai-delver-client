@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .entity import WorldObject
+    from .entities.entity import WorldObject
 
 
 class WorldObjectsController:

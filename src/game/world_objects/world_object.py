@@ -43,7 +43,6 @@ class WorldObject:
         if not self.bounding_box or not other.bounding_box:
             return False
 
-        # print(self.bounding_box, other.bounding_box)
         x1_min, y1_min, x1_max, y1_max = self.bounding_box
         x2_min, y2_min, x2_max, y2_max = other.bounding_box
 

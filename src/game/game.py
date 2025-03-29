@@ -8,6 +8,7 @@ from pyglet_dragonbones import config as pdb_config
 from .level_setup import world_objects_controller_factory
 from typing import cast
 from .world_objects.entities.delver import Delver
+from utils import refine_texture
 
 with open("src/game/config.json", "r") as file:
     config_data = json.load(file)
@@ -17,6 +18,8 @@ pdb_config.fps = config_data["fps"]
 
 class Game:
     def __init__(self):
+        self.running = False
+
         display = pyglet.display.get_display()
         screen = display.get_screens()[0]
 
@@ -95,7 +98,13 @@ class Game:
             pass
 
     def run(self):
+        self.running = True
         pyglet.clock.schedule_interval(
             self.update, 1 / float(config_data["fps"])
         )  # Update at 60 FPS
         pyglet.app.run()
+
+    def stop(self):
+        if self.running:
+            self.running = False
+            pyglet.app.exit()

@@ -1,14 +1,12 @@
 import customtkinter as ctk
 from .sidebar import Sidebar
 from .level_canvas import LevelCanvas
-from .topbar import Topbar
+from .. import Page
 
 
-class LevelEditor(ctk.CTkFrame):
+class LevelEditor(Page):
     def __init__(self, parent):
-        super().__init__(parent)
-
-        self.selected_tool = "brush"
+        super().__init__(parent, "Level Editor")
 
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
@@ -19,9 +17,6 @@ class LevelEditor(ctk.CTkFrame):
         left_frame.grid_columnconfigure(0, weight=1)
         left_frame.grid_rowconfigure(0, weight=0)
         left_frame.grid_rowconfigure(1, weight=1)
-
-        topbar = Topbar(left_frame)
-        topbar.grid(row=0, column=0, sticky="nsew")
 
         canvas = LevelCanvas(left_frame)
         canvas.grid(row=1, column=0, sticky="nsew")

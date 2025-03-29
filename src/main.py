@@ -5,11 +5,9 @@ PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(PROJECT_ROOT, "src"))
 sys.path.insert(0, os.path.join(PROJECT_ROOT, ".."))
 
-from game.game import Game
+from game import game_manager
+from editor import app
 
-game = Game()
-game.run()
+# game_manager.start_game()
 
-# from editor import app
-
-# app.mainloop()
+app.mainloop()

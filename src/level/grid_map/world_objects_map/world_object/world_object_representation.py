@@ -1,4 +1,8 @@
 from pytiling import GridElement
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from pytiling import GridLayer
 
 
 class WorldObjectRepresentation(GridElement):
@@ -10,8 +14,15 @@ class WorldObjectRepresentation(GridElement):
         super().__init__(position, name, **args)
         self.tags = tags
 
+    @property
+    def layer(self):
+        return super().layer
+
+    @layer.setter
+    def layer(self, layer: "GridLayer"):
+        self._layer = layer
+
     def add_tag(self, tag: str):
-        print(f"Adding tag {tag} to {self.name}")
         self.tags.append(tag)
 
     @property

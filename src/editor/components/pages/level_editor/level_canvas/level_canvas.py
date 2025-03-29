@@ -45,7 +45,6 @@ class LevelCanvas(ctk.CTkCanvas):
         level_loader.level.map.events["reducted"].connect(
             self._reduction_callback, weak=True
         )
-        pass
 
     def _expansion_callback(
         self,
@@ -92,8 +91,9 @@ class LevelCanvas(ctk.CTkCanvas):
         """Ensure layers are drawn in the correct Z-index order."""
         layers = level_loader.level.map.layers
 
-        for layer_name in layers:
-            self.tag_raise(f"layer_{layer_name}")
+        for layer in layers:
+            tag = f"layer={layer.name}"
+            self.tag_raise(tag)
         self.tag_raise("line")
         self.tag_raise("border")
 

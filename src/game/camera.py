@@ -3,7 +3,7 @@ from pyglet.math import Vec3
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .entities.entity import Entity
+    from .world_objects.entities.entity import Entity
 
 
 class Camera:
@@ -137,22 +137,18 @@ class Camera:
         if not self.entity_being_followed:
             return
 
-        # self.target_position = (
-        #     (
-        #         -self.entity_being_followed.position[0] / self._zoom
-        #         + (self._window.width / 2) / self._zoom
-        #     ),
-        #     (
-        #         -self.entity_being_followed.position[1] / self._zoom
-        #         + (self._window.height / 2) / self._zoom
-        #     ),
-        # )
         self.target_position = (
             (-self.entity_being_followed.position[0] + self._window.width / 2)
             / self._zoom,
             (-self.entity_being_followed.position[1] + self._window.height / 2)
             / self._zoom,
         )
+
+        if (
+            abs(self.target_position[0] - self.position[0]) < 4
+            and abs(self.target_position[1] - self.position[1]) < 4
+        ):
+            return
 
         self.position = (
             self.position[0]

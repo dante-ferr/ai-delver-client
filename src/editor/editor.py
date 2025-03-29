@@ -1,9 +1,11 @@
 from level import level_loader
 import customtkinter as ctk
-from .components.level_editor import LevelEditor
+from .components.pages.level_editor import LevelEditor
+from .components.pages.runner import Runner
+from .components import Navbar
 from .theme import theme
 import sys
-import os
+from .components.pages import Page
 
 ctk.set_appearance_mode("Dark")
 ctk.set_default_color_theme(theme.path)
@@ -18,18 +20,37 @@ class App(ctk.CTk):
         self.attributes("-zoomed", True)
         self.minsize(width=800, height=600)
 
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=0)
+        self.grid_rowconfigure(1, weight=1)
+
+        self.navbar = Navbar(self)
+        self.navbar.grid(row=0, column=0, sticky="ew")
+
         self.level_editor: LevelEditor | None = None
 
         self.bind("<Button-1>", self.clear_focus)
 
-        self.restart_level_editor()
+        self.selected_page: Page | None = None
+        self._create_pages()
 
-    def restart_level_editor(self):
-        if self.level_editor:
-            self.level_editor.pack_forget()
+    def _create_pages(self):
+        pages: dict[str, Page] = {
+            "level_editor": LevelEditor(self),
+            "runner": Runner(self),
+        }
+        self.pages = pages
 
-        self.level_editor = LevelEditor(self)
-        self.level_editor.pack(expand=True, fill="both")
+        self.navbar.create_page_selectors(pages, default_page_name="level_editor")
+
+    def select_page(self, page_name: str):
+        page = self.pages[page_name]
+
+        if self.selected_page is not None:
+            self.selected_page.grid_forget()
+
+        self.selected_page = page
+        page.grid(row=1, column=0, sticky="nsew")
 
     def clear_focus(self, event):
         widget_under_cursor = self.winfo_containing(event.x_root, event.y_root)

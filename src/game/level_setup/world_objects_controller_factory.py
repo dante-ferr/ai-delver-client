@@ -1,4 +1,4 @@
-from ..world_objects.entities import WorldObjectsController
+from ..world_objects import WorldObjectsController
 from ..world_objects import WorldObject
 from level import level_loader
 from ..world_objects.entities.delver import Delver
@@ -14,8 +14,12 @@ def world_objects_controller_factory(space: "pymunk.Space"):
     world_objects_controller = WorldObjectsController()
 
     def _place_world_object(world_object: "WorldObject", **args):
-        world_object.position = level_loader.level.map.grid_pos_to_actual_pos(
+        world_object_actual_pos = level_loader.level.map.grid_pos_to_actual_pos(
             element.position
+        )
+        world_object.position = (
+            world_object_actual_pos[0] + level_loader.level.map.tile_size[0] / 2,
+            world_object_actual_pos[1] + level_loader.level.map.tile_size[1] / 2,
         )
         world_objects_controller.add_world_object(world_object, **args)
 
