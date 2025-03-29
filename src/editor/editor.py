@@ -27,12 +27,20 @@ class App(ctk.CTk):
         self.navbar = Navbar(self)
         self.navbar.grid(row=0, column=0, sticky="ew")
 
-        self.level_editor: LevelEditor | None = None
-
-        self.bind("<Button-1>", self.clear_focus)
+        self.page_container = ctk.CTkFrame(self, fg_color="transparent")
+        self.page_container.grid(row=1, column=0, sticky="nsew")
 
         self.selected_page: Page | None = None
         self._create_pages()
+
+        self.bind("<Button-1>", self.clear_focus)
+
+    def restart_level_editor(self):
+        if self.pages["level_editor"]:
+            self.pages["level_editor"].pack_forget()
+
+        self.pages["level_editor"] = LevelEditor(self)
+        self.select_page("level_editor")
 
     def _create_pages(self):
         pages: dict[str, Page] = {

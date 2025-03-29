@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from typing import Literal, Callable
+from typing import Callable
 from ..overlay import Overlay
 
 
@@ -17,21 +17,36 @@ class MessageOverlay(Overlay):
         message: str,
         subject="Warning",
         button_commands: dict[str, Callable] | None = None,
+        paragraphs: list[str] = [],
     ):
         super().__init__(subject)
 
-        self.geometry("300x150")
+        text_container = ctk.CTkFrame(self, fg_color="transparent", width=300)
+        text_container.pack(pady=4, fill="x", expand=True)
 
-        label = ctk.CTkLabel(
-            self, text=message, corner_radius=10, width=280, height=100, wraplength=240
-        )
-        label.pack(pady=4)
+        label = ctk.CTkLabel(text_container, text=message, wraplength=240)
+        label.pack(pady=6.4, anchor="w", fill="x")
 
-        button_container = ctk.CTkFrame(self, fg_color="transparent")
-        button_container.pack(pady=4)
+        for paragraph in paragraphs:
+            paragraph_label = ctk.CTkLabel(
+                text_container,
+                text=paragraph,
+                wraplength=240,
+            )
+            paragraph_label.pack(pady=2, anchor="w", fill="x")
 
+        self.button_container = ctk.CTkFrame(self, fg_color="transparent")
+        self.button_container.pack(pady=4)
+
+        self._create_buttons(button_commands)
+
+        self._post_init_config()
+
+    def _create_buttons(self, button_commands: dict[str, Callable] | None):
         if button_commands is None:
-            buttons = [ctk.CTkButton(button_container, text="Ok", command=self._close)]
+            buttons = [
+                ctk.CTkButton(self.button_container, text="Ok", command=self._close)
+            ]
         else:
             buttons = []
             for text, command in button_commands.items():
@@ -42,7 +57,7 @@ class MessageOverlay(Overlay):
 
                 buttons.append(
                     ctk.CTkButton(
-                        button_container, text=text, command=_command_callback
+                        self.button_container, text=text, command=_command_callback
                     )
                 )
 
@@ -50,5 +65,3 @@ class MessageOverlay(Overlay):
             row = i // 3
             col = i % 3
             button.grid(row=row, column=col, pady=5, padx=5)
-
-        self.after(10, self.grab_set)

@@ -76,6 +76,7 @@ class Game:
             return pyglet.event.EVENT_HANDLED
 
     def update(self, dt):
+        global steps
         self.window.clear()
 
         self.tilemap_renderer.render_all_layers()
@@ -95,7 +96,9 @@ class Game:
 
     def _check_collisions(self):
         if self.delver.check_collision(self.goal):
-            pass
+            from .game_manager import game_manager
+
+            game_manager.queue.put("stop")
 
     def run(self):
         self.running = True
@@ -105,6 +108,10 @@ class Game:
         pyglet.app.run()
 
     def stop(self):
-        if self.running:
-            self.running = False
-            pyglet.app.exit()
+        if not self.running:
+            return
+        self.running = False
+        pyglet.app.exit()
+
+        if self.window:
+            self.window.close()

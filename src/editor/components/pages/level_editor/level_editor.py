@@ -22,4 +22,4 @@ class LevelEditor(Page):
         canvas.grid(row=1, column=0, sticky="nsew")
 
         sidebar = Sidebar(self)
-        sidebar.grid(row=0, column=1, sticky="ns", padx=20, pady=32)
+        sidebar.grid(row=0, column=1, sticky="ns", padx=16, pady=32)

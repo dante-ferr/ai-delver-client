@@ -60,3 +60,18 @@ class Level:
     @property
     def save_file_path(self):
         return SAVE_FOLDER_PATH / f"{self.name}.dill"
+
+    @property
+    def issues(self):
+        issues: list[str] = []
+
+        essentials_layer = self.map.get_layer("essentials")
+        delver = essentials_layer.has_element_named("delver")
+        if not delver:
+            issues.append("The delver needs to be placed on the level.")
+
+        goal = essentials_layer.has_element_named("goal")
+        if not goal:
+            issues.append("The goal needs to be placed on the level.")
+
+        return issues

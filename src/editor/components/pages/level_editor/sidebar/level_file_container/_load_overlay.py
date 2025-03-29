@@ -9,17 +9,13 @@ class LoadOverlay(Overlay):
     def __init__(self):
         super().__init__("load_file")
 
-        self.geometry("300x250")
-
         label = ctk.CTkLabel(
             self,
             text="Choose a file to load.",
-            corner_radius=10,
-            width=280,
             height=100,
             wraplength=240,
         )
-        label.pack(pady=2, side="top")
+        label.pack(pady=0, anchor="w", fill="x")
 
         interaction_container = ctk.CTkFrame(self, fg_color="transparent")
         interaction_container.pack(pady=4)
@@ -37,6 +33,8 @@ class LoadOverlay(Overlay):
             interaction_container, text="Load", command=self._load, width=32
         )
         load_button.grid(row=0, column=1, padx=4)
+
+        self._post_init_config()
 
     def _load(self):
         from level import level_loader

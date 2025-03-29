@@ -8,7 +8,6 @@ class Overlay(ctk.CTkToplevel):
         super().__init__(app)
 
         self.attributes("-topmost", True)
-        self.geometry("300x150")
 
         self.title(title)
 
@@ -17,8 +16,14 @@ class Overlay(ctk.CTkToplevel):
         y = (self.winfo_screenheight() // 2) - (self.winfo_reqheight() // 2)
         self.geometry(f"+{x}+{y}")
 
-        # self.grab_set()
+        self.after(10, self.grab_set)
+        self._post_init_config()
 
     def _close(self):
-        # self.grab_release()
+        self.grab_release()
         self.destroy()
+
+    def _post_init_config(self):
+        self.minsize(width=320, height=160)
+        self.maxsize(width=320, height=480)
+        self.resizable(False, False)
