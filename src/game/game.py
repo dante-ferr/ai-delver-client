@@ -111,7 +111,9 @@ class Game:
         if not self.running:
             return
         self.running = False
-        pyglet.app.exit()
+
+        pyglet.clock.unschedule(self.update)
 
         if self.window:
             self.window.close()
+        pyglet.app.exit()

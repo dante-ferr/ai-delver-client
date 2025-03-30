@@ -12,6 +12,7 @@ class GameManager:
         self._should_stop = False
 
         self.queue = queue.Queue()
+        self._lock = threading.Lock()
 
     def start_game(self):
         """Starts a new game instance in a separate thread."""
@@ -34,14 +35,21 @@ class GameManager:
         if not self.game_instance:
             return
 
-        self.game_instance.stop()
+        # self.game_instance.stop()
 
-        if threading.current_thread() is not self.game_thread:
-            if self.game_thread and self.game_thread.is_alive():
-                self.game_thread.join()
+        # if self.game_thread and self.game_thread.is_alive():
+        #     self.game_thread.join()
 
-        self.game_instance = None
-        self.game_thread = None
+        # self.game_instance = None
+        # self.game_thread = None
+
+        with self._lock:  # Prevent concurrent cleanup
+            self.game_instance.stop()
+            if self.game_thread:
+                self.game_thread.join(timeout=1.0)
+
+            self.game_instance = None
+            self.game_thread = None
 
     def restart_game(self):
         """Stops the current game and starts a new one."""
