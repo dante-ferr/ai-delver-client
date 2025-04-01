@@ -13,7 +13,6 @@ ctk.set_default_color_theme(theme.path)
 
 class App(ctk.CTk):
     def __init__(self):
-
         super().__init__()
 
         self.title("Custom Tkinter App")
@@ -94,8 +93,8 @@ class App(ctk.CTk):
         return level_loader.level
 
 
-if not hasattr(sys.modules[__name__], "_app_initialized"):
-    app = App()
-    setattr(sys.modules[__name__], "_app_initialized", True)
-else:
-    app = sys.modules[__name__].app
+# if not hasattr(sys.modules[__name__], "_app_initialized"):
+#     app = App()
+#     setattr(sys.modules[__name__], "_app_initialized", True)
+# else:
+#     app = sys.modules[__name__].app

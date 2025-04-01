@@ -52,6 +52,6 @@ class LoadOverlay(Overlay):
         )
 
     def _restart_level_editor(self):
-        from editor import app
+        from app_manager import app_manager
 
-        app.restart_level_editor()
+        app_manager.editor_app.restart_level_editor()

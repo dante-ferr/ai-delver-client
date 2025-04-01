@@ -1,3 +1,3 @@
-from .editor import app
+from .editor import App as EditorApp
 
-__all__ = ["app"]
+__all__ = ["EditorApp"]

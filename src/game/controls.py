@@ -3,9 +3,10 @@ from typing import TYPE_CHECKING
 import math
 from pymunk import Vec2d
 from utils import vector_to_angle
+import pyglet
 
 if TYPE_CHECKING:
-    from .entities.delver.delver import Delver
+    from .world_objects.entities.delver import Delver
 
 
 class Controls:

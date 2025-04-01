@@ -8,7 +8,9 @@ from pyglet_dragonbones import config as pdb_config
 from .level_setup import world_objects_controller_factory
 from typing import cast
 from .world_objects.entities.delver import Delver
-from utils import refine_texture
+from .world_objects.items.goal import Goal
+from typing import Any
+from pyglet.window import Window
 
 with open("src/game/config.json", "r") as file:
     config_data = json.load(file)
@@ -23,7 +25,9 @@ class Game:
         display = pyglet.display.get_display()
         screen = display.get_screens()[0]
 
-        self.window = pyglet.window.Window(fullscreen=False, resizable=False)
+        self._window: Window | None = pyglet.window.Window(
+            fullscreen=False, resizable=False
+        )
 
         self.camera: None | Camera = None
 
@@ -40,7 +44,6 @@ class Game:
         self.goal = self.world_objects_controller.get_world_object("goal")
 
         # Initialize tilemap
-        # self.tilemap_renderer = tilemap_factory()
         self.tilemap_renderer = tilemap_renderer_factory()
 
         # Initialize controls
@@ -52,7 +55,16 @@ class Game:
         self.window.push_handlers(
             self.keys,
             on_mouse_scroll=self.controls.on_mouse_scroll,
+            on_close=self._on_window_close,
         )
+
+    def _on_window_close(self):
+        from app_manager import app_manager
+
+        app_manager.stop_game()
+        pyglet.clock.schedule_once(lambda dt: self._safe_close(), 0)
+
+        return pyglet.event.EVENT_HANDLED
 
     def _on_screen_maximize_interval(self, dt):
         self._lock_window_size()
@@ -66,7 +78,6 @@ class Game:
 
         self.window.set_minimum_size(width, height)
         self.window.set_maximum_size(width, height)
-
         self.window.set_size(width, height)
 
         @self.window.event
@@ -96,9 +107,9 @@ class Game:
 
     def _check_collisions(self):
         if self.delver.check_collision(self.goal):
-            from .game_manager import game_manager
+            from app_manager import app_manager
 
-            game_manager.queue.put("stop")
+            app_manager.stop_game()
 
     def run(self):
         self.running = True
@@ -107,13 +118,34 @@ class Game:
         )  # Update at 60 FPS
         pyglet.app.run()
 
+    @property
+    def window(self) -> Window:
+        if self._window is None:
+            raise RuntimeError("Window not initialized")
+        return self._window
+
+    @window.setter
+    def window(self, window: Window | None):
+        self._window = window
+
     def stop(self):
         if not self.running:
             return
+
         self.running = False
 
         pyglet.clock.unschedule(self.update)
 
         if self.window:
             self.window.close()
+
         pyglet.app.exit()
+
+    def _safe_close(self):
+        """Called in main thread after all drawing completes"""
+        if self.window:
+            self.window.set_visible(False)
+
+            self.window.remove_handlers()
+            self.window.close()
+            self.window = None

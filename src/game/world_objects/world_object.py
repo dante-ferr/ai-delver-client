@@ -49,3 +49,6 @@ class WorldObject:
         return not (
             x1_max < x2_min or x1_min > x2_max or y1_max < y2_min or y1_min > y2_max
         )
+
+    def cleanup(self):
+        pass

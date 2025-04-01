@@ -3,9 +3,9 @@ import customtkinter as ctk
 
 class Overlay(ctk.CTkToplevel):
     def __init__(self, title: str):
-        from editor import app
+        from app_manager import app_manager
 
-        super().__init__(app)
+        super().__init__(app_manager.editor_app)
 
         self.attributes("-topmost", True)
 

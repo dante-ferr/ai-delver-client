@@ -1,5 +1,4 @@
 import customtkinter as ctk
-from game import game_manager
 from level import level_loader
 from editor.components.overlay.message_overlay import MessageOverlay
 
@@ -14,9 +13,10 @@ class Sidebar(ctk.CTkFrame):
         play_game_button.pack(pady=8)
 
     def _play_game(self):
-        issues = level_loader.level.issues
+        from app_manager import app_manager
 
+        issues = level_loader.level.issues
         if len(issues) > 0:
             MessageOverlay(f"There are some issues with the level:", paragraphs=issues)
         else:
-            game_manager.start_game()
+            app_manager.start_game()

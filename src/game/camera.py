@@ -3,7 +3,7 @@ from pyglet.math import Vec3
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .world_objects.entities.entity import Entity
+    from .world_objects import WorldObject
 
 
 class Camera:
@@ -13,7 +13,7 @@ class Camera:
     offset_y: float = 0
     target_position: tuple[float, float] | None = None
 
-    entity_being_followed: "Entity | None" = None
+    world_object_being_followed: "WorldObject | None" = None
     follow_smoothing_factor = 0.05
 
     _zoom_target: float = 1.0
@@ -78,9 +78,9 @@ class Camera:
         self.offset_x += self.scroll_speed * axis_x
         self.offset_y += self.scroll_speed * axis_y
 
-    def start_following(self, entity: "Entity"):
-        """Start following a given entity."""
-        self.entity_being_followed = entity
+    def start_following(self, world_object: "WorldObject"):
+        """Start following a given world object."""
+        self.world_object_being_followed = world_object
 
     def __enter__(self):
         self.begin()
@@ -133,14 +133,14 @@ class Camera:
         self._zoom += (self._zoom_target - self._zoom) * self.zoom_smoothing_factor
 
     def _follow_entity(self):
-        """ "Set the camera position to follow a given entity."""
-        if not self.entity_being_followed:
+        """ "Set the camera position to follow a given world object."""
+        if not self.world_object_being_followed:
             return
 
         self.target_position = (
-            (-self.entity_being_followed.position[0] + self._window.width / 2)
+            (-self.world_object_being_followed.position[0] + self._window.width / 2)
             / self._zoom,
-            (-self.entity_being_followed.position[1] + self._window.height / 2)
+            (-self.world_object_being_followed.position[1] + self._window.height / 2)
             / self._zoom,
         )
 

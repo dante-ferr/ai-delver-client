@@ -33,3 +33,8 @@ class SkeletalEntity(Entity):
     def run_animation(self, animation_name: str | None, starting_frame=0, speed=1):
         """Run an animation on the skeletal entity."""
         self.skeleton.run_animation(animation_name, starting_frame, speed)
+
+    def cleanup(self):
+        if hasattr(self, "skeleton"):
+            del self.skeleton.batch
+            del self.skeleton
