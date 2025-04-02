@@ -50,11 +50,9 @@ class Game:
         self.keys = pyglet.window.key.KeyStateHandler()
         self.controls = Controls(self.keys)
         self.controls.append_delver(self.delver)
-        self.controls.append_camera(self.camera)
 
         self.window.push_handlers(
             self.keys,
-            on_mouse_scroll=self.controls.on_mouse_scroll,
             on_close=self._on_window_close,
         )
 
@@ -69,8 +67,11 @@ class Game:
     def _on_screen_maximize_interval(self, dt):
         self._lock_window_size()
 
-        self.camera = Camera(self.window, start_zoom=0.5, min_zoom=0.25, max_zoom=2)
+        self.camera = Camera(self.window, start_zoom=1, min_zoom=0.25, max_zoom=2)
         self.camera.start_following(self.delver)
+
+        self.controls.append_camera(self.camera)
+        self.window.push_handlers(on_mouse_scroll=self.controls.on_mouse_scroll)
 
     def _lock_window_size(self):
         """Locks the window size completely (even on Linux)"""

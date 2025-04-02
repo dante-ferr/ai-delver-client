@@ -11,7 +11,6 @@ class Camera:
 
     offset_x: float = 0
     offset_y: float = 0
-    target_position: tuple[float, float] | None = None
 
     world_object_being_followed: "WorldObject | None" = None
     follow_smoothing_factor = 0.05
@@ -81,6 +80,8 @@ class Camera:
     def start_following(self, world_object: "WorldObject"):
         """Start following a given world object."""
         self.world_object_being_followed = world_object
+        with self:
+            self.position = self.followed_object_position
 
     def __enter__(self):
         self.begin()
@@ -91,7 +92,7 @@ class Camera:
     def begin(self):
         self._apply_view_matrix_transformation()
 
-        self._follow_entity()
+        self._follow_world_object()
         self._execute_zoom()
 
     def end(self):
@@ -111,8 +112,8 @@ class Camera:
         return (translated_x, translated_y)
 
     def _apply_view_matrix_transformation(self):
-        x = -self._window.width // 2 / self._zoom + self.offset_x
-        y = -self._window.height // 2 / self._zoom + self.offset_y
+        x = -self._window.width / 2 / self._zoom + self.offset_x
+        y = -self._window.height / 2 / self._zoom + self.offset_y
 
         view_matrix = self._window.view.translate(
             Vec3(-x * self._zoom, -y * self._zoom, 0)
@@ -121,8 +122,8 @@ class Camera:
         self._window.view = view_matrix
 
     def _restore_view_matrix(self):
-        x = -self._window.width // 2 / self._zoom + self.offset_x
-        y = -self._window.height // 2 / self._zoom + self.offset_y
+        x = -self._window.width / 2 / self._zoom + self.offset_x
+        y = -self._window.height / 2 / self._zoom + self.offset_y
 
         view_matrix = self._window.view.scale(Vec3(1 / self._zoom, 1 / self._zoom, 1))
         view_matrix = view_matrix.translate(Vec3(x * self._zoom, y * self._zoom, 0))
@@ -130,31 +131,53 @@ class Camera:
 
     def _execute_zoom(self):
         """Execute the zoom at each frame."""
-        self._zoom += (self._zoom_target - self._zoom) * self.zoom_smoothing_factor
+        if abs(self._zoom_target - self._zoom) < 0.01:
+            return
 
-    def _follow_entity(self):
+        zoom_sum = (self._zoom_target - self._zoom) * self.zoom_smoothing_factor
+        self._zoom += zoom_sum
+
+        distance_to_world_object = self.distance_to_world_object
+        self.position = (
+            self.position[0] + distance_to_world_object[0],
+            self.position[1] + distance_to_world_object[1],
+        )
+
+    def _follow_world_object(self):
         """ "Set the camera position to follow a given world object."""
         if not self.world_object_being_followed:
             return
 
-        self.target_position = (
-            (-self.world_object_being_followed.position[0] + self._window.width / 2)
-            / self._zoom,
-            (-self.world_object_being_followed.position[1] + self._window.height / 2)
-            / self._zoom,
-        )
+        distance_to_world_object = self.distance_to_world_object
 
         if (
-            abs(self.target_position[0] - self.position[0]) < 4
-            and abs(self.target_position[1] - self.position[1]) < 4
+            abs(distance_to_world_object[0]) < 4
+            and abs(distance_to_world_object[1]) < 4
         ):
             return
 
         self.position = (
             self.position[0]
-            + (self.target_position[0] - self.position[0])
-            * self.follow_smoothing_factor,
+            + (distance_to_world_object[0]) * self.follow_smoothing_factor,
             self.position[1]
-            + (self.target_position[1] - self.position[1])
-            * self.follow_smoothing_factor,
+            + (distance_to_world_object[1]) * self.follow_smoothing_factor,
+        )
+
+    @property
+    def distance_to_world_object(self):
+        return (
+            self.followed_object_position[0] - self.position[0],
+            self.followed_object_position[1] - self.position[1],
+        )
+
+    @property
+    def followed_object_position(self):
+        if not self.world_object_being_followed:
+            raise Exception("No world object being followed")
+
+        return (
+            (-self.world_object_being_followed.position[0] + self._window.width / 2)
+            / self._zoom,
+            (-self.world_object_being_followed.position[1] + self._window.height / 2)
+            / self._zoom,
         )
