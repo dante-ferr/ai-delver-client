@@ -5,6 +5,7 @@ name = "pypi"
 
 [scripts]
 start = "python src/main.py"
+gpu_list = "python src/gpu_list.py"
 
 [packages]
 pyglet = "*"
@@ -16,8 +17,16 @@ pytiling = {file = "../pytiling", editable = true}
 pyglet-dragonbones = {file = "../pyglet-dragonbones", editable = true}
 blinker = "*"
 dill = "*"
+numpy = "*"
+tf-agents = "*"
+tensorflow = "==2.15.0"
+matplotlib = "*"
 
 [dev-packages]
+matplotlib = "*"
 
 [requires]
-python_version = "3.13.2"
+python_version = "3.11.0"
+
+[pipenv]
+allow_prereleases = true

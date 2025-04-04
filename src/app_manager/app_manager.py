@@ -1,5 +1,6 @@
 import customtkinter as ctk
-from game.game import Game
+
+from runtime.view.game import Game
 from typing import Optional
 from editor import EditorApp
 

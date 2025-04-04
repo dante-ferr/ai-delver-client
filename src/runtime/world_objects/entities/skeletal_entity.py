@@ -22,6 +22,10 @@ class SkeletalEntity(Entity):
         """Set the angle of the skeletal entity."""
         self.skeleton.set_angle(angle)
 
+    @property
+    def angle(self):
+        return self.skeleton.angle
+
     def set_target_angle(self, angle: float):
         """Set the target angle of the skeletal entity."""
         self.skeleton.set_target_angle(angle)

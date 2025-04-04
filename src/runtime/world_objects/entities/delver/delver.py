@@ -5,12 +5,6 @@ import json
 import pymunk
 from ..skeletal_entity import SkeletalEntity
 
-with open("src/game/config.json", "r") as file:
-    config_data = json.load(file)
-
-window_width = config_data["window_width"]
-window_height = config_data["window_height"]
-
 delver_groups = {
     "head": pyglet.graphics.Group(3),
     "left_foot": pyglet.graphics.Group(0),

@@ -3,7 +3,7 @@ from pyglet.math import Vec3
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .world_objects import WorldObject
+    from ..world_objects import WorldObject
 
 
 class Camera:
