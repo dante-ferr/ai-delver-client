@@ -1,0 +1,30 @@
+services:
+  app:
+    build: .
+    container_name: ai_delver
+    working_dir: /app
+    # volumes:
+    # - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - PYTHONUNBUFFERED=1
+      - DISPLAY=${DISPLAY}
+      - XAUTHORITY=~/.Xauthority
+    tty: false
+    stdin_open: false
+    develop:
+      watch:
+        - action: sync
+          path: .
+          target: /src/app
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: package.json

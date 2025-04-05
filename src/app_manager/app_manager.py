@@ -1,5 +1,3 @@
-import customtkinter as ctk
-
 from runtime.view.game import Game
 from typing import Optional
 from editor import EditorApp
@@ -31,6 +29,7 @@ class AppManager:
     def start_editor(self):
         if self._editor is None:
             self._editor = EditorApp()
+            print("Starting editor")
             self._editor.mainloop()
         else:
             self._editor.deiconify()

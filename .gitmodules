@@ -1,0 +1,6 @@
+[submodule "pytiling"]
+	path = pytiling
+	url = https://github.com/dante-ferr/pytiling.git
+[submodule "pyglet_dragonbones"]
+	path = pyglet_dragonbones
+	url = https://github.com/dante-ferr/pyglet-dragonbones.git

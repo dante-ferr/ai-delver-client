@@ -42,7 +42,9 @@ class SvgImage(ImageTk.PhotoImage):
         svg_content = re.sub(r'stroke="[^"]+"', f'stroke="{stroke}"', svg_content)
         svg_content = re.sub(r'fill="[^"]+"', f'fill="{fill}"', svg_content)
 
-        temp_svg_path = "temp_modified.svg"
+        temp_svg_path = temp_svg_path = os.path.join(
+            os.getenv("TEMP_DIR", "/tmp"), "temp_modified.svg"
+        )
         with open(temp_svg_path, "w") as temp_file:
             temp_file.write(svg_content)
 
