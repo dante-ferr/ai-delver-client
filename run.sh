@@ -1,6 +1,21 @@
 #!/bin/bash
 
-export UID=$(id -u)
-export GID=$(id -g)
+set -e
+set -o pipefail
 
-docker compose --env-file <(env | grep -E '^(UID|GID|DISPLAY)=') up --build
+echo "🔁 Initializing submodules without overwriting changes..."
+git submodule update --init --recursive --merge
+
+echo "📦 Starting AI module using Docker Compose..."
+cd ai_delver_intelligence
+
+docker compose up -d
+
+cd ..
+
+echo "🖥️ Running AI Delver main application..."
+pipenv run start
+
+echo "🧹 Stopping AI module container..."
+cd ai_delver_intelligence
+docker compose down

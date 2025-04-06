@@ -5,7 +5,6 @@ name = "pypi"
 
 [scripts]
 start = "python src/main.py"
-gpu_list = "python src/gpu_list.py"
 
 [packages]
 customtkinter = "*"
@@ -15,14 +14,10 @@ cairosvg = "*"
 blinker = "*"
 dill = "*"
 numpy = "*"
-tf-agents = "*"
-tensorflow = "==2.15.0"
-matplotlib = "*"
 six = "*"
 pyglet = "*"
 
 [dev-packages]
-matplotlib = "*"
 
 [requires]
 python_version = "3.11.0"
