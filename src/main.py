@@ -5,7 +5,6 @@ PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(PROJECT_ROOT, "src"))
 sys.path.insert(0, os.path.join(PROJECT_ROOT, ".."))
 
-# import tensorflow
 from app_manager import app_manager
 
 
@@ -25,6 +24,7 @@ def main():
 
     # level_loader.load_level("data/level_saves/My custom level.dill")
     # train()
+    pass
 
 
 if __name__ == "__main__":
