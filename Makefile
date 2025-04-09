@@ -1,4 +1,8 @@
-.PHONY: run build ensure-env
+.PHONY: run build ensure-env update-submodules
+
+update-submodules:
+	echo "🔁 Initializing submodules without overwriting changes..."
+	git submodule update --init --recursive --merge
 
 ensure-env:
 	@if [ ! -f ai_delver_intelligence/.env ]; then \
@@ -9,8 +13,8 @@ ensure-env:
 	  echo "✅ .env already exists."; \
 	fi
 
-run: ensure-env
-	./run.sh
-
-build: ensure-env
+build: update-submodules ensure-env
 	cd ai_delver_intelligence && docker compose up --build -d
+
+run: update-submodules ensure-env
+	./run.sh

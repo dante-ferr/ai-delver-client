@@ -3,9 +3,6 @@
 set -e
 set -o pipefail
 
-echo "🔁 Initializing submodules without overwriting changes..."
-git submodule update --init --recursive --merge
-
 echo "📦 Starting AI module using Docker Compose..."
 cd ai_delver_intelligence
 
