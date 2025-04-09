@@ -10,8 +10,14 @@ docker compose up -d
 
 cd ..
 
-echo "🖥️ Running AI Delver main application..."
-pipenv run start
+echo "🖥️ Running AI Delver's $1 application..."
+if [ "$1" == "game" ]; then
+    python3 src/direct_game.py
+elif [ "$1" == "ai" ]; then
+    python3 src/direct_ai.py
+else
+    python3 src/main.py
+fi
 
 echo "🧹 Stopping AI module container..."
 cd ai_delver_intelligence

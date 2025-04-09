@@ -1,3 +1,5 @@
+ENTRYPOINT ?= main
+
 .PHONY: run build ensure-env update-submodules
 
 update-submodules:
@@ -17,4 +19,4 @@ build: update-submodules ensure-env
 	cd ai_delver_intelligence && docker compose up --build -d
 
 run: update-submodules ensure-env
-	./run.sh
+	./run.sh $(ENTRYPOINT)
