@@ -1,6 +1,6 @@
 # AI Delver
 
-**AI Delver** is a simulation framework where an AI agent learns to navigate 2D environments filled with obstacles, traps, and goals. It combines procedural level design, reinforcement learning, and custom visualization to explore how agents adapt to dynamic dungeon-like environments.
+**AI Delver** is a simulation framework where an AI agent learns to navigate 2D environments filled with obstacles, traps, and goals.
 
 ## Features
 
@@ -10,8 +10,9 @@
 
 ## Subprojects
 
-- [`pytiling`](./pytiling): Autotiling engine for procedural and user-defined map generation.
-- [`pyglet_dragonbones`](./pyglet_dragonbones): Renderer for DragonBones animation assets in `pyglet`.
+- [`pytiling`](https://github.com/dante-ferr/pytiling.git): Autotiling library for handling tilemaps.
+- [`pyglet_dragonbones`](https://github.com/dante-ferr/pyglet-dragonbones.git): Renderer for DragonBones animation assets in `pyglet`.
+- [`ai_delver_intelligence`](https://github.com/dante-ferr/ai_delver_intelligence.git): Subproject that handles Ai Delver's Ai.
 
 ### Setup (Local)
 
