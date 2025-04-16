@@ -16,4 +16,4 @@ class Simulation(Runtime):
         self.elapsed_time += dt
 
     def add_delver_action(self, action: dict[str, Any]):
-        self.delver_actions.append(DelverAction(action["move_direction"]))
+        self.delver_actions.append(DelverAction(**action))

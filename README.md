@@ -14,7 +14,7 @@
 - [`pyglet_dragonbones`](https://github.com/dante-ferr/pyglet-dragonbones.git): Renderer for DragonBones animation assets in `pyglet`.
 - [`ai_delver_intelligence`](https://github.com/dante-ferr/ai_delver_intelligence.git): Subproject that handles Ai Delver's Ai.
 
-### Setup (Local)
+## Setup (Local)
 
 To setup the project, you must:
 
@@ -22,7 +22,7 @@ To setup the project, you must:
 - Run `make build`
 - Run `make run`
 
-### COMMANDS
+## COMMANDS
 
 - `make update-submodules`  
   Initializes and updates git submodules without overwriting local changes.
