@@ -1,7 +1,13 @@
 from fastapi import APIRouter
 from runtime.simulation import simulation_controller
 from typing import cast
-import numpy as np
+from fastapi.responses import JSONResponse
+import json
+from .delver_action_controller import delver_action_controller
+
+with open("src/runtime/config.json", "r") as file:
+    config = json.load(file)
+DT = 1 / config["fps"] * 3
 
 router = APIRouter()
 
@@ -9,13 +15,9 @@ router = APIRouter()
 @router.post("/step")
 def step_simulation(action: dict[str, float]):
     simulation = simulation_controller.current_simulation
-    simulation.add_delver_action(action)
+    delver_action_controller(action, simulation, DT)
 
-    move_direction = cast(float, action["move_direction"])
-    if move_direction != 360.0:
-        simulation.delver.move(1, move_direction)
-
-    simulation.update(1)
+    simulation.update(DT)
 
     reward = -1
     ended = False
@@ -29,12 +31,17 @@ def step_simulation(action: dict[str, float]):
 
 @router.get("/walls")
 def get_walls():
-    return np.where(
-        simulation_controller.current_simulation.tilemap.get_layer("walls").grid
-        is not None,
-        1,
-        0,
-    ).astype(np.int32)
+    import numpy as np
+
+    walls_grid = simulation_controller.current_simulation.tilemap.get_layer(
+        "walls"
+    ).grid
+    walls_grid_presence = np.array(
+        [[1 if cell is not None else 0 for cell in row] for row in walls_grid],
+        dtype=np.uint8,
+    )
+
+    return JSONResponse(content=walls_grid_presence.tolist())
 
 
 @router.post("/start_new_simulation")
@@ -50,3 +57,8 @@ def get_delver_position():
 @router.get("/goal_position")
 def get_goal_position():
     return simulation_controller.current_simulation.goal.position
+
+
+@router.get("/delver_angle")
+def get_delver_angle():
+    return simulation_controller.current_simulation.delver.angle

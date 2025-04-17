@@ -1,6 +1,9 @@
 from .. import Runtime
-from ..delver_action import DelverAction
-from typing import Any
+from typing import Any, TypedDict
+
+
+class DelverAction(TypedDict):
+    move: int
 
 
 class Simulation(Runtime):

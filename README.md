@@ -36,9 +36,16 @@ To setup the project, you must:
 - `make run`  
   Runs the main application. Automatically runs update-submodules and ensure-env first.  
   You can specify an entry point by setting ENTRYPOINT:
+
   - `make run ENTRYPOINT=game` runs the game application
   - `make run ENTRYPOINT=ai` runs the AI application
   - Default (no ENTRYPOINT) runs main.py
+
+- `make run-ai`
+  Only runs the ai_delver_intelligence container, without making it detached.
+
+- `make run-main`
+  Only runs the main application, without executing the docker container.
 
 The run script performs these steps:
 

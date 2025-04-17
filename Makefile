@@ -18,6 +18,12 @@ ensure-env:
 build: update-submodules ensure-env
 	cd ai_delver_intelligence && docker compose build
 
-run: update-submodules ensure-env
+run-ai: update-submodules ensure-env
 	cd ai_delver_intelligence && docker compose up
-	cd .. && ./run.sh $(ENTRYPOINT)
+
+run-main: update-submodules ensure-env
+	./run.sh $(ENTRYPOINT)
+
+run: update-submodules ensure-env
+	cd ai_delver_intelligence && docker compose up -d
+	./run.sh $(ENTRYPOINT)

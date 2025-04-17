@@ -3,7 +3,6 @@ import math
 from pymunk import Vec2d
 from typing import TYPE_CHECKING
 from ..world_object import WorldObject
-import pymunk
 
 if TYPE_CHECKING:
     from .entity_body import EntityBody
