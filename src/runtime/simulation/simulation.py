@@ -1,9 +1,6 @@
 from .. import Runtime
-from typing import Any, TypedDict
-
-
-class DelverAction(TypedDict):
-    move: int
+from typing import Any
+from .delver_action import DelverAction
 
 
 class Simulation(Runtime):
@@ -18,5 +15,5 @@ class Simulation(Runtime):
 
         self.elapsed_time += dt
 
-    def add_delver_action(self, action: dict[str, Any]):
+    def add_delver_action(self, action: DelverAction):
         self.delver_actions.append(DelverAction(**action))

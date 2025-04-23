@@ -22,6 +22,11 @@ To setup the project, you must:
 - Run `make build`
 - Run `make run`
 
+If you want to see the logs of ai_delver_intelligence's container, you need to:
+
+- Run `make run-ai` first
+- Once the ai_delver_intelligence api is up and running, open another terminal then run `make run-main`
+
 ## COMMANDS
 
 - `make update-submodules`  
@@ -42,7 +47,7 @@ To setup the project, you must:
   - Default (no ENTRYPOINT) runs main.py
 
 - `make run-ai`
-  Only runs the ai_delver_intelligence container, without making it detached.
+  Only runs the ai_delver_intelligence container, without making it detached. Mainly used in a separate terminal to allow the dev to see the container's internal logs.
 
 - `make run-main`
   Only runs the main application, without executing the docker container.

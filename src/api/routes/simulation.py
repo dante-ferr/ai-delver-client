@@ -1,9 +1,12 @@
 from fastapi import APIRouter
 from runtime.simulation import simulation_controller
-from typing import cast
 from fastapi.responses import JSONResponse
 import json
 from .delver_action_controller import delver_action_controller
+from typing import TYPE_CHECKING, cast, Any
+
+if TYPE_CHECKING:
+    from runtime.simulation import DelverAction
 
 with open("src/runtime/config.json", "r") as file:
     config = json.load(file)
@@ -13,9 +16,9 @@ router = APIRouter()
 
 
 @router.post("/step")
-def step_simulation(action: dict[str, float]):
+def step_simulation(action: dict[str, Any]):
     simulation = simulation_controller.current_simulation
-    delver_action_controller(action, simulation, DT)
+    delver_action_controller(cast("DelverAction", action), simulation, DT)
 
     simulation.update(DT)
 

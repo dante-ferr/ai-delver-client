@@ -2,23 +2,15 @@ from typing import Any, cast, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from runtime.simulation import Simulation
+    from runtime.simulation import DelverAction
 
-delver_angle_var = 5
+DELVER_ANGLE_VAR = 5
 
 
-def delver_action_controller(action: Any, simulation: "Simulation", dt: float):
+def delver_action_controller(
+    action: "DelverAction", simulation: "Simulation", dt: float
+):
     simulation.add_delver_action(action)
 
-    move_command = action["move"]
-
-    move_direction = simulation.delver.angle
-    if move_command == 0:
-        return
-    elif move_command == 1:
-        move_direction += delver_angle_var * -1
-    elif move_command == 2:
-        move_direction += delver_angle_var
-    elif move_command == 3:
-        pass  # Keep move direction unchanged
-
-    simulation.delver.move(dt, move_direction)
+    if action["move"]:
+        simulation.delver.move(dt, action["move_angle"])

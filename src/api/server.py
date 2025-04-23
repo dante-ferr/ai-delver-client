@@ -16,7 +16,7 @@ def startup_event():
 
 def run_api():
     def _run_callback():
-        uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")
+        uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info", access_log=False)
 
     api_thread = threading.Thread(target=_run_callback, daemon=True)
     api_thread.start()
