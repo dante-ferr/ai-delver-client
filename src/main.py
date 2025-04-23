@@ -5,7 +5,7 @@ from app_manager import app_manager
 
 def main():
     run_api()
-    app_manager.start_editor()  # Your main app logic
+    app_manager.start_editor()
 
 
 if __name__ == "__main__":

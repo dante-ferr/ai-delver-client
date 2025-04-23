@@ -34,8 +34,6 @@ class App(ctk.CTk):
 
         self.bind("<Button-1>", self.clear_focus)
 
-        print("App created")
-
     def restart_level_editor(self):
         if self.pages["level_editor"]:
             self.pages["level_editor"].pack_forget()

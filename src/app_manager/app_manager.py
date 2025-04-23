@@ -1,6 +1,7 @@
 from runtime.view.game import Game
 from typing import Optional
 from editor import EditorApp
+import logging
 
 
 class AppManager:
@@ -29,7 +30,7 @@ class AppManager:
     def start_editor(self):
         if self._editor is None:
             self._editor = EditorApp()
-            print("Starting editor")
+            logging.info("Starting editor")
             self._editor.mainloop()
         else:
             self._editor.deiconify()

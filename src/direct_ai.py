@@ -1,5 +1,6 @@
 from bootstrap import *
 import requests
+import logging
 
 if __name__ == "__main__":
     from level import level_loader
@@ -12,6 +13,5 @@ if __name__ == "__main__":
 
     api_ready.wait()
 
-    print("Sending training request...")
+    logging.info("Sending training request...")
     response = requests.post("http://localhost:8001/train")
-    print(response)

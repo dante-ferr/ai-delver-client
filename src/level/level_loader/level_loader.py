@@ -3,6 +3,7 @@ import dill
 from ._level_factory import LevelFactory
 from pathlib import Path
 from typing import cast, TYPE_CHECKING
+import logging
 
 if TYPE_CHECKING:
     from ..level import Level
@@ -23,16 +24,10 @@ class LevelLoader:
 
         if path.is_file():
             with open(path, "rb") as file:
-                print("Loading existing level")
+                logging.info("Loading existing level")
                 self._level = dill.load(file)
-            # try:
-            #     with open(path, "rb") as file:
-            #         self.level = dill.load(file)
-            # except Exception as e:
-            #     print(f"Error loading instance: {e}. Creating a new one.")
-            #     self._create_new_level()
         else:
-            print("Creating new level")
+            logging.info("Creating new level")
             self._create_new_level()
 
     @property
