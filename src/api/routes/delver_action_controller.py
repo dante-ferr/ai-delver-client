@@ -4,8 +4,6 @@ if TYPE_CHECKING:
     from runtime.simulation import Simulation
     from runtime.simulation import DelverAction
 
-DELVER_ANGLE_VAR = 5
-
 
 def delver_action_controller(
     action: "DelverAction", simulation: "Simulation", dt: float

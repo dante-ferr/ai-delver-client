@@ -5,7 +5,6 @@ import json
 from runtime.simulation import simulation_controller
 from .delver_action_controller import delver_action_controller
 from typing import TYPE_CHECKING
-import logging
 
 if TYPE_CHECKING:
     from runtime.simulation import DelverAction

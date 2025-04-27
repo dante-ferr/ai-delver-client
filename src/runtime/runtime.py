@@ -5,6 +5,7 @@ from .level_setup import world_objects_controller_factory
 from typing import cast
 from .world_objects.entities.delver import Delver
 from .space import space
+import time
 
 with open("src/runtime/config.json", "r") as file:
     config_data = json.load(file)
