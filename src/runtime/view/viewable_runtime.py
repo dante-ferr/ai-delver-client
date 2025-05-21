@@ -1,25 +1,18 @@
-import json
-from .. import Runtime
-from pyglet_dragonbones import config as pdb_config
+from ai_delver_runtime import Runtime, config
 from .camera import Camera, Camera
 from pyglet.window import Window
 from .view_controls import ViewControls
 import pyglet
 
-with open("src/runtime/config.json", "r") as file:
-    runtime_config_data = json.load(file)
-
-pdb_config.fps = runtime_config_data["fps"]
-
 
 class ViewableRuntime(Runtime):
-    def __init__(self):
+    def __init__(self, level):
         self.camera: None | Camera = None
         self._window: Window | None = pyglet.window.Window(
             fullscreen=False, resizable=False
         )
 
-        super().__init__()
+        super().__init__(level)
 
         def _maximize_callback(dt):
             self.window.maximize()
@@ -87,7 +80,7 @@ class ViewableRuntime(Runtime):
         super().run()
 
         pyglet.clock.schedule_interval(
-            self.update, 1 / float(runtime_config_data["fps"])
+            self.update, 1 / float(config["fps"])
         )  # Update at 60 FPS
         pyglet.app.run()
 

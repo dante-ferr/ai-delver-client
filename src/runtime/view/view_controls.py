@@ -1,9 +1,8 @@
 from pyglet import window
 from typing import TYPE_CHECKING
-from utils import vector_to_angle
 
 if TYPE_CHECKING:
-    from ..world_objects.entities.delver import Delver
+    from ai_delver_runtime.world_objects.entities.delver import Delver
 
 
 class ViewControls:

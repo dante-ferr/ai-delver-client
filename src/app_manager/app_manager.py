@@ -2,6 +2,7 @@ from runtime.view.game import Game
 from typing import Optional
 from editor import EditorApp
 import logging
+from level import level_loader
 
 
 class AppManager:
@@ -12,7 +13,7 @@ class AppManager:
     def start_game(self):
         if self._editor is not None:
             self._editor.withdraw()
-        self._game = Game()
+        self._game = Game(level_loader.level)
         self._game.run()
 
         if self._editor is not None:

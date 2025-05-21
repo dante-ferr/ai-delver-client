@@ -7,7 +7,7 @@ if __name__ == "__main__":
 
     level_loader.load_level("data/level_saves/My custom level.dill")
 
-    from runtime.simulation import simulation_controller
+    from runtime import simulation_controller
 
     frame = 0
     while True:

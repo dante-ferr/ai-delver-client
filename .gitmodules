@@ -7,3 +7,6 @@
 [submodule "ai_delver_intelligence"]
 	path = ai_delver_intelligence
 	url = https://github.com/dante-ferr/ai_delver_intelligence.git
+[submodule "ai_delver_runtime"]
+	path = ai_delver_runtime
+	url = https://github.com/dante-ferr/ai_delver_runtime.git
