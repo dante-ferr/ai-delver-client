@@ -1,8 +1,5 @@
-[submodule "pytiling"]
-	path = pytiling
-	url = https://github.com/dante-ferr/pytiling.git
-[submodule "pyglet_dragonbones"]
-	path = pyglet_dragonbones
+[submodule "pyglet-dragonbones"]
+	path = pyglet-dragonbones
 	url = https://github.com/dante-ferr/pyglet-dragonbones.git
 [submodule "ai_delver_intelligence"]
 	path = ai_delver_intelligence
@@ -10,3 +7,6 @@
 [submodule "ai_delver_runtime"]
 	path = ai_delver_runtime
 	url = https://github.com/dante-ferr/ai_delver_runtime.git
+[submodule "pytiling"]
+	path = pytiling-lib
+	url = https://github.com/dante-ferr/pytiling.git

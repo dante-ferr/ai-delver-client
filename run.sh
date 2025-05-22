@@ -12,11 +12,11 @@ cd ..
 
 echo "🖥️ Running AI Delver's $1 application..."
 if [ "$1" == "game" ]; then
-    pipenv run python3 src/direct_game.py
+    poetry run python src/direct_game.py
 elif [ "$1" == "ai" ]; then
-    pipenv run python3 src/direct_ai.py
+    poetry run python src/direct_ai.py
 else
-    pipenv run python3 src/main.py
+    poetry run python src/main.py
 fi
 
 echo "🧹 Stopping AI module container..."
