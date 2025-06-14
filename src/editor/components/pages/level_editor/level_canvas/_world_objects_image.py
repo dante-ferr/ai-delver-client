@@ -11,7 +11,7 @@ class WorldObjectsImage:
 
     def _initialize_images(self):
         """Initialize the images from the images directory."""
-        from level import level_loader
+        from level_loader import level_loader
 
         for canvas_object in level_loader.level.map.canvas_objects.values():
             self.images[canvas_object.name] = ImageTk.PhotoImage(canvas_object.image)

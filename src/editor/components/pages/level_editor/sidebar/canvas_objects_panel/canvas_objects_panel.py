@@ -1,5 +1,5 @@
 from editor.utils.selection import populate_selection_manager, SelectionManager
-from level import level_loader
+from level_loader import level_loader
 from ._canvas_object_container import CanvasObjectContainer
 from typing import TYPE_CHECKING
 from editor.theme import theme

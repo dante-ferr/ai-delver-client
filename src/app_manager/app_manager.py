@@ -2,7 +2,7 @@ from runtime.view.game import Game
 from typing import Optional
 from editor import EditorApp
 import logging
-from level import level_loader
+from level_loader import level_loader
 
 
 class AppManager:

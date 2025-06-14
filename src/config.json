@@ -1,4 +1,4 @@
 {
-  "layer_order": ["floor", "walls", "essentials"],
-  "tilemap_layer_names": ["floor", "walls"]
+  "tilemap_layer_names": ["floor", "walls"],
+  "save_folder_path": "data/level_saves"
 }

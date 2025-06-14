@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from level import level_loader
+from level_loader import level_loader
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:

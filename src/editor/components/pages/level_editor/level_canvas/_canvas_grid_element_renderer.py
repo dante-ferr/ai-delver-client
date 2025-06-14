@@ -1,7 +1,7 @@
 from ._tileset_image import TilesetImage
 from typing import Literal, TYPE_CHECKING, cast
 import customtkinter as ctk
-from level import level_loader
+from level_loader import level_loader
 from ._world_objects_image import WorldObjectsImage
 
 

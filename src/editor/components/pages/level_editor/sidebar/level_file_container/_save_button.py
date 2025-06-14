@@ -1,6 +1,6 @@
 from editor.components.overlay.message_overlay import MessageOverlay
 from editor.components import IconButton
-from level import level_loader
+from level_loader import level_loader
 
 
 class SaveButton(IconButton):

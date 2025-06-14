@@ -1,4 +1,4 @@
-from level import level_loader
+from level_loader import level_loader
 import customtkinter as ctk
 from .components.pages.level_editor import LevelEditor
 from .components.pages.runner import Runner

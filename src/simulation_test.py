@@ -3,7 +3,7 @@ from bootstrap import *
 # pipenv run python3 src/simulation_test.py
 
 if __name__ == "__main__":
-    from level import level_loader
+    from level_loader import level_loader
 
     level_loader.load_level("data/level_saves/My custom level.dill")
 

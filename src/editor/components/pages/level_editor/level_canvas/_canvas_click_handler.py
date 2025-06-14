@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, Optional, cast
 from src.utils import bresenham_line
-from level import level_loader
+from level_loader import level_loader
 
 if TYPE_CHECKING:
     from .level_canvas import LevelCanvas

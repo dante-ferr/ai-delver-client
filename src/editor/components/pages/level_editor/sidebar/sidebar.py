@@ -4,7 +4,7 @@ from .layers_panel.layers_panel import LayersPanel
 from .canvas_objects_panel import CanvasObjectPanelsWrapper
 from ._title_textbox import TitleTextbox
 from .level_file_container import LevelFileContainer
-from level import level_loader
+from level_loader import level_loader
 
 
 class Sidebar(ctk.CTkFrame):

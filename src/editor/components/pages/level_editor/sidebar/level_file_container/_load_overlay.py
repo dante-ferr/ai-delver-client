@@ -1,7 +1,7 @@
 from editor.components.overlay.message_overlay import MessageOverlay
 from editor.components.overlay import Overlay
 import customtkinter as ctk
-from level.level import SAVE_FOLDER_PATH
+from level_loader import level_loader
 from pathlib import Path
 
 
@@ -21,7 +21,11 @@ class LoadOverlay(Overlay):
         interaction_container.pack(pady=4)
 
         self.files: dict[str, Path] = {}
-        for file in [file for file in SAVE_FOLDER_PATH.iterdir() if file.is_file()]:
+        for file in [
+            file
+            for file in level_loader.level.save_folder_path.iterdir()
+            if file.is_file()
+        ]:
             self.files[file.name] = file
 
         self.option_menu = ctk.CTkOptionMenu(
@@ -37,7 +41,7 @@ class LoadOverlay(Overlay):
         self._post_init_config()
 
     def _load(self):
-        from level import level_loader
+        from level_loader import level_loader
 
         level_loader.load_level(self.files[self.option_menu.get()])
         self._restart_level_editor()

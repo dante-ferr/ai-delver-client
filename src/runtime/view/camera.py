@@ -1,9 +1,9 @@
-from pyglet.window import Window
 from pyglet.math import Vec3
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ai_delver_runtime.world_objects import WorldObject
+    from pyglet.window import Window
 
 
 class Camera:
@@ -20,7 +20,7 @@ class Camera:
 
     def __init__(
         self,
-        window: Window,
+        window: "Window",
         scroll_speed=1.0,
         start_zoom=1.0,
         min_zoom=1.0,

@@ -10,7 +10,6 @@ package-mode = false
 python = ">=3.13"
 customtkinter = "*"
 pillow = "*"
-pymunk = "*"
 cairosvg = "*"
 blinker = "*"
 dill = "*"
@@ -26,6 +25,7 @@ websockets = "*"
 # Local editable packages
 pytiling = { path = "./pytiling-lib", develop = true }
 ai_delver_runtime = { path = "./ai_delver_runtime", develop = true }
+level = { path = "./level-lib", develop = true }
 
 [tool.poetry.group.dev.dependencies]
 # e.g. pytest = "*"

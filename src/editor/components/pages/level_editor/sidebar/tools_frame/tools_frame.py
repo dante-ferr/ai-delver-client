@@ -2,7 +2,7 @@ import customtkinter as ctk
 from editor.components import SvgImage
 from editor.theme import theme
 from editor.utils.selection import populate_selection_manager, SelectionManager
-from level import level_loader
+from level_loader import level_loader
 
 
 class ToolBox(ctk.CTkFrame):

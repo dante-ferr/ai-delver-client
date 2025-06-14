@@ -3,7 +3,7 @@ from .layer_container import LayerContainer
 from editor.components.svg_image import SvgImage
 from editor.theme import theme
 from editor.utils.selection import populate_selection_manager, SelectionManager
-from level import level_loader
+from level_loader import level_loader
 from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:

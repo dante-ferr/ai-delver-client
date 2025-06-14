@@ -12,7 +12,7 @@ class ViewableRuntime(Runtime):
             fullscreen=False, resizable=False
         )
 
-        super().__init__(level)
+        super().__init__(level, render=True)
 
         def _maximize_callback(dt):
             self.window.maximize()

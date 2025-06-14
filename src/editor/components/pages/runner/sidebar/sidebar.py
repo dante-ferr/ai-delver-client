@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from level import level_loader
+from level_loader import level_loader
 from editor.components.overlay.message_overlay import MessageOverlay
 
 

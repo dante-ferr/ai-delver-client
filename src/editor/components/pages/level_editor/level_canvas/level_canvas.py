@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from level import level_loader
+from level_loader import level_loader
 from typing import TYPE_CHECKING
 from ._canvas_click_handler import CanvasClickHandler
 from ._canvas_scroller import CanvasScroller
