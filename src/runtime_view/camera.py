@@ -2,7 +2,7 @@ from pyglet.math import Vec3
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ai_delver_runtime.world_objects import WorldObject
+    from runtime.world_objects import WorldObject
     from pyglet.window import Window
 
 

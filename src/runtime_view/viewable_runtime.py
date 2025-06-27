@@ -1,4 +1,4 @@
-from ai_delver_runtime import Runtime, config
+from runtime import Runtime, config
 from .camera import Camera, Camera
 from pyglet.window import Window
 from .view_controls import ViewControls

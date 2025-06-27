@@ -7,9 +7,9 @@ update-submodules:
 	git submodule update --init --recursive --merge
 
 ensure-env:
-	@if [ ! -f ai_delver_intelligence/.env ]; then \
-	  echo "UID=$$(id -u)" > ai_delver_intelligence/.env; \
-	  echo "GID=$$(id -g)" >> ai_delver_intelligence/.env; \
+	@if [ ! -f intelligence/.env ]; then \
+	  echo "UID=$$(id -u)" > intelligence/.env; \
+	  echo "GID=$$(id -g)" >> intelligence/.env; \
 	  echo "📄 Created .env with UID and GID."; \
 	else \
 	  echo "✅ .env already exists."; \
@@ -19,8 +19,8 @@ build: update-submodules ensure-env
 	docker compose build
 
 # prepare-intelligence:
-# 	rm -rf ai_delver_intelligence/ai_delver_runtime
-# 	cp -r ai_delver_runtime ai_delver_intelligence/
+# 	rm -rf intelligence/runtime
+# 	cp -r runtime intelligence/
 
 on_run: update-submodules ensure-env
 

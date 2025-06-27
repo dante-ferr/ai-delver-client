@@ -24,7 +24,7 @@ websockets = "*"
 
 # Local editable packages
 pytiling = { path = "./pytiling-lib", develop = true }
-ai_delver_runtime = { path = "./ai_delver_runtime", develop = true }
+runtime = { path = "./runtime-lib", develop = true }
 level = { path = "./level-lib", develop = true }
 
 [tool.poetry.group.dev.dependencies]

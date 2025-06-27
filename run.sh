@@ -4,7 +4,7 @@ set -e
 set -o pipefail
 
 echo "📦 Starting AI module using Docker Compose..."
-cd ai_delver_intelligence
+cd intelligence
 
 docker compose up -d
 
@@ -20,5 +20,5 @@ else
 fi
 
 echo "🧹 Stopping AI module container..."
-cd ai_delver_intelligence
+cd intelligence
 docker compose down

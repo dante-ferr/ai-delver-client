@@ -1,4 +1,4 @@
-from runtime.view.game import Game
+from runtime_view.game import Game
 from typing import Optional
 from editor import EditorApp
 import logging

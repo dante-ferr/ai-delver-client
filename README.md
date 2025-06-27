@@ -12,7 +12,7 @@
 
 - [`pytiling`](https://github.com/dante-ferr/pytiling.git): Autotiling library for handling tilemaps.
 - [`pyglet_dragonbones`](https://github.com/dante-ferr/pyglet-dragonbones.git): Renderer for DragonBones animation assets in `pyglet`.
-- [`ai_delver_intelligence`](https://github.com/dante-ferr/ai_delver_intelligence.git): Subproject that handles Ai Delver's Ai.
+- [`intelligence`](https://github.com/dante-ferr/ai_delver_intelligence.git): Subproject that handles Ai Delver's Ai.
 
 ## Setup (Local)
 
@@ -25,7 +25,7 @@ To setup the project, you must:
 If you want to see the logs of ai_delver_intelligence's container, you need to:
 
 - Run `make run-ai` first
-- Once the ai_delver_intelligence api is up and running, open another terminal then run `make run-main`
+- Once the intelligence api is up and running, open another terminal then run `make run-main`
 
 ## COMMANDS
 
@@ -33,7 +33,7 @@ If you want to see the logs of ai_delver_intelligence's container, you need to:
   Initializes and updates git submodules without overwriting local changes.
 
 - `make ensure-env`  
-  Creates a .env file in the ai_delver_intelligence directory with your UID and GID if it doesn't exist.
+  Creates a .env file in the intelligence directory with your UID and GID if it doesn't exist.
 
 - `make build`  
   Builds and starts the Docker containers in detached mode. Automatically runs update-submodules and ensure-env first.
@@ -47,7 +47,7 @@ If you want to see the logs of ai_delver_intelligence's container, you need to:
   - Default (no ENTRYPOINT) runs main.py
 
 - `make run-ai`
-  Only runs the ai_delver_intelligence container, without making it detached. Mainly used in a separate terminal to allow the dev to see the container's internal logs.
+  Only runs the intelligence container, without making it detached. Mainly used in a separate terminal to allow the dev to see the container's internal logs.
 
 - `make run-main`
   Only runs the main application, without executing the docker container.

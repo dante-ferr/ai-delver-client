@@ -4,12 +4,12 @@ services:
       - "8001:8001"
     build:
       context: .
-      dockerfile: ai_delver_intelligence/Dockerfile
+      dockerfile: intelligence/Dockerfile
       args:
         UID: ${UID:-1000}
         GID: ${GID:-1000}
-    image: ai_delver_intelligence
-    container_name: ai_delver_intelligence
+    image: intelligence
+    container_name: intelligence
     working_dir: /app
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
@@ -17,10 +17,10 @@ services:
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
       - NVIDIA_REQUIRE_CUDA=cuda>=11.8
     volumes:
-      - ./ai_delver_intelligence:/app
+      - ./intelligence:/app
       - ./pytiling-lib:/app/pytiling-lib
       - ./pyglet-dragonbones:/app/pyglet-dragonbones
-      - ./ai_delver_runtime:/app/ai_delver_runtime
+      - ./runtime-lib:/app/runtime-lib
       - ./level-lib:/app/level-lib
       - ./assets:/app/assets
     extra_hosts:
