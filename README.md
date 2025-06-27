@@ -5,14 +5,13 @@
 ## Features
 
 - 🧠 **AI Integration**: Reinforcement learning support for training agents to solve complex spatial challenges.
-- 🧱 **Level Editor**: (Coming soon) A GUI tool for designing levels using a tile-based system powered by Pytiling.
+- 🧱 **Level Editor**: A GUI tool for designing levels using a tile-based system powered by Pytiling.
 - 📊 **Replay System**: Save and review agent behaviors across different environments (NOT AVAILABLE YET).
 
 ## Subprojects
 
 - [`pytiling`](https://github.com/dante-ferr/pytiling.git): Autotiling library for handling tilemaps.
 - [`pyglet_dragonbones`](https://github.com/dante-ferr/pyglet-dragonbones.git): Renderer for DragonBones animation assets in `pyglet`.
-- [`intelligence`](https://github.com/dante-ferr/ai_delver_intelligence.git): Subproject that handles Ai Delver's Ai.
 
 ## Setup (Local)
 
@@ -21,6 +20,8 @@ To setup the project, you must:
 - Git clone Ai Delver with its submodules: `git clone --recurse-submodules -j8 https://github.com/dante-ferr/ai-delver.git`
 - Run `make build`
 - Run `make run`
+
+Note that this project requires proper GPU driver setup: you must have NVIDIA drivers and NVIDIA Container Toolkit installed in your system.
 
 If you want to see the logs of ai_delver_intelligence's container, you need to:
 
@@ -39,24 +40,18 @@ If you want to see the logs of ai_delver_intelligence's container, you need to:
   Builds and starts the Docker containers in detached mode. Automatically runs update-submodules and ensure-env first.
 
 - `make run`  
-  Runs the main application. Automatically runs update-submodules and ensure-env first.  
+  Runs the full application. Automatically runs update-submodules and ensure-env first.  
   You can specify an entry point by setting ENTRYPOINT:
 
   - `make run ENTRYPOINT=game` runs the game application
   - `make run ENTRYPOINT=ai` runs the AI application
-  - Default (no ENTRYPOINT) runs main.py
+  - Default (no ENTRYPOINT) runs main.py, which executes the editor app
 
 - `make run-ai`
-  Only runs the intelligence container, without making it detached. Mainly used in a separate terminal to allow the dev to see the container's internal logs.
+  Only runs the intelligence container, without making it detached. Mainly used in a separate terminal to allow the developer to see the container's internal logs.
 
 - `make run-main`
   Only runs the main application, without executing the docker container.
-
-The run script performs these steps:
-
-1. Starts the AI module using Docker Compose
-2. Runs the specified application (game/ai/main)
-3. Stops the AI module containers when done
 
 ```
 
