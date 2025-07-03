@@ -18,18 +18,10 @@ ensure-env:
 build: update-submodules ensure-env
 	docker compose build
 
-# prepare-intelligence:
-# 	rm -rf intelligence/runtime
-# 	cp -r runtime intelligence/
-
 on_run: update-submodules ensure-env
 
-run-ai: on_run #prepare-intelligence
+run-ai: on_run
 	docker compose up
 
-run-main: on_run
-	./run.sh $(ENTRYPOINT)
-
-run: on_run prepare-intelligence
-	docker compose up -d
+run: on_run
 	./run.sh $(ENTRYPOINT)

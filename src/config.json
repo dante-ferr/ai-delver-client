@@ -1,4 +1,3 @@
 {
-  "tilemap_layer_names": ["floor", "walls"],
-  "save_folder_path": "data/level_saves"
+  "tilemap_layer_names": ["floor", "walls"]
 }

@@ -27,9 +27,9 @@ TILEMAP_LAYER_NAMES: list[str] = config_data["tilemap_layer_names"]
 
 
 class LevelFactory:
-    def __init__(self, save_folder_path: str | None = None):
+
+    def __init__(self):
         self._level: "Level | None" = None
-        self.save_folder_path = save_folder_path
 
     def create_level(self):
         from ..level import Level
@@ -41,7 +41,7 @@ class LevelFactory:
         self._configure_world_objects_map()
         mixed_map.populate_layers()
 
-        self.level = Level(mixed_map, save_folder_path=self.save_folder_path)
+        self.level = Level(mixed_map)
         self.level.map.add_layer_concurrence("walls", "essentials")
 
         CanvasObjectsFactory(self.level).create_canvas_objects()

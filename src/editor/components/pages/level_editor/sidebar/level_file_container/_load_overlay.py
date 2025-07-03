@@ -3,6 +3,12 @@ from editor.components.overlay import Overlay
 import customtkinter as ctk
 from level_loader import level_loader
 from pathlib import Path
+import json
+
+with open("level-lib/level/config.json", "r") as file:
+    level_config = json.load(file)
+
+SAVE_FOLDER_PATH = Path(level_config["save_folder_path"])
 
 
 class LoadOverlay(Overlay):
@@ -21,11 +27,7 @@ class LoadOverlay(Overlay):
         interaction_container.pack(pady=4)
 
         self.files: dict[str, Path] = {}
-        for file in [
-            file
-            for file in level_loader.level.save_folder_path.iterdir()
-            if file.is_file()
-        ]:
+        for file in [file for file in SAVE_FOLDER_PATH.iterdir() if file.is_file()]:
             self.files[file.name] = file
 
         self.option_menu = ctk.CTkOptionMenu(

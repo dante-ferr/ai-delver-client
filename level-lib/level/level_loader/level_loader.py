@@ -9,8 +9,9 @@ if TYPE_CHECKING:
 
 
 class LevelLoader:
-    def __init__(self, save_folder_path: str | None = None):
-        self.factory = LevelFactory(save_folder_path=save_folder_path)
+
+    def __init__(self):
+        self.factory = LevelFactory()
         self._create_new_level()
 
     def load_level(self, path: str | Path):

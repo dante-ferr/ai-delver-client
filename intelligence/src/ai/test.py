@@ -1,11 +1,11 @@
 # from tf_agents.environments import tf_py_environment
 # from .agents import PPOAgentFactory
-# from .environments import AIDelverEnvironment
+# from .environments import LevelEnvironment
 
 
 # def main():
 #     # Create environment and agent
-#     test_env = tf_py_environment.TFPyEnvironment(AIDelverEnvironment())
+#     test_env = tf_py_environment.TFPyEnvironment(LevelEnvironment())
 #     agent = PPOAgentFactory(test_env).get_agent()
 
 #     print("\nTesting trained agent...")

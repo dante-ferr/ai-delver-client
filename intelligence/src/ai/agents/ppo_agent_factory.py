@@ -21,6 +21,13 @@ GAMMA = config["gamma"]
 ENTROPY_REGULARIZATION = config["entropy_regularization"]
 
 
+def check_gpu_available():
+    if tf.test.is_gpu_available():
+        print("GPU is available and being used for training.")
+    else:
+        print("WARNING: GPU is NOT available. Training will be slow.")
+
+
 class PPOAgentFactory:
     def __init__(
         self, train_env: "TFPyEnvironment", learning_rate=LEARNING_RATE, gamma=GAMMA
@@ -39,7 +46,7 @@ class PPOAgentFactory:
         )
         position_preprocessing = keras.Sequential(
             [
-                keras.layers.BatchNormalization(input_shape=(2,)),
+                keras.layers.LayerNormalization(axis=-1),
                 keras.layers.Dense(
                     32, activation="relu", name="position_preprocessing"
                 ),
@@ -87,6 +94,7 @@ class PPOAgentFactory:
         )
 
         self.agent.initialize()
+        check_gpu_available()  # Check if GPU is used after agent is initialized
 
     def get_agent(self):
         return self.agent

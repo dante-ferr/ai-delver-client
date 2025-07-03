@@ -45,7 +45,8 @@ If you want to see the logs of ai_delver_intelligence's container, you need to:
 
   - `make run ENTRYPOINT=game` runs the game application
   - `make run ENTRYPOINT=ai` runs the AI application
-  - Default (no ENTRYPOINT) runs main.py, which executes the editor app
+  - `make run ENTRYPOINT=editor` runs the editor application
+  - Default (no ENTRYPOINT) runs main.py, which executes the editor app and the AI Docker container
 
 - `make run-ai`
   Only runs the intelligence container, without making it detached. Mainly used in a separate terminal to allow the developer to see the container's internal logs.

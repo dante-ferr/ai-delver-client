@@ -1,4 +1,4 @@
-from .ai_delver_environment import AIDelverEnvironment
-from .delver_observation import DelverObservation
+from .level.environment import LevelEnvironment
+from .level._delver_observation import DelverObservation
 
-__all__ = ["AIDelverEnvironment", "DelverObservation"]
+__all__ = ["LevelEnvironment", "DelverObservation"]

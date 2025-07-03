@@ -3,16 +3,23 @@ from .level_selector import LevelSelector
 from .level_toggler import LevelToggler
 import dill
 from pathlib import Path
+import json
 
 if TYPE_CHECKING:
     from .grid_map import MixedMap
 
+current_dir = Path(__file__).parent.absolute()
+config_path = current_dir / "config.json"
+with open(config_path, "r") as file:
+    config_data = json.load(file)
+
+SAVE_FOLDER_PATH = Path(config_data["save_folder_path"])
 
 class Level:
+
     def __init__(
         self,
         map: "MixedMap",
-        save_folder_path: str | None = None,
     ):
         self.map = map
 
@@ -20,9 +27,6 @@ class Level:
         self.toggler = LevelToggler()
 
         self._name = "My custom level"
-
-        if save_folder_path:
-            self.save_folder_path = Path(save_folder_path)
 
     @property
     def name(self):
@@ -58,11 +62,7 @@ class Level:
 
     @property
     def save_file_path(self):
-        return (
-            self.save_folder_path / f"{self.name}.dill"
-            if self.save_folder_path
-            else None
-        )
+        return SAVE_FOLDER_PATH / f"{self.name}.dill" if SAVE_FOLDER_PATH else None
 
     @property
     def issues(self):

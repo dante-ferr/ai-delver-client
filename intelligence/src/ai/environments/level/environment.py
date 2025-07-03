@@ -4,6 +4,7 @@ from tf_agents.trajectories import time_step as ts
 import numpy as np
 from typing import cast, Any
 from tf_agents.typing.types import NestedArraySpec
+import time
 from ._simulation_socket_worker import SimulationSocketWorker
 import math
 from functools import cached_property
@@ -12,9 +13,11 @@ from runtime.simulation import Simulation
 from level_holder import level_holder
 from typing import TYPE_CHECKING
 from runtime.simulation import DelverAction
+from ._pathfinder import Pathfinder
+from ._logger import LevelEnvironmentLogger
 
 if TYPE_CHECKING:
-    from . import DelverObservation
+    from .. import DelverObservation
 
 SIMULATION_WS_URL = "ws://host.docker.internal:8000/ws/simulation"
 
@@ -23,8 +26,9 @@ frame_counter = manager.Value("i", 0)
 frame_lock = manager.Lock()
 
 
-class AIDelverEnvironment(PyEnvironment):
-    def __init__(self):
+class LevelEnvironment(PyEnvironment):
+    def __init__(self, env_id: int = 0):
+        self.env_id = env_id
         self.last_action: dict[str, Any] = {
             "move": 0.0,
             "move_angle_sin": 0.0,
@@ -33,9 +37,18 @@ class AIDelverEnvironment(PyEnvironment):
         self._restart_simulation()
         self.episodes = 0
 
+        # self.pathfinder = Pathfinder(self)
+        self.logger = LevelEnvironmentLogger(env_id)
+
         self._init_specs()
 
         self.episode_ended = False
+        self.last_fps_time = time.time()
+
+        with frame_lock:
+            self.last_frame_count = frame_counter.value
+        self.fps = 0.0
+        self.last_log_time = time.time()
 
     def _restart_simulation(self):
         self.simulation = Simulation(level_holder.level)
@@ -64,6 +77,9 @@ class AIDelverEnvironment(PyEnvironment):
             "goal_position": array_spec.ArraySpec(
                 shape=(2,), dtype=np.float32, name="goal_position"
             ),
+            # "path_direction": array_spec.ArraySpec(
+            #     shape=(2,), dtype=np.float32, name="path_direction"
+            # ),
         }
 
     def _reset(self):
@@ -71,27 +87,52 @@ class AIDelverEnvironment(PyEnvironment):
         self.episode_ended = False
         self._restart_simulation()
 
+        self.current_waypoint_index = 0
+
+        self.logger.log_episode_start(self.episodes)
+
         return ts.restart(self.observation)
 
-    def _count_and_print_frame(self):
+    def _count_frame(self):
         with frame_lock:
             frame_counter.value += 1
-            current_frame = frame_counter.value
 
-        print(f"Global frame count: {current_frame}")
+    def _calculate_and_print_fps(self):
+        if self.env_id != 0:
+            return
+
+        with frame_lock:
+            current_frame = frame_counter.value
+        current_time = time.time()
+
+        time_delta = current_time - self.last_fps_time
+        frame_delta = current_frame - self.last_frame_count
+
+        if time_delta >= 1.0:  # Update FPS reading every second
+            self.fps = frame_delta / time_delta
+            print(f"Global frame count: {current_frame}, FPS: {self.fps:.2f}")
+            self.last_fps_time = current_time
+            self.last_frame_count = current_frame
 
     def _step(self, action):
-        self._count_and_print_frame()
+        self._count_frame()
+        self._calculate_and_print_fps()
 
         if self.episode_ended:
             return self._reset()
 
         action_dict = self._get_dict_of_action(action)
-        # print(
-        #     f"Episode: {self.episodes}, Move: {action_dict['move']}, Move angle: {action_dict['move_angle']}, Delver pos: {self.observation['delver_position']}"
-        # )
 
         reward, self.episode_ended, elapsed_time = self.simulation.step(action_dict)
+
+        if self.env_id == 0:
+            self.logger.handle_step(
+                reward=reward,
+                move=action_dict["move"],
+                move_angle=action_dict["move_angle"],
+                delver_position=self.observation["delver_position"],
+            )
+            self.last_log_time = current_time
 
         return self._create_time_step(reward)
 
@@ -105,7 +146,7 @@ class AIDelverEnvironment(PyEnvironment):
 
     def _create_time_step(self, reward):
         if self.episode_ended:
-            print(f"Episode {self.episodes} ended!")
+            self.logger.log_episode_end(self.episodes, reward)
             return ts.termination(self.observation, reward)
         return ts.transition(self.observation, reward, 1.0)
 
