@@ -13,6 +13,13 @@
 - [`pytiling`](https://github.com/dante-ferr/pytiling.git): Autotiling library for handling tilemaps.
 - [`pyglet_dragonbones`](https://github.com/dante-ferr/pyglet-dragonbones.git): Renderer for DragonBones animation assets in `pyglet`.
 
+## Requirements
+
+- A decent NVIDIA GPU
+- NVIDIA Gpu Drivers
+- NVIDIA Container Toolkit
+- Docker
+
 ## Setup (Local)
 
 To setup the project, you must:
@@ -44,7 +51,7 @@ If you want to see the logs of ai_delver_intelligence's container, you need to:
   You can specify an entry point by setting ENTRYPOINT:
 
   - `make run ENTRYPOINT=game` runs the game application
-  - `make run ENTRYPOINT=ai` runs the AI application
+  - `make run ENTRYPOINT=ai` runs the AI application directly on the default level (My custom level.dill). It's been used for testing purposes only.
   - `make run ENTRYPOINT=editor` runs the editor application
   - Default (no ENTRYPOINT) runs main.py, which executes the editor app and the AI Docker container
 

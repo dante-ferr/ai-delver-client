@@ -26,13 +26,17 @@ class LevelEnvironmentLogger:
         self.logger.addHandler(file_handler)
         self.logger.addHandler(console_handler)
 
+        self.last_step_log_time = time.time()
+
     def log_episode_start(self, episode):
         self.logger.info("Episode start", extra={"episode": episode})
 
-    def handle_step(self, reward, move, move_angle, delver_position):
+    def handle_step(
+        self, reward, move, move_angle, delver_position, global_frame_count, fps
+    ):
         current_time = time.time()
 
-        if (current_time - self.last_log_time) >= 0.5:
+        if (current_time - self.last_step_log_time) >= 0.5:
             self.logger.info(
                 "Step",
                 extra={
@@ -40,10 +44,12 @@ class LevelEnvironmentLogger:
                     "move": move,
                     "move_angle": move_angle,
                     "delver_position": delver_position,
+                    "step": global_frame_count,
+                    "fps": fps,
                 },
             )
 
-            self.last_log_time = current_time
+            self.last_step_log_time = current_time
 
     def log_episode_end(self, episode, reward):
         self.logger.info("Episode end", extra={"episode": episode, "reward": reward})

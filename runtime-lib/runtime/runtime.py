@@ -3,14 +3,13 @@ from .world_objects import WorldObjectsController, WorldObject
 from .world_objects.entities.delver import Delver
 from .world_objects.items import Goal
 from pyglet_dragonbones import config as pdb_config
-from pytiling import (
-    TilemapBorderTracer,
-    PymunkTilemapPhysics,
-)
-from pytiling.pyglet_support import TilemapRenderer
 import pymunk
 import json
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from level.level import Level
 
 with open(Path(__file__).parent / "config.json", "r") as file:
     config = json.load(file)
@@ -19,9 +18,9 @@ pdb_config.fps = config["fps"]
 
 
 class Runtime:
-    def __init__(self, level: Any, render):
+    def __init__(self, level: Any, render: bool):
         self.render = render
-        self.level = level
+        self.level: "Level" = level
         self.space = pymunk.Space()
         self.space.gravity = (0, 0)
 
@@ -34,9 +33,6 @@ class Runtime:
             "Delver", self.world_objects_controller.get_world_object("delver")
         )
         self.goal = self.world_objects_controller.get_world_object("goal")
-
-        if self.render:
-            self.tilemap_renderer = self.tilemap_renderer_factory()
 
     def update(self, dt):
         self.world_objects_controller.update_world_objects(dt)
@@ -93,11 +89,3 @@ class Runtime:
             world_objects_factories[element.name](element)
 
         return world_objects_controller
-
-    def tilemap_renderer_factory(self):
-        walls = self.level.map.tilemap.get_layer("walls")
-        border_tracer = TilemapBorderTracer(walls)
-        PymunkTilemapPhysics(border_tracer, self.space)
-
-        tilemap_renderer = TilemapRenderer(self.level.map.tilemap)
-        return tilemap_renderer

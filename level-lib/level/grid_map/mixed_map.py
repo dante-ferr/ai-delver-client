@@ -49,6 +49,14 @@ class MixedMap(GridMap):
             if self.world_objects_map.has_layer(layer_name):
                 self.add_layer(self.world_objects_map.get_layer(layer_name))
 
+    def get_tilemap_layer(self, name: str):
+        """Get a tilemap layer. Use this function if you want the tilemap layer type assigned to a variable."""
+        return self.tilemap.get_layer(name)
+
+    def get_world_objects_layer(self, name: str):
+        """Get a world objects layer. Use this function if you want the world objects layer type assigned to a variable."""
+        return self.world_objects_map.get_layer(name)
+
     def get_layer(self, name: str):
         """Get a layer by its name."""
         return cast("WorldObjectsLayer | EditorTilemapLayer", super().get_layer(name))

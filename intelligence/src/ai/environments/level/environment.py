@@ -5,7 +5,6 @@ import numpy as np
 from typing import cast, Any
 from tf_agents.typing.types import NestedArraySpec
 import time
-from ._simulation_socket_worker import SimulationSocketWorker
 import math
 from functools import cached_property
 from multiprocessing import Manager
@@ -13,7 +12,6 @@ from runtime.simulation import Simulation
 from level_holder import level_holder
 from typing import TYPE_CHECKING
 from runtime.simulation import DelverAction
-from ._pathfinder import Pathfinder
 from ._logger import LevelEnvironmentLogger
 
 if TYPE_CHECKING:
@@ -48,7 +46,6 @@ class LevelEnvironment(PyEnvironment):
         with frame_lock:
             self.last_frame_count = frame_counter.value
         self.fps = 0.0
-        self.last_log_time = time.time()
 
     def _restart_simulation(self):
         self.simulation = Simulation(level_holder.level)
@@ -97,10 +94,7 @@ class LevelEnvironment(PyEnvironment):
         with frame_lock:
             frame_counter.value += 1
 
-    def _calculate_and_print_fps(self):
-        if self.env_id != 0:
-            return
-
+    def _calculate_fps(self):
         with frame_lock:
             current_frame = frame_counter.value
         current_time = time.time()
@@ -108,15 +102,14 @@ class LevelEnvironment(PyEnvironment):
         time_delta = current_time - self.last_fps_time
         frame_delta = current_frame - self.last_frame_count
 
-        if time_delta >= 1.0:  # Update FPS reading every second
-            self.fps = frame_delta / time_delta
-            print(f"Global frame count: {current_frame}, FPS: {self.fps:.2f}")
-            self.last_fps_time = current_time
-            self.last_frame_count = current_frame
+        fps = frame_delta / time_delta
+        self.last_fps_time = current_time
+        self.last_frame_count = current_frame
+
+        return fps
 
     def _step(self, action):
         self._count_frame()
-        self._calculate_and_print_fps()
 
         if self.episode_ended:
             return self._reset()
@@ -131,8 +124,9 @@ class LevelEnvironment(PyEnvironment):
                 move=action_dict["move"],
                 move_angle=action_dict["move_angle"],
                 delver_position=self.observation["delver_position"],
+                global_frame_count=frame_counter.value,
+                fps=self._calculate_fps(),
             )
-            self.last_log_time = current_time
 
         return self._create_time_step(reward)
 

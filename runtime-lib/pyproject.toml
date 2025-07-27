@@ -12,6 +12,7 @@ pymunk = "==6.11.1"
 pyglet = "*"
 pytiling = { path = "../pytiling-lib", develop = true }
 pyglet_dragonbones = { path = "../pyglet-dragonbones", develop = true }
+level = { path = "../level-lib", develop = true }
 
 [build-system]
 requires = ["poetry-core>=2.0.0"]

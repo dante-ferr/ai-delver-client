@@ -3,16 +3,29 @@ from .camera import Camera, Camera
 from pyglet.window import Window
 from .view_controls import ViewControls
 import pyglet
+from pyglet.gl import glClearColor
+from typing import TYPE_CHECKING
+from .utils import get_average_color_from_raw_data
+from pytiling import (
+    TilemapBorderTracer,
+    PymunkTilemapPhysics,
+)
+from pytiling.pyglet_support import TilemapRenderer
 
+if TYPE_CHECKING:
+    from level.level import Level
 
 class ViewableRuntime(Runtime):
-    def __init__(self, level):
+
+    def __init__(self, level: "Level"):
         self.camera: None | Camera = None
         self._window: Window | None = pyglet.window.Window(
             fullscreen=False, resizable=False
         )
 
         super().__init__(level, render=True)
+
+        self.set_clear_color()
 
         def _maximize_callback(dt):
             self.window.maximize()
@@ -26,6 +39,30 @@ class ViewableRuntime(Runtime):
             self.keys,
             on_close=self._on_window_close,
         )
+
+        self.tilemap_renderer = self.tilemap_renderer_factory()
+
+    def tilemap_renderer_factory(self):
+        walls = self.level.map.tilemap.get_layer("walls")
+        border_tracer = TilemapBorderTracer(walls)
+        PymunkTilemapPhysics(border_tracer, self.space)
+
+        tilemap_renderer = TilemapRenderer(self.level.map.tilemap)
+        return tilemap_renderer
+
+    def set_clear_color(self):
+        tileset = self.level.map.get_tilemap_layer("walls").tileset
+        inner_wall_image_bytes = tileset.tile_images[3, 0]
+
+        average_color = get_average_color_from_raw_data(
+            inner_wall_image_bytes, tileset.tile_size, "RGBA"
+        )
+
+        if not average_color:
+            return
+
+        normalized_color = [c / 255.0 for c in average_color]
+        glClearColor(*normalized_color, 1.0)
 
     def _create_controls(self):
         self.controls = ViewControls(self.keys)

@@ -1278,6 +1278,7 @@ files = []
 develop = true
 
 [package.dependencies]
+level = {path = "../level-lib", develop = true}
 pyglet = "*"
 pyglet_dragonbones = {path = "../pyglet-dragonbones", develop = true}
 pymunk = "==6.11.1"
