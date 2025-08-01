@@ -18,10 +18,13 @@
 - A decent NVIDIA GPU
 - NVIDIA Gpu Drivers
 - NVIDIA Container Toolkit
-- Docker
+- docker
+- docker compose
+- docker buildx
+- python poetry
 
 ## Setup (Local)
-
+            
 To setup the project, you must:
 
 - Git clone Ai Delver with its submodules: `git clone --recurse-submodules -j8 https://github.com/dante-ferr/ai-delver.git`
