@@ -1,4 +1,9 @@
 ENTRYPOINT ?= main
 
-run: on_run
+prepare-scripts:
+	chmod +x run.sh
+
+on-run: prepare-scripts
+
+run: on-run
 	./run.sh $(ENTRYPOINT)

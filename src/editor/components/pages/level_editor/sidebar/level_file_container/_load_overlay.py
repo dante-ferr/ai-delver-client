@@ -1,14 +1,9 @@
 from editor.components.overlay.message_overlay import MessageOverlay
 from editor.components.overlay import Overlay
 import customtkinter as ctk
-from level_loader import level_loader
 from pathlib import Path
-import json
 
-with open("level-lib/level/config.json", "r") as file:
-    level_config = json.load(file)
-
-SAVE_FOLDER_PATH = Path(level_config["save_folder_path"])
+SAVE_FOLDER_PATH = "data/level_saves"
 
 
 class LoadOverlay(Overlay):

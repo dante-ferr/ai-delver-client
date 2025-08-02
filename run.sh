@@ -3,9 +3,7 @@
 set -e
 set -o pipefail
 
-echo "📦 Starting AI module using Docker Compose..."
-
-echo "🖥️ Running AI Delver's $1 application..."
+echo "🖥️ Running AI Delver's client application on the '$1' entrypoint..."
 if [ "$1" == "game" ]; then
     poetry run python src/direct_game.py
 elif [ "$1" == "ai" ]; then
@@ -15,7 +13,3 @@ elif [ "$1" == "editor" ]; then
 else
     poetry run python src/main.py
 fi
-
-echo "🧹 Stopping AI module container..."
-cd intelligence
-docker compose down
