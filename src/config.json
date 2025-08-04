@@ -2,5 +2,6 @@
   "tilemap_layer_names": ["floor", "walls"],
   "window_width": 1280,
   "window_height": 720,
-  "window_title": "AI Delver"
+  "window_title": "AI Delver",
+  "fps": 60
 }

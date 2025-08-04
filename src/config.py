@@ -9,6 +9,7 @@ TILEMAP_LAYER_NAMES = config["tilemap_layer_names"]
 WINDOW_WIDTH = config["window_width"]
 WINDOW_HEIGHT = config["window_height"]
 WINDOW_TITLE = config["window_title"]
+FPS = config["fps"]
 
 
 def get_project_root() -> Path:
