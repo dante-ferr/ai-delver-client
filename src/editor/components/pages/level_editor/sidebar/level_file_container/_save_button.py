@@ -1,11 +1,11 @@
 from editor.components.overlay.message_overlay import MessageOverlay
 from editor.components import IconButton
 from level_loader import level_loader
-
+from src.config import ASSETS_PATH
 
 class SaveButton(IconButton):
     def __init__(self, parent):
-        super().__init__(parent, svg_path="assets/svg/save.svg")
+        super().__init__(parent, svg_path=ASSETS_PATH / "svg" / "save.svg")
 
     def _on_click(self, event):
         if level_loader.level.same_name_saved:

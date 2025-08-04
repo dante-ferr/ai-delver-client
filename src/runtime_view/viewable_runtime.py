@@ -1,4 +1,4 @@
-from runtime import Runtime, config
+from runtime import Runtime
 from .camera import Camera, Camera
 from pyglet.window import Window
 from .view_controls import ViewControls
@@ -10,6 +10,7 @@ from pytiling import (
     TilemapBorderTracer,
     PymunkTilemapPhysics,
 )
+from src.config import FPS
 from pytiling.pyglet_support import TilemapRenderer
 
 if TYPE_CHECKING:
@@ -116,9 +117,7 @@ class ViewableRuntime(Runtime):
     def run(self):
         super().run()
 
-        pyglet.clock.schedule_interval(
-            self.update, 1 / float(config["fps"])
-        )  # Update at 60 FPS
+        pyglet.clock.schedule_interval(self.update, 1 / float(FPS))
         pyglet.app.run()
 
     def stop(self):

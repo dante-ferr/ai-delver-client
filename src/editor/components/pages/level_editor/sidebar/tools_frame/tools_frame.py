@@ -3,7 +3,7 @@ from editor.components import SvgImage
 from editor.theme import theme
 from editor.utils.selection import populate_selection_manager, SelectionManager
 from level_loader import level_loader
-
+from src.config import ASSETS_PATH
 
 class ToolBox(ctk.CTkFrame):
     def __init__(self, parent, tool_name: str, icon_image: ctk.CTkImage):
@@ -40,14 +40,14 @@ class ToolsFrame(ctk.CTkFrame):
         tool_size = 24
 
         pen_icon = SvgImage(
-            svg_path="assets/svg/pencil.svg",
+            svg_path=ASSETS_PATH / "svg" / "pencil.svg",
             size=(tool_size, tool_size),
             stroke=theme.icon_color,
         )
         pen_box = ToolBox(self, "pencil", pen_icon.get_ctk_image())
 
         eraser_icon = SvgImage(
-            svg_path="assets/svg/eraser.svg",
+            svg_path=ASSETS_PATH / "svg" / "eraser.svg",
             fill=theme.icon_color,
             stroke=theme.icon_color,
             size=(tool_size, tool_size),
