@@ -6,12 +6,8 @@ import pyglet
 from pyglet.gl import glClearColor
 from typing import TYPE_CHECKING
 from .utils import get_average_color_from_raw_data
-from pytiling import (
-    TilemapBorderTracer,
-    PymunkTilemapPhysics,
-)
-from src.config import FPS
 from pytiling.pyglet_support import TilemapRenderer
+from src.config import FPS
 
 if TYPE_CHECKING:
     from level.level import Level
@@ -44,10 +40,6 @@ class ViewableRuntime(Runtime):
         self.tilemap_renderer = self.tilemap_renderer_factory()
 
     def tilemap_renderer_factory(self):
-        walls = self.level.map.tilemap.get_layer("walls")
-        border_tracer = TilemapBorderTracer(walls)
-        PymunkTilemapPhysics(border_tracer, self.space)
-
         tilemap_renderer = TilemapRenderer(self.level.map.tilemap)
         return tilemap_renderer
 
