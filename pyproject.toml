@@ -20,6 +20,7 @@ matplotlib = "*"
 fastapi = "*"
 uvicorn = "*"
 requests = "*"
+httpx = "*"
 websockets = "*"
 
 # Local editable packages
