@@ -40,8 +40,6 @@ class MessageOverlay(Overlay):
 
         self._create_buttons(button_commands)
 
-        self._post_init_config()
-
     def _create_buttons(self, button_commands: dict[str, Callable] | None):
         if button_commands is None:
             buttons = [

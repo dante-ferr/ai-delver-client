@@ -1,14 +1,17 @@
 import logging
 import dill
 import base64
-import httpx  # Use httpx instead of requests
-from .listen_for_replays import listen_for_replays
+import httpx
+from .listen_for_trajectories import listen_for_trajectories
+from runtime.episode_trajectory import EpisodeTrajectoryFactory
+from typing import cast
+from level_loader import level_loader
 
 
-async def send_training_request(level_data, server_url="http://localhost:8001"):
+async def send_training_request(server_url="http://localhost:8001"):
     """
     Orchestrates the entire process: sends a training request and then
-    listens for the replay data.
+    listens for the episode trajectory data.
 
     Args:
         level_data: The level object to be trained.
@@ -18,7 +21,9 @@ async def send_training_request(level_data, server_url="http://localhost:8001"):
     try:
         # Step 1: Send the training request using an async HTTP client
         logging.info("Sending training request to the server...")
-        payload = {"level": base64.b64encode(dill.dumps(level_data)).decode("ascii")}
+        payload = {
+            "level": base64.b64encode(dill.dumps(level_loader.level)).decode("ascii")
+        }
 
         async with httpx.AsyncClient() as client:
             response = await client.post(
@@ -34,11 +39,17 @@ async def send_training_request(level_data, server_url="http://localhost:8001"):
             logging.error("Failed to get a valid session_id from the server.")
             return
 
-        # Step 2: Connect to the WebSocket and listen for replays
-        replay_uri = f"ws://{server_url.split('//')[1]}/replay/{session_id}"
+        # Step 2: Connect to the WebSocket and listen for episode trajectories
+        trajectory_uri = (
+            f"ws://{server_url.split('//')[1]}/episode-trajectory/{session_id}"
+        )
 
-        async for replay_frame in listen_for_replays(uri=replay_uri):
-            logging.info(f"Received replay frame: {replay_frame}")
+        await listen_for_trajectories(uri=trajectory_uri)
+
+        # async for trajectory_json in listen_for_trajectories(uri=trajectory_uri):
+        #     trajectory_json = cast(str, trajectory_json)
+        #     episode_trajectory = EpisodeTrajectoryFactory().from_json(trajectory_json)
+        #     yield episode_trajectory
 
     except httpx.RequestError as e:
         logging.error(f"HTTP request failed: {e}")

@@ -1,14 +1,18 @@
 from level_loader import level_loader
 import customtkinter as ctk
-from .components.pages.level_editor import LevelEditor
-from .components.pages.runner import Runner
-from .components import Navbar
+from .pages.level_editor import LevelEditor
+from .pages.agent import AgentPage
+from .pages import Page
+from .navbar import Navbar
 from .theme import theme
-import sys
-from .components.pages import Page
 
 ctk.set_appearance_mode("Dark")
-ctk.set_default_color_theme(theme.path)
+ctk.set_default_color_theme(str(theme.path))
+
+PAGE_COMPONENTS = {
+    "level_editor": LevelEditor,
+    "agent": AgentPage,
+}
 
 
 class App(ctk.CTk):
@@ -29,26 +33,30 @@ class App(ctk.CTk):
         self.page_container = ctk.CTkFrame(self, fg_color="transparent")
         self.page_container.grid(row=1, column=0, sticky="nsew")
 
+        self.selected_page_name: str | None = None
         self.selected_page: Page | None = None
         self._create_pages()
 
         self.bind("<Button-1>", self.clear_focus)
 
-    def restart_level_editor(self):
-        if self.pages["level_editor"]:
-            self.pages["level_editor"].pack_forget()
+    def restart_page(self, page_name: str):
+        if self.pages[page_name]:
+            self.pages[page_name].pack_forget()
+            self.pages[page_name].grid_forget()
+        self.pages[page_name] = PAGE_COMPONENTS[page_name](self)
 
-        self.pages["level_editor"] = LevelEditor(self)
-        self.select_page("level_editor")
+        if self.selected_page_name == page_name:
+            self.select_page(page_name)
+
+    def restart_all_pages(self):
+        for page_name in self.pages.keys():
+            self.restart_page(page_name)
 
     def _create_pages(self):
-        pages: dict[str, Page] = {
-            "level_editor": LevelEditor(self),
-            "runner": Runner(self),
+        self.pages: dict[str, Page] = {
+            name: component(self) for name, component in PAGE_COMPONENTS.items()
         }
-        self.pages = pages
-
-        self.navbar.create_page_selectors(pages, default_page_name="level_editor")
+        self.navbar.create_page_selectors(self.pages, default_page_name="level_editor")
 
     def select_page(self, page_name: str):
         page = self.pages[page_name]
@@ -56,7 +64,9 @@ class App(ctk.CTk):
         if self.selected_page is not None:
             self.selected_page.grid_forget()
 
+        self.selected_page_name = page_name
         self.selected_page = page
+
         page.grid(row=1, column=0, sticky="nsew")
 
     def clear_focus(self, event):
@@ -91,10 +101,3 @@ class App(ctk.CTk):
     @property
     def level(self):
         return level_loader.level
-
-
-# if not hasattr(sys.modules[__name__], "_app_initialized"):
-#     app = App()
-#     setattr(sys.modules[__name__], "_app_initialized", True)
-# else:
-#     app = sys.modules[__name__].app
