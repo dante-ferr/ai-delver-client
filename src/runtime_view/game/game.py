@@ -8,6 +8,7 @@ class Game(ViewableRuntime):
         self.controls.append_delver(self.delver)
 
     def update(self, dt):
+        dt *= self.execution_speed
         super().update(dt)
 
         # def _check_collisions(self):

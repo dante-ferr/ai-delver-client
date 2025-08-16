@@ -14,13 +14,14 @@ if TYPE_CHECKING:
 
 class ViewableRuntime(Runtime):
 
-    def __init__(self, level: "Level", deterministic: bool = False):
+    def __init__(self, level: "Level", physics: bool = True):
         self.camera: None | Camera = None
         self._window: Window | None = pyglet.window.Window(
             fullscreen=False, resizable=False
         )
-        super().__init__(level, render=True, deterministic=deterministic)
+        super().__init__(level, render=True, physics=physics)
 
+        self.execution_speed = 1.0
         self.set_clear_color()
 
         def _maximize_callback(dt):

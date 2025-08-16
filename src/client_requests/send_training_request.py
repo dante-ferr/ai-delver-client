@@ -3,7 +3,6 @@ import dill
 import base64
 import httpx
 from .listen_for_trajectories import listen_for_trajectories
-from runtime.episode_trajectory import EpisodeTrajectoryFactory
 from typing import cast
 from level_loader import level_loader
 
@@ -45,11 +44,6 @@ async def send_training_request(server_url="http://localhost:8001"):
         )
 
         await listen_for_trajectories(uri=trajectory_uri)
-
-        # async for trajectory_json in listen_for_trajectories(uri=trajectory_uri):
-        #     trajectory_json = cast(str, trajectory_json)
-        #     episode_trajectory = EpisodeTrajectoryFactory().from_json(trajectory_json)
-        #     yield episode_trajectory
 
     except httpx.RequestError as e:
         logging.error(f"HTTP request failed: {e}")

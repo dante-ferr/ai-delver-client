@@ -3,7 +3,7 @@ from runtime_view.game import Game
 from typing import Optional
 import logging
 from level_loader import level_loader
-from runtime_view.replay import Replay
+from runtime_view.replay import StateSyncReplay
 from agent_loader import agent_loader
 from typing import TYPE_CHECKING
 
@@ -106,7 +106,7 @@ class AppManager:
         trajectory = agent_loader.agent.trajectory_loader.trajectory
         if trajectory is None:
             raise RuntimeError("No trajectory loaded")
-        self._start_runtime("replay", Replay, level_loader.level, trajectory)
+        self._start_runtime("replay", StateSyncReplay, level_loader.level, trajectory)
 
     def stop_replay(self):
         self._stop_runtime("replay")
