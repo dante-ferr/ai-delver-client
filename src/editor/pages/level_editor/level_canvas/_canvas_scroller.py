@@ -1,4 +1,3 @@
-import customtkinter as ctk
 from level_loader import level_loader
 from typing import TYPE_CHECKING
 

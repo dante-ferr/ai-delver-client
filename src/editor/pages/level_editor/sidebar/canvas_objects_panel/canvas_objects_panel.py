@@ -1,25 +1,19 @@
 from editor.utils.selection import populate_selection_manager, SelectionManager
-from level_loader import level_loader
 from ._canvas_object_container import CanvasObjectContainer
 from typing import TYPE_CHECKING
 from editor.theme import theme
 from editor.components import MouseWheelScrollableFrame
+from canvas_controller import canvas_controller
 
 if TYPE_CHECKING:
-    from level.grid_map.editor_tilemap.editor_tilemap_layer import (
-        EditorTilemapLayer,
-    )
-    from level.grid_map.world_objects_map import WorldObjectsLayer
     from editor.utils.selection.selection_element_group import SelectionElementGroup
 
 
 class CanvasObjectsPanel(MouseWheelScrollableFrame):
-    def __init__(
-        self, parent, layer: "EditorTilemapLayer | WorldObjectsLayer", *args, **kwargs
-    ):
-        super().__init__(parent, *args, fg_color="transparent", **kwargs)
 
-        self.layer = layer
+    def __init__(self, parent, layer_name: str, *args, **kwargs):
+        self.layer_name = layer_name
+        super().__init__(parent, *args, fg_color="transparent", **kwargs)
 
         self.configure(border_width=0)
 
@@ -37,8 +31,8 @@ class CanvasObjectsPanel(MouseWheelScrollableFrame):
         )
 
         def _on_select(frame: "CanvasObjectContainer"):
-            level_loader.level.selector.set_selection(
-                layer.name + ".canvas_object", frame.canvas_object.name
+            canvas_controller.level_selector.set_selection(
+                layer_name + ".canvas_object", frame.canvas_object.name
             )
 
         populate_selection_manager(
@@ -49,11 +43,6 @@ class CanvasObjectsPanel(MouseWheelScrollableFrame):
         )
 
         self._update_scrollbar_visibility()
-
-    def _get_canvas_object_identifier(
-        self, canvas_object_container: "CanvasObjectContainer"
-    ):
-        return canvas_object_container.canvas_object.name
 
     def _object_activate_callback(
         self, selection_element_group: "SelectionElementGroup"
@@ -70,7 +59,8 @@ class CanvasObjectsPanel(MouseWheelScrollableFrame):
     def _create_canvas_object_containers(self):
         canvas_object_containers: list[CanvasObjectContainer] = []
 
-        for canvas_object in self.layer.canvas_object_manager.canvas_objects.values():
+        layer = canvas_controller.objects_manager.get_layer(self.layer_name)
+        for canvas_object in layer.canvas_objects.values():
             canvas_object_containers.append(CanvasObjectContainer(self, canvas_object))
 
         return canvas_object_containers

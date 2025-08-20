@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from typing import Callable
 from ..overlay import Overlay
-
+from typing import Literal, cast
 
 class MessageOverlay(Overlay):
     """
@@ -15,11 +15,11 @@ class MessageOverlay(Overlay):
     def __init__(
         self,
         message: str,
-        subject="Warning",
+        subject: Literal["Warning", "Error", "Success"] = "Warning",
         button_commands: dict[str, Callable] | None = None,
         paragraphs: list[str] = [],
     ):
-        super().__init__(subject)
+        super().__init__(cast(str, subject))
 
         text_container = ctk.CTkFrame(self, fg_color="transparent", width=300)
         text_container.pack(pady=4, fill="x", expand=True)

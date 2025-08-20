@@ -45,4 +45,4 @@ class FileLoaderOverlay(Overlay):
 
     def _load(self):
         self._close()
-        MessageOverlay(f"Sucessfully loaded the {self.file_type}.")
+        MessageOverlay(f"Sucessfully loaded the {self.file_type}.", subject="Success")

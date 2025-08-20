@@ -29,6 +29,7 @@ class SaveButton(IconButton):
                     "Yes": self._save,
                     "No (cancel)": lambda: None,
                 },
+                subject="Warning",
             )
         else:
             self._save()
@@ -39,6 +40,7 @@ class SaveButton(IconButton):
             button_commands={
                 "Ok": lambda: None,
             },
+            subject="Success",
         )
 
     @property

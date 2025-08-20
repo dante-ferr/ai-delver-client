@@ -1,6 +1,5 @@
 from level_loader import level_loader
 from typing import TYPE_CHECKING
-from pytiling import Direction
 
 if TYPE_CHECKING:
     from .level_canvas import LevelCanvas

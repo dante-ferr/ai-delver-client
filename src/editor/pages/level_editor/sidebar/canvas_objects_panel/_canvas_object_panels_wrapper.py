@@ -1,8 +1,7 @@
 import customtkinter as ctk
 from .canvas_objects_panel import CanvasObjectsPanel
-from level_loader import level_loader
 from typing import cast
-
+from canvas_controller import canvas_controller
 
 class CanvasObjectPanelsWrapper(ctk.CTkFrame):
     def __init__(self, parent):
@@ -11,15 +10,17 @@ class CanvasObjectPanelsWrapper(ctk.CTkFrame):
         self.current_canvas_objects_panel: CanvasObjectsPanel | None = None
         self.canvas_objects_panels = self._create_canvas_objects_panels()
         self._set_current_canvas_objects_panel_by_layer_name(
-            level_loader.level.selector.get_selection("layer")
+            canvas_controller.level_selector.get_selection("layer")
         )
-        level_loader.level.selector.set_select_callback("layer", self._on_layer_select)
+        canvas_controller.level_selector.set_select_callback(
+            "layer", self._on_layer_select
+        )
 
     def _create_canvas_objects_panels(self):
         canvas_objects_panels: dict[str, CanvasObjectsPanel] = {}
 
-        for layer in level_loader.level.map.layers:
-            panel = CanvasObjectsPanel(self, layer, max_height=400)
+        for layer in canvas_controller.objects_manager.layers:
+            panel = CanvasObjectsPanel(self, layer.name, max_height=400)
             canvas_objects_panels[layer.name] = panel
 
         return canvas_objects_panels

@@ -44,18 +44,20 @@ class TrajectoryViewer(ctk.CTkFrame):
     def _load_trajectory(self):
         index_str = self.index_entry.get()
         if not index_str:
-            MessageOverlay("Please enter a trajectory index.")
+            MessageOverlay("Please enter a trajectory index.", subject="Error")
             return
 
         try:
             index = int(index_str)
         except ValueError:
-            MessageOverlay("Index must be an integer.")
+            MessageOverlay("Index must be an integer.", subject="Error")
             return
 
         self.trajectory = self.trajectory_loader.load_trajectory(index)
         if self.trajectory is None:
-            MessageOverlay(f"Trajectory with index '{index}' not found.")
+            MessageOverlay(
+                f"Trajectory with index '{index}' not found.", subject="Error"
+            )
             self._set_data_display_to_default()
             return
 
@@ -80,7 +82,9 @@ class TrajectoryViewer(ctk.CTkFrame):
             formatted_json = json.dumps(parsed_json, indent=4)
             self.data_display.insert("1.0", formatted_json)
         except json.JSONDecodeError:
-            MessageOverlay(f"Error decoding trajectory data for index '{index}'.")
+            MessageOverlay(
+                f"Error decoding trajectory data for index '{index}'.", subject="Error"
+            )
             self.data_display.insert("1.0", "Failed to load trajectory data.")
 
         self.data_display.configure(state="disabled")

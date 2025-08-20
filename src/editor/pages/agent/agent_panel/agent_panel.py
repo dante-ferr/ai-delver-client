@@ -1,10 +1,8 @@
 import customtkinter as ctk
-import asyncio
-from editor.utils import verify_level_issues
-from client_requests import send_training_request
 from ._agent_title_textbox import AgentTitleTextbox
 from .agent_file_container import AgentFileContainer
-
+from .train_container import TrainContainer
+from training_manager import training_manager
 
 class AgentPanel(ctk.CTkFrame):
     """
@@ -17,14 +15,27 @@ class AgentPanel(ctk.CTkFrame):
         title_textbox = AgentTitleTextbox(self)
         title_textbox.pack(padx=0, pady=0, fill="x")
 
-        train_button = ctk.CTkButton(
-            self, text="Train", command=lambda: asyncio.run(self._train())
+        train_container = TrainContainer(self)
+        train_container.pack(padx=2, pady=2)
+
+        self.episodes_label = ctk.CTkLabel(self, text="Episodes: 100")
+        self.episodes_label.pack(pady=0, anchor="w", fill="x")
+        self.episodes_slider = ctk.CTkSlider(
+            self, from_=10, to=1000, width=200, height=20
         )
-        train_button.pack(pady=8)
+        self.episodes_slider.pack(pady=(0, 24))
+        self._set_amount_of_episodes(50)
+
+        self.episodes_slider.configure(command=self._on_episode_slide)
 
         agent_file_container = AgentFileContainer(self)
         agent_file_container.pack(side="bottom", padx=2, pady=2)
 
-    async def _train(self):
-        if not verify_level_issues():
-            await send_training_request()
+    def _on_episode_slide(self, value):
+        rounded_value = round(value / 10) * 10
+        self._set_amount_of_episodes(rounded_value)
+
+    def _set_amount_of_episodes(self, value):
+        self.episodes_slider.set(value)
+        self.episodes_label.configure(text=f"Episodes: {value}")
+        training_manager.amount_of_episodes = value

@@ -4,7 +4,6 @@ import customtkinter as ctk
 from level_loader import level_loader
 from ._world_objects_image import WorldObjectsImage
 
-
 if TYPE_CHECKING:
     from pytiling import Tileset, Tile, GridElement, GridMap
     from level.grid_map.world_objects_map.world_object import (

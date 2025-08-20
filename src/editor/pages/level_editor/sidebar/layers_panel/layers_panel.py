@@ -4,7 +4,8 @@ from editor.components.svg_image import SvgImage
 from editor.theme import theme
 from editor.utils.selection import populate_selection_manager, SelectionManager
 from level_loader import level_loader
-from typing import TYPE_CHECKING, cast
+from canvas_controller import canvas_controller
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from level.grid_map.editor_tilemap.editor_tilemap_layer import (
@@ -41,7 +42,7 @@ class LayersPanel(ctk.CTkFrame):
         self._pack_layer_containers()
 
         def _on_select(frame: "LayerContainer"):
-            level_loader.level.selector.set_selection("layer", frame.layer_name)
+            canvas_controller.level_selector.set_selection("layer", frame.layer_name)
 
         populate_selection_manager(
             SelectionManager(),

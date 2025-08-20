@@ -1,5 +1,5 @@
 from bootstrap import *
-from client_requests import send_training_request
+from client_requests import client_requester
 import logging
 import asyncio
 from level.config import LEVEL_SAVE_FOLDER_PATH
@@ -19,11 +19,10 @@ async def main():
     try:
         from level_loader import level_loader
 
-        level_data = level_loader.load_level(f"{LEVEL_SAVE_FOLDER_PATH}/test_1")
+        level_loader.load_level(f"{LEVEL_SAVE_FOLDER_PATH}/test_1")
 
         # Request the ai server to train on this level
-        async for trajectory in send_training_request():
-            pass
+        await client_requester.send_training_request()
 
     except FileNotFoundError:
         logging.error(f"Error: The level file '{level_path}' was not found.")

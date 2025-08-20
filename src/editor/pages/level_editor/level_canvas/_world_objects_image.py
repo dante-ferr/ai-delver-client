@@ -1,20 +1,19 @@
 import customtkinter as ctk
 from PIL import ImageTk
 from typing import cast
-
+from canvas_controller import canvas_controller
 
 class WorldObjectsImage:
     def __init__(self):
         self.images: dict[str, ImageTk.PhotoImage] = {}
 
-        self._initialize_images()
-
-    def _initialize_images(self):
-        """Initialize the images from the images directory."""
-        from level_loader import level_loader
-
-        for canvas_object in level_loader.level.map.canvas_objects.values():
-            self.images[canvas_object.name] = ImageTk.PhotoImage(canvas_object.image)
-
     def get_image(self, canvas_object_name: str) -> ctk.CTkImage:
+        if canvas_object_name not in self.images:
+            canvas_object = canvas_controller.objects_manager.get_canvas_object(
+                canvas_object_name
+            )
+            if not canvas_object:
+                raise KeyError(f"Canvas object '{canvas_object_name}' not found.")
+            self.images[canvas_object_name] = ImageTk.PhotoImage(canvas_object.image)
+
         return cast("ctk.CTkImage", self.images[canvas_object_name])
