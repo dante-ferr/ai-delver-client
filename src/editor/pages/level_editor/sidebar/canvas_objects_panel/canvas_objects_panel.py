@@ -3,7 +3,7 @@ from ._canvas_object_container import CanvasObjectContainer
 from typing import TYPE_CHECKING
 from editor.theme import theme
 from editor.components import MouseWheelScrollableFrame
-from canvas_controller import canvas_controller
+from ...level_editor_manager import level_editor_manager
 
 if TYPE_CHECKING:
     from editor.utils.selection.selection_element_group import SelectionElementGroup
@@ -31,7 +31,7 @@ class CanvasObjectsPanel(MouseWheelScrollableFrame):
         )
 
         def _on_select(frame: "CanvasObjectContainer"):
-            canvas_controller.level_selector.set_selection(
+            level_editor_manager.selector.set_selection(
                 layer_name + ".canvas_object", frame.canvas_object.name
             )
 
@@ -59,7 +59,7 @@ class CanvasObjectsPanel(MouseWheelScrollableFrame):
     def _create_canvas_object_containers(self):
         canvas_object_containers: list[CanvasObjectContainer] = []
 
-        layer = canvas_controller.objects_manager.get_layer(self.layer_name)
+        layer = level_editor_manager.objects_manager.get_layer(self.layer_name)
         for canvas_object in layer.canvas_objects.values():
             canvas_object_containers.append(CanvasObjectContainer(self, canvas_object))
 

@@ -2,7 +2,7 @@ import customtkinter as ctk
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from canvas_controller.canvas_objects import CanvasObject
+    from ...level_editor_manager.canvas_objects import CanvasObject
 
 
 class CanvasObjectContainer(ctk.CTkFrame):

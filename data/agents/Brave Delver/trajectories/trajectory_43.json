@@ -1,0 +1,1496 @@
+{
+  "actions_per_second": 10,
+  "victorious": true,
+  "delver_actions": [
+    {
+      "move": false,
+      "move_angle": -118.2018155880044
+    },
+    {
+      "move": true,
+      "move_angle": -68.43553468113097
+    },
+    {
+      "move": true,
+      "move_angle": -150.2303911389527
+    },
+    {
+      "move": true,
+      "move_angle": -152.45448370890716
+    },
+    {
+      "move": true,
+      "move_angle": 100.50952825853771
+    },
+    {
+      "move": false,
+      "move_angle": -170.8212331208928
+    },
+    {
+      "move": false,
+      "move_angle": -113.92459734901372
+    },
+    {
+      "move": true,
+      "move_angle": -29.574121792536157
+    },
+    {
+      "move": true,
+      "move_angle": -149.98863861893287
+    },
+    {
+      "move": false,
+      "move_angle": -89.7671390464366
+    },
+    {
+      "move": true,
+      "move_angle": -175.38458295721114
+    },
+    {
+      "move": false,
+      "move_angle": -91.02666505414292
+    },
+    {
+      "move": true,
+      "move_angle": -93.45022944548481
+    },
+    {
+      "move": false,
+      "move_angle": 9.59723204801216
+    },
+    {
+      "move": true,
+      "move_angle": 3.981357854403329
+    },
+    {
+      "move": false,
+      "move_angle": -64.58384083105308
+    },
+    {
+      "move": true,
+      "move_angle": 121.11805444861939
+    },
+    {
+      "move": true,
+      "move_angle": 159.5586454805939
+    },
+    {
+      "move": false,
+      "move_angle": -68.82355648028218
+    },
+    {
+      "move": true,
+      "move_angle": -156.3401270915514
+    },
+    {
+      "move": true,
+      "move_angle": 146.09481491662572
+    },
+    {
+      "move": true,
+      "move_angle": 48.944477047387196
+    },
+    {
+      "move": true,
+      "move_angle": 0.7013773054679872
+    },
+    {
+      "move": true,
+      "move_angle": -63.247461086327604
+    },
+    {
+      "move": true,
+      "move_angle": -18.348785754849597
+    },
+    {
+      "move": true,
+      "move_angle": 176.85125547791813
+    },
+    {
+      "move": true,
+      "move_angle": 50.79362331157611
+    },
+    {
+      "move": true,
+      "move_angle": 9.606091754119316
+    },
+    {
+      "move": true,
+      "move_angle": -154.64574873700778
+    },
+    {
+      "move": true,
+      "move_angle": -47.90136356764699
+    },
+    {
+      "move": true,
+      "move_angle": -43.45530131002036
+    },
+    {
+      "move": true,
+      "move_angle": -17.750301213191452
+    },
+    {
+      "move": true,
+      "move_angle": -125.22466723648628
+    },
+    {
+      "move": false,
+      "move_angle": -41.53933533142752
+    },
+    {
+      "move": false,
+      "move_angle": 77.88699594450836
+    },
+    {
+      "move": false,
+      "move_angle": 99.34818438115828
+    },
+    {
+      "move": true,
+      "move_angle": 55.449442818499776
+    },
+    {
+      "move": false,
+      "move_angle": -37.76714510709711
+    },
+    {
+      "move": true,
+      "move_angle": -8.649498602657735
+    },
+    {
+      "move": true,
+      "move_angle": 93.44260747335235
+    },
+    {
+      "move": false,
+      "move_angle": -140.58750494930308
+    },
+    {
+      "move": false,
+      "move_angle": -62.95708435404002
+    },
+    {
+      "move": true,
+      "move_angle": -13.43013080692205
+    },
+    {
+      "move": false,
+      "move_angle": -131.3908700128096
+    },
+    {
+      "move": true,
+      "move_angle": -115.73154682636053
+    },
+    {
+      "move": true,
+      "move_angle": 49.51224113597249
+    },
+    {
+      "move": true,
+      "move_angle": -8.950265285807975
+    },
+    {
+      "move": false,
+      "move_angle": 164.05415424652597
+    },
+    {
+      "move": true,
+      "move_angle": 39.03692712247222
+    },
+    {
+      "move": true,
+      "move_angle": -78.71833746834857
+    },
+    {
+      "move": false,
+      "move_angle": 84.60241942464904
+    },
+    {
+      "move": false,
+      "move_angle": 93.68730287294058
+    },
+    {
+      "move": false,
+      "move_angle": -121.0552088794666
+    },
+    {
+      "move": true,
+      "move_angle": 11.591197128374313
+    },
+    {
+      "move": false,
+      "move_angle": -31.272559283835243
+    },
+    {
+      "move": false,
+      "move_angle": 50.599357458952355
+    },
+    {
+      "move": false,
+      "move_angle": 94.42759410024567
+    },
+    {
+      "move": false,
+      "move_angle": 156.89466767126373
+    },
+    {
+      "move": true,
+      "move_angle": 47.53796435160926
+    },
+    {
+      "move": false,
+      "move_angle": -167.88504862939422
+    },
+    {
+      "move": true,
+      "move_angle": 42.309248811459184
+    },
+    {
+      "move": true,
+      "move_angle": -48.89112922656574
+    }
+  ],
+  "frame_snapshots": [
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            48.0,
+            144.0
+          ],
+          "angle": 180,
+          "velocity": [
+            0.0,
+            0.0
+          ],
+          "angular_velocity": 0.0,
+          "entity_type": "SkeletalEntity",
+          "animation_name": null
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            49.6335459429531,
+            139.8666461472535
+          ],
+          "angle": 338.435534681131,
+          "velocity": [
+            19.60255131543702,
+            -49.60024623295839
+          ],
+          "angular_velocity": 0.0,
+          "entity_type": "SkeletalEntity",
+          "animation_name": "run"
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            47.19137936500488,
+            134.0776790025788
+          ],
+          "angle": 420.2303911389527,
+          "velocity": [
+            -33.22650919846589,
+            -59.54755648950422
+          ],
+          "angular_velocity": 0.0,
+          "entity_type": "SkeletalEntity",
+          "animation_name": "run"
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            43.30519322457238,
+            127.72167495844747
+          ],
+          "angle": 422.45448370890716,
+          "velocity": [
+            0.0,
+            -64.36253723167522
+          ],
+          "angular_velocity": 0.0,
+          "entity_type": "SkeletalEntity",
+          "animation_name": "run"
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            43.58389534200524,
+            127.4431565508004
+          ],
+          "angle": 529.4904717414622,
+          "velocity": [
+            3.944304526105059e-31,
+            9.530286554569813
+          ],
+          "angular_velocity": 0.0,
+          "entity_type": "SkeletalEntity",
+          "animation_name": "run"
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            43.73200905045385,
+            127.4431565508004
+          ],
+          "angle": 529.4904717414622,
+          "velocity": [
+            0.0,
+            0.0
+          ],
+          "angular_velocity": 0.0,
+          "entity_type": "SkeletalEntity",
+          "animation_name": null
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            43.81072273527428,
+            127.4431565508004
+          ],
+          "angle": 529.4904717414622,
+          "velocity": [
+            0.0,
+            0.0
+          ],
+          "angular_velocity": 0.0,
+          "entity_type": "SkeletalEntity",
+          "animation_name": null
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            47.69309846159546,
+            125.24960499434751
+          ],
+          "angle": 659.5741217925362,
+          "velocity": [
+            46.38495650970075,
+            -26.322618677434328
+          ],
+          "angular_velocity": 0.0,
+          "entity_type": "SkeletalEntity",
+          "animation_name": "run"
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            47.19456203171696,
+            121.12554156816198
+          ],
+          "angle": 779.9886386189329,
+          "velocity": [
+            -15.2594284604819,
+            -44.224237378739275
+          ],
+          "angular_velocity": 0.0,
+          "entity_type": "SkeletalEntity",
+          "animation_name": "run"
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            46.57466313099345,
+            119.32897649972485
+          ],
+          "angle": 779.9886386189329,
+          "velocity": [
+            -4.3869011165859035,
+            -12.71393334549731
+          ],
+          "angular_velocity": 0.0,
+          "entity_type": "SkeletalEntity",
+          "animation_name": null
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            43.7358119620984,
+            118.05311627878811
+          ],
+          "angle": 805.3845829572111,
+          "velocity": [
+            1.4210854715202004e-14,
+            -12.767535982141338
+          ],
+          "angular_velocity": 2.3129674833789708e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": "run"
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            43.812743758120334,
+            119.55414045835177
+          ],
+          "angle": 805.3845829572111,
+          "velocity": [
+            2.4761192444893986e-14,
+            20.565797351191996
+          ],
+          "angular_velocity": 2.3129674833789696e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": null
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            43.85362846223158,
+            116.60305936811116
+          ],
+          "angle": 723.4502294454848,
+          "velocity": [
+            4.75175454539567e-14,
+            -39.52613255312571
+          ],
+          "angular_velocity": 2.4535276223311316e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": "run"
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            43.87535626681562,
+            115.42822389057638
+          ],
+          "angle": 723.4502294454848,
+          "velocity": [
+            7.418792170529505e-15,
+            -6.192799219792377
+          ],
+          "angular_velocity": 2.453527622331132e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": null
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            48.313757216444635,
+            115.28955237276666
+          ],
+          "angle": 626.0186421455967,
+          "velocity": [
+            53.20462367459396,
+            -0.42549836975803235
+          ],
+          "angular_velocity": 2.453527622331132e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": "run"
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            50.85653063286579,
+            115.26921681039207
+          ],
+          "angle": 626.0186421455967,
+          "velocity": [
+            19.87235626213492,
+            -0.15892707454350052
+          ],
+          "angular_velocity": 2.453527622331132e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": null
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            49.99485360213876,
+            119.06264664387585
+          ],
+          "angle": 508.88194555138057,
+          "velocity": [
+            -14.31459562115132,
+            45.5529434167145
+          ],
+          "angular_velocity": 2.453527622331132e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": "run"
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            44.79644322662832,
+            123.90479682777305
+          ],
+          "angle": 470.4413545194061,
+          "velocity": [
+            -59.51800538189503,
+            48.99521352342363
+          ],
+          "angular_velocity": 2.453527622331132e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": "run"
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            43.84359431778682,
+            127.03888587681466
+          ],
+          "angle": 470.4413545194061,
+          "velocity": [
+            3.345211386418555e-14,
+            27.810025883814653
+          ],
+          "angular_velocity": 3.921273246910605e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": null
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            43.87002371190533,
+            127.26380377305715
+          ],
+          "angle": 426.3401270915514,
+          "velocity": [
+            3.4308079719275633e-15,
+            -2.86299042185267
+          ],
+          "angular_velocity": 6.08807687661054e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": "run"
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            43.88406937331258,
+            129.5362332209557
+          ],
+          "angle": 483.90518508337425,
+          "velocity": [
+            0.0,
+            27.841751459152995
+          ],
+          "angular_velocity": 6.08807687661054e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": "run"
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            46.80616320807335,
+            134.89846401073402
+          ],
+          "angle": 581.0555229526128,
+          "velocity": [
+            35.02880418347525,
+            58.77841918550935
+          ],
+          "angular_velocity": 6.08807687661054e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": "run"
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            53.78013273551541,
+            139.1979766743672
+          ],
+          "angle": 629.298622694532,
+          "velocity": [
+            76.68187349260961,
+            39.838468126496245
+          ],
+          "angular_velocity": 6.08807687661054e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": "run"
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            61.318881423929824,
+            138.10649271643229
+          ],
+          "angle": 693.2474610863276,
+          "velocity": [
+            75.12860956245123,
+            -21.065501120517688
+          ],
+          "angular_velocity": 6.08807687661054e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": "run"
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            70.96331557101824,
+            135.1859809630407
+          ],
+          "angle": 648.3487857548496,
+          "velocity": [
+            100.70748785257061,
+            -30.833040816595073
+          ],
+          "angular_velocity": 6.08807687661054e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": "run"
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            73.79889946574194,
+            133.20327601865597
+          ],
+          "angle": 813.1487445220819,
+          "velocity": [
+            13.88550916617001,
+            -17.625851169296826
+          ],
+          "angular_velocity": 6.08807687661054e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": "run"
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            77.6111442192266,
+            135.37418295733573
+          ],
+          "angle": 939.2063766884239,
+          "velocity": [
+            42.96983520858185,
+            29.57605349801729
+          ],
+          "angular_velocity": 6.08807687661054e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": "run"
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            85.0966469862904,
+            138.2518916122914
+          ],
+          "angle": 980.3939082458808,
+          "velocity": [
+            81.23206616304876,
+            28.617293159864605
+          ],
+          "angular_velocity": 6.08807687661054e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": "run"
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            86.94706289795212,
+            138.41552405540293
+          ],
+          "angle": 1144.6457487370078,
+          "velocity": [
+            5.9585777073310595,
+            -3.7598693146339635
+          ],
+          "angular_velocity": 6.08807687661054e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": "run"
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            90.3570000020376,
+            134.84623662233432
+          ],
+          "angle": 1037.901363567647,
+          "velocity": [
+            39.727529707559526,
+            -42.079475333896994
+          ],
+          "angular_velocity": 6.08807687661054e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": "run"
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            96.4524823150718,
+            128.75032574503496
+          ],
+          "angle": 1033.4553013100203,
+          "velocity": [
+            65.20028181489832,
+            -64.73503546081312
+          ],
+          "angular_velocity": 6.08807687661054e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": "run"
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            105.3942546546328,
+            122.72004293543071
+          ],
+          "angle": 1007.7503012131915,
+          "velocity": [
+            94.26121171175228,
+            -59.416386623088414
+          ],
+          "angular_velocity": 6.08807687661054e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": "run"
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            109.63852410656338,
+            114.79820765984283
+          ],
+          "angle": 1115.2246672364863,
+          "velocity": [
+            32.07899108081646,
+            -83.17874598243664
+          ],
+          "angular_velocity": 6.08807687661054e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": "run"
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            111.84689357051447,
+            109.07204868512349
+          ],
+          "angle": 1115.2246672364863,
+          "velocity": [
+            20.084635351249457,
+            -52.078158500144376
+          ],
+          "angular_velocity": 6.08807687661054e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": null
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            112.85582746150888,
+            106.45594845863344
+          ],
+          "angle": 1115.2246672364863,
+          "velocity": [
+            8.090279621682631,
+            -20.977571017852043
+          ],
+          "angular_velocity": 6.08807687661054e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": null
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            112.66532577954662,
+            106.94990698037263
+          ],
+          "angle": 1115.2246672364863,
+          "velocity": [
+            -3.904076107883691,
+            10.123016464440482
+          ],
+          "angular_velocity": 6.08807687661054e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": null
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            114.90395680036733,
+            111.34157406751474
+          ],
+          "angle": 1294.5505571815002,
+          "velocity": [
+            27.64438747142531,
+            50.67540175281744
+          ],
+          "angular_velocity": 6.08807687661054e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": "run"
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            116.33812986743924,
+            113.97058136355486
+          ],
+          "angle": 1294.5505571815002,
+          "velocity": [
+            11.681199310577991,
+            21.413007201918244
+          ],
+          "angular_velocity": 6.08807687661054e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": null
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            121.57566904640304,
+            114.84867860542175
+          ],
+          "angle": 1358.6494986026578,
+          "velocity": [
+            60.51423028544994,
+            6.254565462018906
+          ],
+          "angular_velocity": 6.08807687661054e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": "run"
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            125.67925817204258,
+            119.73682144114916
+          ],
+          "angle": 1256.5573925266476,
+          "velocity": [
+            37.140223450584344,
+            57.40680093632528
+          ],
+          "angular_velocity": 6.08807687661054e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": "run"
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            127.8844025025487,
+            123.14526301355006
+          ],
+          "angle": 1256.5573925266476,
+          "velocity": [
+            19.03368727595687,
+            29.419938681545492
+          ],
+          "angular_velocity": 6.08807687661054e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": null
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            128.2788932155921,
+            123.75501836047297
+          ],
+          "angle": 1256.5573925266476,
+          "velocity": [
+            0.9271511013290095,
+            1.4330764267659433
+          ],
+          "angular_velocity": 6.08807687661054e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": null
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            132.66876022491923,
+            122.82625416221636
+          ],
+          "angle": 1363.430130806922,
+          "velocity": [
+            52.492973891658906,
+            -11.431785664432526
+          ],
+          "angular_velocity": 6.08807687661054e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": "run"
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            135.20389656421153,
+            122.27415865090616
+          ],
+          "angle": 1363.430130806922,
+          "velocity": [
+            19.923041293176524,
+            -4.3387890028355365
+          ],
+          "angular_velocity": 6.08807687661054e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": null
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            134.71320444328495,
+            117.95707671715306
+          ],
+          "angle": 1465.7315468263605,
+          "velocity": [
+            -9.872913709754854,
+            -50.93722540447017
+          ],
+          "angular_velocity": 6.08807687661054e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": "run"
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            136.8858743384647,
+            117.65847577840118
+          ],
+          "angle": 1300.4877588640275,
+          "velocity": [
+            28.04662148410825,
+            6.604233815871716
+          ],
+          "angular_velocity": 6.08807687661054e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": "run"
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            143.30179148560362,
+            117.44399462669162
+          ],
+          "angle": 1358.950265285808,
+          "velocity": [
+            71.38168146884502,
+            -3.8946205836893792
+          ],
+          "angular_velocity": 6.08807687661054e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": "run"
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            147.66630715876812,
+            117.20586444778903
+          ],
+          "angle": 1358.950265285808,
+          "velocity": [
+            38.097851784204664,
+            -2.078638030093424
+          ],
+          "angular_velocity": 6.08807687661054e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": null
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            153.8699973572677,
+            119.85494561576253
+          ],
+          "angle": 1310.9630728775278,
+          "velocity": [
+            66.8247120251539,
+            32.204701621701
+          ],
+          "angular_velocity": 6.08807687661054e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": "run"
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            159.56570340031203,
+            117.82227486297793
+          ],
+          "angle": 1428.7183374683486,
+          "velocity": [
+            54.98353011150085,
+            -30.832989357755658
+          ],
+          "angular_velocity": 6.08807687661054e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": "run"
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            162.6412219735387,
+            116.09762329467051
+          ],
+          "angle": 1428.7183374683486,
+          "velocity": [
+            25.90951685641908,
+            -14.529220948138182
+          ],
+          "angular_velocity": 6.08807687661054e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": null
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            162.80933922125723,
+            116.00334856732489
+          ],
+          "angle": 1428.7183374683486,
+          "velocity": [
+            -3.164496398662312,
+            1.774547461479969
+          ],
+          "angular_velocity": 6.08807687661054e-15,
+          "entity_type": "SkeletalEntity",
+          "animation_name": null
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            162.80933922125723,
+            116.00334856732489
+          ],
+          "angle": 1428.7183374683486,
+          "velocity": [
+            0.0,
+            0.0
+          ],
+          "angular_velocity": 0.0,
+          "entity_type": "SkeletalEntity",
+          "animation_name": null
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            167.1631442500009,
+            116.8963593127471
+          ],
+          "angle": 1338.4088028716258,
+          "velocity": [
+            52.24566034492389,
+            10.716128945066513
+          ],
+          "angular_velocity": 0.0,
+          "entity_type": "SkeletalEntity",
+          "animation_name": "run"
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            169.66658214152852,
+            117.40984049136479
+          ],
+          "angle": 1338.4088028716258,
+          "velocity": [
+            19.592122629346612,
+            4.018548354399219
+          ],
+          "angular_velocity": 0.0,
+          "entity_type": "SkeletalEntity",
+          "animation_name": null
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            168.90466626149842,
+            117.25356361091589
+          ],
+          "angle": 1338.4088028716258,
+          "velocity": [
+            -13.061415086230916,
+            -2.6790322362668686
+          ],
+          "angular_velocity": 0.0,
+          "entity_type": "SkeletalEntity",
+          "animation_name": null
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            170.31965289584014,
+            117.54379210317818
+          ],
+          "angle": 1338.4088028716258,
+          "velocity": [
+            19.592122629346242,
+            4.01854835440103
+          ],
+          "angular_velocity": 0.0,
+          "entity_type": "SkeletalEntity",
+          "animation_name": null
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            169.55773701581003,
+            117.38751522272916
+          ],
+          "angle": 1338.4088028716258,
+          "velocity": [
+            -13.061415086230667,
+            -2.6790322362680756
+          ],
+          "angular_velocity": 0.0,
+          "entity_type": "SkeletalEntity",
+          "animation_name": null
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            171.61486386944193,
+            120.47280655225654
+          ],
+          "angle": 1302.4620356483908,
+          "velocity": [
+            27.297805260828717,
+            37.559302401582265
+          ],
+          "angular_velocity": 0.0,
+          "entity_type": "SkeletalEntity",
+          "animation_name": "run"
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            172.71154052533785,
+            121.98173409283996
+          ],
+          "angle": 1302.4620356483908,
+          "velocity": [
+            7.700558818585208,
+            10.5952700066847
+          ],
+          "angular_velocity": 0.0,
+          "entity_type": "SkeletalEntity",
+          "animation_name": null
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            176.55445842300986,
+            125.73864536055916
+          ],
+          "angle": 1307.6907511885408,
+          "velocity": [
+            44.574903008347285,
+            42.96388121129347
+          ],
+          "angular_velocity": 0.0,
+          "entity_type": "SkeletalEntity",
+          "animation_name": "run"
+        }
+      ]
+    },
+    {
+      "entities": [
+        {
+          "entity_id": "Delver:48.0_144.0",
+          "state": "NORMAL",
+          "position": [
+            180.45357739680256,
+            125.4928740895016
+          ],
+          "angle": 1398.8911292265657,
+          "velocity": [
+            0.0,
+            -11.542031494949086
+          ],
+          "angular_velocity": 0.0,
+          "entity_type": "SkeletalEntity",
+          "animation_name": "run"
+        }
+      ]
+    }
+  ]
+}

@@ -6,10 +6,9 @@ from level_loader import level_loader
 import websockets
 from runtime.episode_trajectory import EpisodeTrajectoryFactory
 from agent_loader import agent_loader
-from training_manager import training_manager
+from training_state_manager import training_state_manager
 import json
 from editor.components.overlay.message_overlay import MessageOverlay
-from src.utils.log_bytes_size import log_bytes_size
 
 
 class ClientRequester:
@@ -26,15 +25,14 @@ class ClientRequester:
             level_data: The level object to be trained.
             server_url (str): The base URL of the AI server.
         """
-        training_manager.sending_training_request = True
+        training_state_manager.sending_training_request = True
         try:
             uri = f"http://{self.server_url}/train"
 
-            level_bytes = dill.dumps(level_loader.level)
-            log_bytes_size(level_bytes, "CLIENT")
+            level_json = level_loader.level.to_dict()
             payload = {
-                "level": base64.b64encode(level_bytes).decode("ascii"),
-                "amount_of_episodes": training_manager.amount_of_episodes,
+                "level": level_json,
+                "amount_of_episodes": training_state_manager.amount_of_episodes,
             }
 
             response_json = await self._send_request(uri, payload)
@@ -43,11 +41,11 @@ class ClientRequester:
             session_id = response_json.get("session_id")
             if session_id:
                 self.session_id = session_id
-                training_manager.sending_training_request = False
-                training_manager.training = True
+                training_state_manager.sending_training_request = False
+                training_state_manager.training = True
             else:
                 logging.error("Failed to get a valid session_id from the server.")
-                training_manager.reset_states()
+                training_state_manager.reset_states()
                 return
 
             await self.listen_for_trajectories()
@@ -57,14 +55,14 @@ class ClientRequester:
             MessageOverlay(
                 f"An error occurred during the process: {e}", subject="Error"
             )
-            training_manager.reset_states()
+            training_state_manager.reset_states()
 
     async def send_interrupt_training_request(self):
         """
         Sends a request to interrupt the training process.
         """
         try:
-            training_manager.sending_interrupt_training_request = True
+            training_state_manager.sending_interrupt_training_request = True
 
             uri = f"http://{self.server_url}/interrupt-training/{self.session_id}"
 
@@ -79,7 +77,7 @@ class ClientRequester:
             MessageOverlay(
                 f"An error occurred during the process: {e}", subject="Error"
             )
-            training_manager.reset_states()
+            training_state_manager.reset_states()
 
     async def _send_request(self, uri, payload):
         async with httpx.AsyncClient() as client:
@@ -134,15 +132,17 @@ class ClientRequester:
                         trajectory = trajectory_factory.from_json(trajectory_data)
                         trajectory.save(agent_loader.agent.name)
                     elif is_end_signal:
-                        training_manager.training = False
-                        training_manager.sending_interrupt_training_request = False
+                        training_state_manager.training = False
+                        training_state_manager.sending_interrupt_training_request = (
+                            False
+                        )
 
         except websockets.exceptions.ConnectionClosed as e:
             logging.warning(f"WebSocket connection closed: {e}")
-            training_manager.reset_states()
+            training_state_manager.reset_states()
         except Exception as e:
             logging.error(f"An unexpected error occurred in WebSocket listener: {e}")
-            training_manager.reset_states()
+            training_state_manager.reset_states()
             raise
 
 

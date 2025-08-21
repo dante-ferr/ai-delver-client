@@ -28,15 +28,16 @@ class CanvasGridElementRenderer:
         level_loader.level.map.tilemap.on_layer_event(
             "tile_formatted", self._handle_tile_formatted
         )
-
-        level_loader.level.map.on_layer_event(
+        level_loader.level.map.tilemap.on_layer_event(
             "element_removed", self._handle_element_removed
         )
 
         level_loader.level.map.world_objects_map.on_layer_event(
             "element_created", self._handle_world_object_created
         )
-        pass
+        level_loader.level.map.world_objects_map.on_layer_event(
+            "element_removed", self._handle_element_removed
+        )
 
     def _handle_tile_created(self, sender, element: "GridElement"):
         self.draw_tile(cast("Tile", element))

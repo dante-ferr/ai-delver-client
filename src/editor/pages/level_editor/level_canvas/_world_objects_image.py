@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from PIL import ImageTk
 from typing import cast
-from canvas_controller import canvas_controller
+from ..level_editor_manager import level_editor_manager
 
 class WorldObjectsImage:
     def __init__(self):
@@ -9,7 +9,7 @@ class WorldObjectsImage:
 
     def get_image(self, canvas_object_name: str) -> ctk.CTkImage:
         if canvas_object_name not in self.images:
-            canvas_object = canvas_controller.objects_manager.get_canvas_object(
+            canvas_object = level_editor_manager.objects_manager.get_canvas_object(
                 canvas_object_name
             )
             if not canvas_object:

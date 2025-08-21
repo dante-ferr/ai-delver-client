@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING, Optional, cast
 from src.utils import bresenham_line
 from level_loader import level_loader
-from canvas_controller import canvas_controller
+from ..level_editor_manager import level_editor_manager
 
 if TYPE_CHECKING:
     from .level_canvas import LevelCanvas
@@ -74,16 +74,14 @@ class CanvasClickHandler:
             return
         self.drawn_tile_positions.append(canvas_grid_pos)
 
-        self.selected_layer_name = canvas_controller.level_selector.get_selection(
-            "layer"
-        )
+        self.selected_layer_name = level_editor_manager.selector.get_selection("layer")
         self.selected_canvas_object_name = cast(
             str,
-            canvas_controller.level_selector.get_selection(
+            level_editor_manager.selector.get_selection(
                 self.selected_layer_name + ".canvas_object"
             ),
         )
-        self.selected_tool_name = canvas_controller.level_selector.get_selection("tool")
+        self.selected_tool_name = level_editor_manager.selector.get_selection("tool")
 
         grid_pos = self.canvas.get_absolute_grid_pos(canvas_grid_pos)
         self._handle_interaction(grid_pos)
@@ -93,14 +91,14 @@ class CanvasClickHandler:
             return
 
         if self.selected_tool_name == "pencil":
-            canvas_object = canvas_controller.objects_manager.get_canvas_object(
+            canvas_object = level_editor_manager.objects_manager.get_canvas_object(
                 self.selected_canvas_object_name
             )
             canvas_object.create_element_callback(grid_pos)
 
         elif self.selected_tool_name == "eraser":
             layer = level_loader.level.map.get_layer(self.selected_layer_name)
-            canvas_object = canvas_controller.objects_manager.get_canvas_object(
+            canvas_object = level_editor_manager.objects_manager.get_canvas_object(
                 self.selected_canvas_object_name
             )
 

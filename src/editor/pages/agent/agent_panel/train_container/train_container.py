@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from training_manager import training_manager
+from training_state_manager import training_state_manager
 import asyncio
 from editor.utils import verify_level_issues
 from client_requests import client_requester
@@ -24,8 +24,10 @@ class TrainContainer(ctk.CTkFrame):
         self.after(100, self._add_buttons_to_training_manager)
 
     def _add_buttons_to_training_manager(self):
-        training_manager.add_disable_on_train_element(self.train_button)
-        training_manager.add_enable_on_train_element(self.interrupt_training_button)
+        training_state_manager.add_disable_on_train_element(self.train_button)
+        training_state_manager.add_enable_on_train_element(
+            self.interrupt_training_button
+        )
 
     def _start_train_thread(self):
         """

@@ -16,11 +16,8 @@ PAGE_COMPONENTS = {
 
 
 class App(ctk.CTk):
+
     def __init__(self):
-        from canvas_controller import canvas_controller
-
-        canvas_controller.objects_manager.assign_level_to_objects(level_loader.level)
-
         super().__init__()
 
         self.title("Custom Tkinter App")
@@ -53,10 +50,6 @@ class App(ctk.CTk):
             self.select_page(page_name)
 
     def restart_all_pages(self):
-        from canvas_controller import canvas_controller
-
-        canvas_controller.objects_manager.assign_level_to_objects(level_loader.level)
-
         for page_name in self.pages.keys():
             self.restart_page(page_name)
 

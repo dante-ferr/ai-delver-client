@@ -6,16 +6,19 @@ from ._level_title_textbox import LevelTitleTextbox
 from .level_file_container import LevelFileContainer
 from level_loader import level_loader
 from editor.utils import verify_level_issues
-from canvas_controller import canvas_controller
 
 
 class Sidebar(ctk.CTkFrame):
     def __init__(self, parent):
+        from ..level_editor_manager import level_editor_manager
+
+        level_editor_manager.objects_manager.assign_level_to_objects(level_loader.level)
+
         super().__init__(parent, fg_color="transparent")
 
         self.pack_propagate(False)
 
-        canvas_controller.level_selector.set_selection("layer", "floor")
+        level_editor_manager.selector.set_selection("layer", "floor")
 
         title_textbox = LevelTitleTextbox(self)
         title_textbox.pack(padx=0, pady=0, fill="x")

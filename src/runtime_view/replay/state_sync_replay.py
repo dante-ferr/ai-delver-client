@@ -53,6 +53,7 @@ class StateSyncReplay(Replay):
             self.current_step_index += 1
             if self.finished:
                 self._apply_state(self.snapshots[-1])
+                self._stop_every_entity()
                 return
 
         prev_snapshot = self.snapshots[max(0, self.current_step_index - 1)]
@@ -77,6 +78,10 @@ class StateSyncReplay(Replay):
             target_entity = self.entity_map.get(entity_state.entity_id)
             if target_entity:
                 entity_state.apply_to_entity(target_entity)
+
+    def _stop_every_entity(self):
+        for entity in self.entity_map.values():
+            entity.run_animation(None)
 
     @property
     def finished(self) -> bool:
