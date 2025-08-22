@@ -1,15 +1,14 @@
 import logging
-import dill
-import base64
 import httpx
 from level_loader import level_loader
+from agent_loader import agent_loader
 import websockets
 from runtime.episode_trajectory import EpisodeTrajectoryFactory
-from agent_loader import agent_loader
 from training_state_manager import training_state_manager
 import json
 from editor.components.overlay.message_overlay import MessageOverlay
-
+from utils import json_to_sha256
+import os
 
 class ClientRequester:
     def __init__(self, server_url="localhost:8001"):
@@ -48,7 +47,18 @@ class ClientRequester:
                 training_state_manager.reset_states()
                 return
 
-            await self.listen_for_trajectories()
+            # Each level configuration is saved with a unique hash as its filename, into the agent's directory.
+            # This is done in order to allow the trajectories to point to a specific level configuration through
+            # its specific hash. So when the trajectory is loaded to render a replay, the correct level will be
+            # loaded as well.
+            level_hash = level_loader.level.to_hash()
+            level_path = (
+                f"data/agents/{agent_loader.agent.name}/level_saves/{level_hash}.json"
+            )
+            if not os.path.exists(level_path):
+                level_loader.level.save(level_path)
+
+            await self.listen_for_trajectories(level_hash)
 
         except Exception as e:
             logging.error(f"An error occurred during the process: {e}")
@@ -88,7 +98,7 @@ class ClientRequester:
             logging.info(f"Server responded: {response_data.get('message')}")
             return response_data
 
-    async def listen_for_trajectories(self):
+    async def listen_for_trajectories(self, level_hash: str):
         """
         Connects to a WebSocket and yields received episode trajectory frames.
 
@@ -130,6 +140,7 @@ class ClientRequester:
 
                     if trajectory_data:
                         trajectory = trajectory_factory.from_json(trajectory_data)
+                        trajectory.level_hash = level_hash
                         trajectory.save(agent_loader.agent.name)
                     elif is_end_signal:
                         training_state_manager.training = False

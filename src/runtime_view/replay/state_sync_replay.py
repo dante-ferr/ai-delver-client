@@ -3,6 +3,10 @@ from typing import TYPE_CHECKING, Dict, cast, List
 from pymunk import Vec2d
 from runtime.world_objects.entities.entity import Entity
 from runtime.episode_trajectory.snapshots import interpolate_frame_snapshots
+from level_loader import level_loader
+from agent_loader import agent_loader
+from editor.components.overlay.message_overlay import MessageOverlay
+import logging
 
 if TYPE_CHECKING:
     from runtime.episode_trajectory import EpisodeTrajectory
@@ -25,9 +29,23 @@ class StateSyncReplay(Replay):
     its own physics simulation.
     """
 
-    def __init__(self, level: "Level", trajectory: "EpisodeTrajectory"):
-        # This replay mode does NOT run physics, so deterministic is False.
-        super().__init__(level, trajectory, physics=False)
+    def __init__(self, trajectory: "EpisodeTrajectory"):
+        print(
+            f"data/agents/{agent_loader.agent.name}/level_saves/{trajectory.level_hash}.json"
+        )
+        trajectory_level = level_loader.load_level(
+            f"data/agents/{agent_loader.agent.name}/level_saves",
+            f"{trajectory.level_hash}.json",
+        )
+        if trajectory_level is None:
+            MessageOverlay(
+                "The level for the trajectory does not exist. You should never delete levels saved on the agent, because it may corrupt saved trajectories.",
+                "Error",
+            )
+            logging.error("Level for trajectory does not exist.")
+            return
+
+        super().__init__(trajectory_level, trajectory, physics=False)
 
         self.execution_speed = 1.0
 

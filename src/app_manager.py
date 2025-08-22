@@ -26,9 +26,25 @@ class AppManager:
         if not self._is_running:
             return
 
-        # This line tells pyglet to process all pending events and call any
-        # functions scheduled with its clock.
-        pyglet.clock.tick(poll=True)
+        try:
+            # This line tells pyglet to process all pending events and call any
+            # functions scheduled with its clock.
+            pyglet.clock.tick(poll=True)
+        except Exception as e:
+            logging.error(
+                "An unhandled exception occurred in the application loop.",
+                exc_info=True,
+            )
+            from editor.components.overlay.message_overlay import MessageOverlay
+
+            MessageOverlay(
+                f"An unexpected error occurred: {e}\n\n"
+                "The application may be unstable. Please save your work and restart.\n"
+                "See logs for more details.",
+                subject="Error",
+            )
+            # We stop ticking to prevent an error loop, but leave the editor open.
+            return
 
         # Reschedule this function to be called again by tkinter's loop.
         # This creates the continuous, non-blocking loop that drives the game.
@@ -106,7 +122,8 @@ class AppManager:
         trajectory = agent_loader.agent.trajectory_loader.trajectory
         if trajectory is None:
             raise RuntimeError("No trajectory loaded")
-        self._start_runtime("replay", StateSyncReplay, level_loader.level, trajectory)
+
+        self._start_runtime("replay", StateSyncReplay, trajectory)
 
     def stop_replay(self):
         self._stop_runtime("replay")

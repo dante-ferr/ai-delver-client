@@ -12,7 +12,10 @@ class _LoadLevelOverlay(FileLoaderOverlay):
         from app_manager import app_manager
 
         super()._load()
-        level_loader.load_level(self._get_file_path())
+        level = level_loader.load_level(self._get_file_path())
+        if level is None:
+            raise RuntimeError("Failed to load level")
+        level_loader.level = level
         app_manager.editor_app.restart_all_pages()
 
 

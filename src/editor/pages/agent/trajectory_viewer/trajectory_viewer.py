@@ -3,7 +3,6 @@ from editor.components.overlay.message_overlay import MessageOverlay
 import json
 from agent_loader import agent_loader
 from editor.utils import verify_level_issues
-from app_manager import app_manager
 
 class TrajectoryViewer(ctk.CTkFrame):
     DISPLAY_TRAJECTORY_JSON = True
@@ -37,7 +36,17 @@ class TrajectoryViewer(ctk.CTkFrame):
         self._set_data_display_to_default()
         self.data_display.configure(state="disabled")
 
+        self.trajectory = None
+
     def _replay(self):
+        from app_manager import app_manager
+
+        if self.trajectory is None:
+            MessageOverlay(
+                "Please load a trajectory before replaying.", subject="Error"
+            )
+            return
+
         if not verify_level_issues():
             app_manager.start_replay()
 
