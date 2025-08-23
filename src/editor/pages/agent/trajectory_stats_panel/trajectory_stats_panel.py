@@ -11,7 +11,7 @@ from src.editor.components import LoadingLogsPanel, SectionTitle
 
 class TrajectoryStatsPanel(ctk.CTkFrame):
     def __init__(self, parent, **kwargs):
-        super().__init__(parent, fg_color="transparent", width=128, **kwargs)
+        super().__init__(parent, fg_color="transparent", width=256, **kwargs)
 
         title = SectionTitle(self, text="Trajectory Stats")
         title.pack(pady=(0, 8), side="top", anchor="w")
@@ -49,6 +49,12 @@ class TrajectoryStatsPanel(ctk.CTkFrame):
         from agent_loader import agent_loader
 
         trajectory_stats_state_manager.getting_stats = True
+
+        # Yield control to the event loop briefly. This allows the UI update from
+        # setting getting_stats to True to be processed by the main GUI thread
+        # before the potentially long-running get_stats() call begins.
+        await asyncio.sleep(0.01)
+
         try:
             stats_calculator = TrajectoryStatsCalculator(agent_loader.agent.name)
             stats = await stats_calculator.get_stats()

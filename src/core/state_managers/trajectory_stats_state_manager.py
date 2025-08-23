@@ -36,12 +36,9 @@ class TrajectoryStatsStateManager:
 
         if self.stats_logs_panel:
             if self._getting_stats:
-                self.stats_logs_panel.show_log(
-                    "getting_stats", "Getting statistics from saved trajectories..."
-                )
+                self.stats_logs_panel.show_log("getting_stats", "Getting statistics...")
             else:
                 self.stats_logs_panel.remove_log("getting_stats")
-                # self.stats_logs_panel.grid_forget()
 
     def reset_states(self):
         self._getting_stats = False
