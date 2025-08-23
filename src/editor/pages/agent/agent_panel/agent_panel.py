@@ -1,9 +1,10 @@
 import customtkinter as ctk
 from ._agent_title_textbox import AgentTitleTextbox
 from .agent_file_container import AgentFileContainer
-from .train_container import TrainContainer
-from .train_logs_panel import TrainLogsPanel
+from ._train_container import TrainContainer
+from src.editor.components import LoadingLogsPanel
 from training_state_manager import training_state_manager
+
 
 class AgentPanel(ctk.CTkFrame):
     """
@@ -11,10 +12,10 @@ class AgentPanel(ctk.CTkFrame):
     """
 
     def __init__(self, parent):
-        super().__init__(parent, fg_color="transparent")
+        super().__init__(parent, fg_color="transparent", width=128)
 
         title_textbox = AgentTitleTextbox(self)
-        title_textbox.pack(padx=0, pady=0, fill="x")
+        title_textbox.pack(padx=0, pady=(0, 8), fill="x")
 
         train_container = TrainContainer(self)
         train_container.pack(padx=2, pady=(2, 24))
@@ -29,7 +30,7 @@ class AgentPanel(ctk.CTkFrame):
 
         self.episodes_slider.configure(command=self._on_episode_slide)
 
-        train_logs_panel = TrainLogsPanel(self)
+        train_logs_panel = LoadingLogsPanel(self)
         train_logs_panel.pack(padx=2, pady=(0, 10), fill="x")
         training_state_manager.set_train_logs_panel(train_logs_panel)
 

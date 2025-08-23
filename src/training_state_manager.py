@@ -2,9 +2,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     import customtkinter as ctk
-    from editor.pages.agent.agent_panel.train_logs_panel.train_logs_panel import (
-        TrainLogsPanel,
-    )
+    from src.editor.components import LoadingLogsPanel
 
 
 class TrainingStateManager:
@@ -16,9 +14,9 @@ class TrainingStateManager:
         self.disable_on_train_elements: "set[ctk.CTkBaseClass]" = set()
         self.enable_on_train_elements: "set[ctk.CTkBaseClass]" = set()
         self.amount_of_episodes = 0
-        self.train_logs_panel: "TrainLogsPanel | None" = None
+        self.train_logs_panel: "LoadingLogsPanel | None" = None
 
-    def set_train_logs_panel(self, panel: "TrainLogsPanel"):
+    def set_train_logs_panel(self, panel: "LoadingLogsPanel"):
         self.train_logs_panel = panel
         self._update_ui_state()
 

@@ -6,6 +6,7 @@ from ._level_title_textbox import LevelTitleTextbox
 from .level_file_container import LevelFileContainer
 from level_loader import level_loader
 from editor.utils import verify_level_issues
+from src.editor.components import SectionTitle
 
 
 class Sidebar(ctk.CTkFrame):
@@ -31,11 +32,7 @@ class Sidebar(ctk.CTkFrame):
         layersPanel = LayersPanel(self)
         layersPanel.pack(pady=(8, 32), anchor="w", fill="x")
 
-        edit_label = ctk.CTkLabel(
-            self,
-            text="Edit",
-            font=ctk.CTkFont(size=16, weight="bold"),
-        )
+        edit_label = SectionTitle(self, text="Edit")
         edit_label.pack(pady=4, side="top", anchor="w")
 
         tools_frame_container = ctk.CTkFrame(self, fg_color="transparent")

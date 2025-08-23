@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from .svg_image import SvgImage
+from ..svg_image.svg_image import SvgImage
 from editor.theme import theme
 
 

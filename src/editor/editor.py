@@ -33,6 +33,8 @@ class App(ctk.CTk):
 
         self.page_container = ctk.CTkFrame(self, fg_color="transparent")
         self.page_container.grid(row=1, column=0, sticky="nsew")
+        self.page_container.grid_rowconfigure(0, weight=1)
+        self.page_container.grid_columnconfigure(0, weight=1)
 
         self.selected_page_name: str | None = None
         self.selected_page: Page | None = None
@@ -44,7 +46,7 @@ class App(ctk.CTk):
         if self.pages[page_name]:
             self.pages[page_name].pack_forget()
             self.pages[page_name].grid_forget()
-        self.pages[page_name] = PAGE_COMPONENTS[page_name](self)
+        self.pages[page_name] = PAGE_COMPONENTS[page_name](self.page_container)
 
         if self.selected_page_name == page_name:
             self.select_page(page_name)
@@ -55,7 +57,8 @@ class App(ctk.CTk):
 
     def _create_pages(self):
         self.pages: dict[str, Page] = {
-            name: component(self) for name, component in PAGE_COMPONENTS.items()
+            name: component(self.page_container)
+            for name, component in PAGE_COMPONENTS.items()
         }
         self.navbar.create_page_selectors(self.pages, default_page_name="level_editor")
 
@@ -68,7 +71,7 @@ class App(ctk.CTk):
         self.selected_page_name = page_name
         self.selected_page = page
 
-        page.grid(row=1, column=0, sticky="nsew")
+        page.grid(row=0, column=0, sticky="nsew")
 
     def clear_focus(self, event):
         widget_under_cursor = self.winfo_containing(event.x_root, event.y_root)

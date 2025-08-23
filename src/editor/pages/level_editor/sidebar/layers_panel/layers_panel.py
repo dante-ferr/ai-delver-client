@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from .layer_container import LayerContainer
-from editor.components.svg_image import SvgImage
+from src.editor.components import SvgImage, SectionTitle
 from editor.theme import theme
 from editor.utils.selection import populate_selection_manager, SelectionManager
 from level_loader import level_loader
@@ -20,11 +20,7 @@ class LayersPanel(ctk.CTkFrame):
     def __init__(self, parent):
         super().__init__(parent, fg_color="transparent")
 
-        title = ctk.CTkLabel(
-            self,
-            text="Layers",
-            font=ctk.CTkFont(size=16, weight="bold"),
-        )
+        title = SectionTitle(self, text="Layers")
         title.pack(pady=8, side="top", anchor="w")
 
         self.layer_containers = self._create_layer_containers()

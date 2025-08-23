@@ -4,6 +4,7 @@ from level_loader import level_loader
 from agent_loader import agent_loader
 import websockets
 from runtime.episode_trajectory import EpisodeTrajectoryFactory
+from trajectory_stats_state_manager import trajectory_stats_state_manager
 from training_state_manager import training_state_manager
 import json
 from editor.components.overlay.message_overlay import MessageOverlay
@@ -147,6 +148,7 @@ class ClientRequester:
                         training_state_manager.sending_interrupt_training_request = (
                             False
                         )
+                        trajectory_stats_state_manager.refresh_stats()
 
         except websockets.exceptions.ConnectionClosed as e:
             logging.warning(f"WebSocket connection closed: {e}")
