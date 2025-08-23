@@ -125,6 +125,8 @@ class ClientRequester:
         )
         trajectory_factory = EpisodeTrajectoryFactory()
 
+        current_episode = 0
+
         try:
             # The 'async with' ensures the connection is properly closed
             async with websockets.connect(uri) as websocket:
@@ -143,6 +145,12 @@ class ClientRequester:
                         trajectory = trajectory_factory.from_json(trajectory_data)
                         trajectory.level_hash = level_hash
                         trajectory.save(agent_loader.agent.name)
+
+                        current_episode += 1
+                        training_state_manager.update_training_process_log(
+                            current_episode
+                        )
+
                     elif is_end_signal:
                         training_state_manager.training = False
                         training_state_manager.sending_interrupt_training_request = (

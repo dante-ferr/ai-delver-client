@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     import customtkinter as ctk
-    from src.editor.components import LoadingLogsPanel
+    from src.editor.pages.agent.agent_panel._train_logs_panel import TrainLogsPanel
 
 
 class TrainingStateManager:
@@ -13,10 +13,12 @@ class TrainingStateManager:
 
         self.disable_on_train_elements: "set[ctk.CTkBaseClass]" = set()
         self.enable_on_train_elements: "set[ctk.CTkBaseClass]" = set()
-        self.amount_of_episodes = 0
-        self.train_logs_panel: "LoadingLogsPanel | None" = None
+        self.train_logs_panel: "TrainLogsPanel | None" = None
 
-    def set_train_logs_panel(self, panel: "LoadingLogsPanel"):
+        # Defined by the user before training starts, on the episodes slider
+        self.amount_of_episodes: int = 0
+
+    def set_train_logs_panel(self, panel: "TrainLogsPanel"):
         self.train_logs_panel = panel
         self._update_ui_state()
 
@@ -27,6 +29,10 @@ class TrainingStateManager:
     def add_enable_on_train_element(self, element: "ctk.CTkBaseClass"):
         self.enable_on_train_elements.add(element)
         self._update_ui_state()
+
+    def update_training_process_log(self, current_episodes: int):
+        if self.train_logs_panel:
+            self.train_logs_panel.update_training_progress(current_episodes)
 
     def _update_ui_state(self):
         is_busy = (
@@ -57,9 +63,9 @@ class TrainingStateManager:
                 self.train_logs_panel.remove_log("sending_request")
 
             if self._training:
-                self.train_logs_panel.show_log("training", "Training in progress...")
+                self.train_logs_panel.show_training_progress(self.amount_of_episodes)
             else:
-                self.train_logs_panel.remove_log("training")
+                self.train_logs_panel.remove_training_progress()
 
             if self._sending_interrupt_training_request:
                 self.train_logs_panel.show_log(

@@ -2,7 +2,7 @@ import customtkinter as ctk
 from ._agent_title_textbox import AgentTitleTextbox
 from .agent_file_container import AgentFileContainer
 from ._train_container import TrainContainer
-from src.editor.components import LoadingLogsPanel
+from ._train_logs_panel import TrainLogsPanel
 from training_state_manager import training_state_manager
 
 
@@ -30,7 +30,7 @@ class AgentPanel(ctk.CTkFrame):
 
         self.episodes_slider.configure(command=self._on_episode_slide)
 
-        train_logs_panel = LoadingLogsPanel(self)
+        train_logs_panel = TrainLogsPanel(self)
         train_logs_panel.pack(padx=2, pady=(0, 10), fill="x")
         training_state_manager.set_train_logs_panel(train_logs_panel)
 
