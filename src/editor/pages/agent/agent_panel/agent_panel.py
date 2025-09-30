@@ -7,6 +7,7 @@ from training_state_manager import training_state_manager
 
 
 class AgentPanel(ctk.CTkFrame):
+    COLLECT_STEPS_PER_ITERATION = 150
     """
     A CustomTkinter panel for creating, editing, saving, and loading Agents.
     """
@@ -23,10 +24,14 @@ class AgentPanel(ctk.CTkFrame):
         self.episodes_label = ctk.CTkLabel(self)
         self.episodes_label.pack(pady=0, anchor="w")
         self.episodes_slider = ctk.CTkSlider(
-            self, from_=10, to=1000, width=200, height=20
+            self,
+            from_=self.COLLECT_STEPS_PER_ITERATION,
+            to=20000,
+            width=self.COLLECT_STEPS_PER_ITERATION,
+            height=20,
         )
         self.episodes_slider.pack(pady=(0, 24), fill="x")
-        self._set_amount_of_episodes(50)
+        self._set_amount_of_episodes(self.COLLECT_STEPS_PER_ITERATION * 5)
 
         self.episodes_slider.configure(command=self._on_episode_slide)
 
@@ -38,7 +43,10 @@ class AgentPanel(ctk.CTkFrame):
         agent_file_container.pack(side="bottom", padx=2, pady=2)
 
     def _on_episode_slide(self, value):
-        rounded_value = round(value / 10) * 10
+        rounded_value = (
+            round(value / self.COLLECT_STEPS_PER_ITERATION)
+            * self.COLLECT_STEPS_PER_ITERATION
+        )
         self._set_amount_of_episodes(rounded_value)
 
     def _set_amount_of_episodes(self, value):
