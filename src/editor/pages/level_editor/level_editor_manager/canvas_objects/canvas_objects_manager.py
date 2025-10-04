@@ -31,22 +31,14 @@ class CanvasObjectsManager:
 
         tilemap = level.map.tilemap
 
-        floor_co = self.get_canvas_object("floor")
-        floor_co.create_element_callback = (
-            lambda position: tilemap.create_basic_floor_at(
+        platform_co = self.get_canvas_object("platform")
+        platform_co.create_element_callback = (
+            lambda position: tilemap.create_basic_platform_at(
                 position, apply_formatting=True
             )
         )
-        floor_co.remove_element_callback = lambda position: tilemap.remove_floor_at(
-            position, apply_formatting=True
-        )
-
-        wall_co = self.get_canvas_object("wall")
-        wall_co.create_element_callback = lambda position: tilemap.create_basic_wall_at(
-            position, apply_formatting=True
-        )
-        wall_co.remove_element_callback = lambda position: tilemap.remove_wall_at(
-            position, apply_formatting=True
+        platform_co.remove_element_callback = (
+            lambda position: tilemap.remove_platform_at(position, apply_formatting=True)
         )
 
         self._assign_layer_to_world_canvas_object("delver")
@@ -76,10 +68,6 @@ class CanvasObjectsManager:
         )
         args = canvas_object.world_object_args
         world_object = layer.create_world_object_at(position, **args)
-
-        layer_grid_map = cast("MixedMap", layer.grid_map)
-        if not layer_grid_map.tilemap.get_layer("floor").has_element_at(position):
-            layer_grid_map.tilemap.create_basic_floor_at(position)
 
         return world_object
 

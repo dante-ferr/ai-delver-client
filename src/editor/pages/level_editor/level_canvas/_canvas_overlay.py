@@ -47,7 +47,7 @@ class CanvasOverlay:
         if not self.grid_lines_activated:
             return
 
-        tile_width, tile_height = level_loader.level.map.tile_size
+        tile_width, tile_height = self.canvas.tile_size
         offset_x, offset_y = self.canvas.draw_offset
 
         grid_x, grid_y = grid_pos

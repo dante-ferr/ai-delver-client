@@ -19,7 +19,7 @@ class Sidebar(ctk.CTkFrame):
 
         self.pack_propagate(False)
 
-        level_editor_manager.selector.set_selection("layer", "floor")
+        level_editor_manager.selector.set_selection("layer", "platforms")
 
         title_textbox = LevelTitleTextbox(self)
         title_textbox.pack(padx=0, pady=0, fill="x")

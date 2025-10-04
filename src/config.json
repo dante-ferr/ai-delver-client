@@ -1,5 +1,5 @@
 {
-  "tilemap_layer_names": ["floor", "walls"],
+  "tilemap_layer_names": ["platforms"],
   "window_width": 1280,
   "window_height": 720,
   "window_title": "AI Delver",

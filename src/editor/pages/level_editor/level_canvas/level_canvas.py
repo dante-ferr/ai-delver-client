@@ -17,6 +17,8 @@ class LevelCanvas(ctk.CTkCanvas):
 
         self.configure(bg="black")
 
+        self._zoom_level = 1.0
+
         self._add_event_listeners()
 
         self.click_handler = CanvasClickHandler(self)
@@ -28,6 +30,26 @@ class LevelCanvas(ctk.CTkCanvas):
 
         self.refresh()
 
+    @property
+    def zoom_level(self) -> float:
+        """The current magnification level of the canvas."""
+        return self._zoom_level
+
+    def set_zoom_level(self, value: float, origin_x: int, origin_y: int):
+        """
+        Sets the zoom level of the canvas, scaling relative to a given
+        origin point (usually the mouse cursor).
+        """
+        if value <= 0:
+            raise ValueError("scale must be positive")
+        if abs(value - self._zoom_level) < 1e-9:  # Floating point comparison
+            return
+
+        ratio = value / self._zoom_level
+        self._zoom_level = value
+        
+        self.refresh()
+
     def shift_offset_towards(self, direction: Direction, size: int):
         self.draw_offset = (
             self.draw_offset[0]
@@ -37,6 +59,8 @@ class LevelCanvas(ctk.CTkCanvas):
             + (direction_vectors[direction][1] * size)
             * level_loader.level.map.tile_size[1],
         )
+
+        # self.refresh()
 
     def _add_event_listeners(self):
         level_loader.level.map.events["expanded"].connect(
@@ -121,10 +145,31 @@ class LevelCanvas(ctk.CTkCanvas):
             coords[1] + (self.draw_offset[1] // level_loader.level.map.tile_size[1]),
         )
 
+    # @property
+    # def grid_lines(self):
+    #     return level_loader.level.toggler.vars["grid_lines"].get()
+
+    # @property
+    # def map_size(self):
+    #     return level_loader.level.map.size
+    #         coords[0] + (self.draw_offset[0] // level_loader.level.map.tile_size[0]),
+    #         coords[1] + (self.draw_offset[1] // level_loader.level.map.tile_size[1]),
+    #     )
+
     @property
     def grid_lines(self):
         return level_loader.level.toggler.vars["grid_lines"].get()
 
     @property
     def map_size(self):
-        return level_loader.level.map.size
+        return (
+            level_loader.level.map.size[0] * self.zoom_level,
+            level_loader.level.map.size[1] * self.zoom_level
+        )
+
+    @property
+    def tile_size(self):
+        return (
+            level_loader.level.map.tile_size[0] * self.zoom_level,
+            level_loader.level.map.tile_size[1] * self.zoom_level,
+        )

@@ -45,10 +45,10 @@ class ViewableRuntime(Runtime):
         return tilemap_renderer
 
     def set_clear_color(self):
-        tileset = self.level.map.get_tilemap_layer("walls").tileset
-        inner_wall_image_bytes = tileset.tile_images[3, 0]
+        tileset = self.level.map.get_tilemap_layer("platforms").tileset
+        inner_platform_image_bytes = tileset.tile_images[3, 0]
         average_color = get_average_color_from_raw_data(
-            inner_wall_image_bytes, tileset.tile_size, "RGBA"
+            inner_platform_image_bytes, tileset.tile_size, "RGBA"
         )
         if not average_color:
             return

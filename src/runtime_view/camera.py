@@ -1,4 +1,3 @@
-from pyglet.math import Vec3
 from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
@@ -91,6 +90,8 @@ class Camera:
 
     def begin(self):
         """Saves the current view and applies camera transformations."""
+        from pyglet.math import Vec3
+
         # Save the original, clean view matrix
         self._original_view = self._window.view
 
@@ -108,6 +109,8 @@ class Camera:
 
     def translate_mouse_coords(self, coords: tuple[float, float]):
         """Converts window coordinates to world coordinates."""
+        from pyglet.math import Vec3
+
         x, y = coords
         # Invert the view matrix to go from screen->world
         inv_matrix = self._window.view.inverse()
@@ -120,6 +123,8 @@ class Camera:
         This is robust and avoids cumulative errors.
         The transformations are applied in reverse order of how you'd think about them.
         """
+        from pyglet.math import Vec3
+
         view_matrix = self._original_view
         if not view_matrix:
             return

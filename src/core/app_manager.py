@@ -51,7 +51,7 @@ class AppManager:
         if self._editor:
             # We schedule it to run every 1ms. The actual frame rate is
             # still controlled by pyglet's schedule_interval in ViewableRuntime.
-            self._editor.after(1, self.master_tick)
+            self._editor.after(16, self.master_tick)
 
     def start_editor(self):
         """

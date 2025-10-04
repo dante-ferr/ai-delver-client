@@ -21,13 +21,18 @@ class TrainContainer(ctk.CTkFrame):
         )
         self.interrupt_training_button.grid(row=0, column=1, padx=(4, 0))
 
-        self.after(100, self._add_buttons_to_training_manager)
-
-    def _add_buttons_to_training_manager(self):
         training_state_manager.add_disable_on_train_element(self.train_button)
         training_state_manager.add_enable_on_train_element(
             self.interrupt_training_button
         )
+
+    #     self.after(100, self._add_buttons_to_training_manager)
+
+    # def _add_buttons_to_training_manager(self):
+    #     training_state_manager.add_disable_on_train_element(self.train_button)
+    #     training_state_manager.add_enable_on_train_element(
+    #         self.interrupt_training_button
+    #     )
 
     def _start_train_thread(self):
         """

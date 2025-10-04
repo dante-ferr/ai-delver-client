@@ -10,18 +10,15 @@ class CanvasObjectsFactory:
     }
 
     def create_layers(self):
-        floor = CanvasObjectsLayer("floor")
-        floor.add_canvas_object(self._create_canvas_object("floor"))
-
-        walls = CanvasObjectsLayer("walls")
-        walls.add_canvas_object(self._create_canvas_object("wall"))
+        platforms = CanvasObjectsLayer("platforms")
+        platforms.add_canvas_object(self._create_canvas_object("platform"))
 
         essentials = CanvasObjectsLayer("essentials")
         essentials.add_canvas_object(self._create_canvas_object("delver", unique=True))
         for canvas_object in self._create_variated_canvas_objects("goal", unique=True):
             essentials.add_canvas_object(canvas_object)
 
-        return [floor, walls, essentials]
+        return [platforms, essentials]
 
     def _create_variated_canvas_objects(
         self, world_object_name: str, **world_object_args

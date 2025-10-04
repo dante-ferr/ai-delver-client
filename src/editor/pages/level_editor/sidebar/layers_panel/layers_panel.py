@@ -28,7 +28,7 @@ class LayersPanel(ctk.CTkFrame):
             (
                 container
                 for container in self.layer_containers
-                if container.layer_name == "floor"
+                if container.layer_name == "platforms"
             ),
             None,
         )

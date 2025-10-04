@@ -11,8 +11,7 @@ class CanvasClickHandler:
     def __init__(self, canvas: "LevelCanvas"):
         self.canvas = canvas
 
-        self.floor = level_loader.level.map.tilemap.get_layer("floor")
-        self.walls = level_loader.level.map.tilemap.get_layer("walls")
+        self.platforms = level_loader.level.map.tilemap.get_layer("platforms")
 
         self.drawn_tile_positions: list[tuple[int, int]] = []
 
@@ -62,9 +61,11 @@ class CanvasClickHandler:
         self, mouse_position: tuple[int, int]
     ) -> Optional[tuple[int, int]]:
         """Convert mouse coordinates to grid coordinates, adjusting for scroll."""
-        x, y = self.translate_mouse_coords(mouse_position)
+        canvas_x = self.canvas.canvasx(mouse_position[0])
+        canvas_y = self.canvas.canvasy(mouse_position[1])
         tile_width, tile_height = level_loader.level.map.tile_size
-        canvas_grid_x, canvas_grid_y = (x // tile_width, y // tile_height)
+        canvas_grid_x = int(canvas_x // (tile_width * self.canvas.zoom_level))
+        canvas_grid_y = int(canvas_y // (tile_height * self.canvas.zoom_level))
 
         return (canvas_grid_x, canvas_grid_y)
 
@@ -109,9 +110,3 @@ class CanvasClickHandler:
 
             if removed_element is None:
                 return
-
-    def translate_mouse_coords(self, coords: tuple[int, int]) -> tuple[int, int]:
-        return (
-            coords[0] - self.canvas.scroller.last_x,
-            coords[1] - self.canvas.scroller.last_y,
-        )
