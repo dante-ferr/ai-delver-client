@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING, Optional, cast
 from src.utils import bresenham_line
 from level_loader import level_loader
+from pytiling import Tile
 from ..level_editor_manager import level_editor_manager
 
 if TYPE_CHECKING:
@@ -18,9 +19,11 @@ class CanvasClickHandler:
         self._bind_click_hold_events()
 
     def _bind_click_hold_events(self):
+        self.canvas.bind("<Enter>", lambda e: self.canvas.focus_set())
         self.canvas.bind("<ButtonPress-1>", self._start_click)
         self.canvas.bind("<B1-Motion>", self._on_click_hold)
         self.canvas.bind("<ButtonRelease-1>", self._stop_click)
+        self.canvas.bind("<KeyPress-i>", self._debug_inspect_tile)
 
     def _start_click(self, event):
         """Handle starting a click on the canvas."""
@@ -110,3 +113,34 @@ class CanvasClickHandler:
 
             if removed_element is None:
                 return
+
+    def _debug_inspect_tile(self, event):
+        """
+        Debug function to print properties of a tile when 'i' is pressed
+        over it. Currently prints the tile's display property.
+        """
+        canvas_grid_pos = self._get_canvas_grid_position((event.x, event.y))
+        if not canvas_grid_pos:
+            print("DEBUG: No canvas grid position found")
+            return
+
+        grid_pos = self.canvas.canvas_to_world_grid_pos(canvas_grid_pos)
+
+        if not level_loader.level.map.position_is_valid(grid_pos):
+            print("DEBUG: Invalid grid position")
+            return
+
+        selected_layer_name = level_editor_manager.selector.get_selection("layer")
+        layer = level_loader.level.map.get_layer(selected_layer_name)
+
+        if not layer:
+            print(f"DEBUG: No layer found with name '{selected_layer_name}'")
+            return
+
+        element = layer.get_element_at(grid_pos)
+
+        if isinstance(element, Tile):
+            tile = cast(Tile, element)
+            print(
+                f"DEBUG: Tile at {grid_pos} on layer '{layer.name}': display={tile.display}"
+            )

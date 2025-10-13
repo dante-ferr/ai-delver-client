@@ -110,7 +110,7 @@ class CanvasGridElementRenderer:
             or photo_image.width() != scaled_width
             or photo_image.height() != scaled_height
         ):
-            resized_image = pil_image.resize((scaled_width, scaled_height), Image.NEAREST)
+            resized_image = pil_image.resize((scaled_width, scaled_height), Image.NEAREST)  # type: ignore
             photo_image = ImageTk.PhotoImage(resized_image)
             self.photo_image_cache[cache_key] = photo_image
 
