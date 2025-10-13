@@ -43,15 +43,19 @@ class CanvasGridElementRenderer:
         )
 
     def _handle_tile_created(self, sender, element: "GridElement"):
+        # print(f"Tile created at {element.position}")
         self.draw_tile(cast("Tile", element))
 
     def _handle_tile_formatted(self, sender, tile: "Tile"):
+        # print(f"Tile formatted at {tile.position}")
         self.draw_tile(tile)
 
     def _handle_element_removed(self, sender, element: "GridElement", layer_name: str):
+        # print(f"Element removed at {element.position}")
         self.erase_grid_element(element, layer_name)
 
     def _handle_world_object_created(self, sender, element: "GridElement"):
+        # print(f"World object created at {element.position}")
         self.draw_world_object(cast("WorldObjectRepresentation", element))
 
     def _initialize_tileset_images(self):
@@ -62,8 +66,7 @@ class CanvasGridElementRenderer:
 
     def handle_reduction(self, removed_positions: "GridMap.RemovedPositions"):
         for position in removed_positions:
-            relative_position = self.canvas.get_relative_grid_pos(position)
-            self.canvas.delete(f"position={relative_position}")
+            self.canvas.delete(f"position={position}")
 
     def erase_all_grid_elements(self):
         """Erase all tiles on the canvas."""
@@ -149,8 +152,11 @@ class CanvasGridElementRenderer:
         layer_name: str | Literal["element's"] = "element's",
     ):
         """Return the tag for a grid element."""
-        # We use the absolute grid position for a stable ID during resizes/pans
-        position_tag = f"grid_pos={element.position}"
+        canvas_grid_x, canvas_grid_y = self.canvas.world_to_canvas_grid_pos(
+            element.position
+        )
+
+        position_tag = f"position={(canvas_grid_x, canvas_grid_y)}"
         if layer_name == "element's":
             layer = element.layer
             layer_tag = f"layer={layer.name}"

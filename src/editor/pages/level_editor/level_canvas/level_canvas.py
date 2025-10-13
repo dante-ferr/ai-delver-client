@@ -17,7 +17,7 @@ class LevelCanvas(ctk.CTkCanvas):
 
         self.configure(bg="black")
 
-        self._zoom_level = 1.0
+        self._zoom_level = 1
 
         self._add_event_listeners()
 
@@ -26,16 +26,16 @@ class LevelCanvas(ctk.CTkCanvas):
         self.overlay = CanvasOverlay(self)
         self.scroller = CanvasScroller(self)
 
-        self.draw_offset: tuple[int, int] = (0, 0)
+        self._grid_draw_offset: tuple[int, int] = (0, 0)
 
         self.refresh()
 
     @property
-    def zoom_level(self) -> float:
+    def zoom_level(self) -> int:
         """The current magnification level of the canvas."""
         return self._zoom_level
 
-    def set_zoom_level(self, value: float, origin_x: int, origin_y: int):
+    def set_zoom_level(self, value: int, origin_x: int, origin_y: int):
         """
         Sets the zoom level of the canvas, scaling relative to a given
         origin point (usually the mouse cursor).
@@ -45,22 +45,9 @@ class LevelCanvas(ctk.CTkCanvas):
         if abs(value - self._zoom_level) < 1e-9:  # Floating point comparison
             return
 
-        ratio = value / self._zoom_level
         self._zoom_level = value
-        
+
         self.refresh()
-
-    def shift_offset_towards(self, direction: Direction, size: int):
-        self.draw_offset = (
-            self.draw_offset[0]
-            + (direction_vectors[direction][0] * size)
-            * level_loader.level.map.tile_size[0],
-            self.draw_offset[1]
-            + (direction_vectors[direction][1] * size)
-            * level_loader.level.map.tile_size[1],
-        )
-
-        # self.refresh()
 
     def _add_event_listeners(self):
         level_loader.level.map.events["expanded"].connect(
@@ -98,6 +85,12 @@ class LevelCanvas(ctk.CTkCanvas):
 
         self._on_map_size_change()
 
+    def shift_offset_towards(self, direction: Direction, size: int):
+        self._grid_draw_offset = (
+            self._grid_draw_offset[0] + direction_vectors[direction][0] * size,
+            self._grid_draw_offset[1] + direction_vectors[direction][1] * size,
+        )
+
     def _on_map_size_change(self):
         self.overlay.draw_border()
 
@@ -133,28 +126,57 @@ class LevelCanvas(ctk.CTkCanvas):
 
         return list(items_with_all_tags)
 
-    def get_absolute_grid_pos(self, coords: tuple[int, int]) -> tuple[int, int]:
+    def canvas_to_world_grid_pos(self, coords: tuple[int, int]) -> tuple[int, int]:
+        """
+        Converts grid coordinates from the canvas's relative space to the
+        level map's absolute world space.
+
+        This is used to translate a position on the visible canvas (e.g., from a
+        mouse click) to its actual coordinate in the underlying game map data.
+
+        Args:
+            coords: A tuple (x, y) representing the grid position relative to the canvas.
+
+        Returns:
+            A tuple (x, y) representing the absolute grid position in the world map.
+        """
         return (
-            coords[0] - (self.draw_offset[0] // level_loader.level.map.tile_size[0]),
-            coords[1] - (self.draw_offset[1] // level_loader.level.map.tile_size[1]),
+            coords[0] - self._grid_draw_offset[0],
+            coords[1] - self._grid_draw_offset[1],
         )
 
-    def get_relative_grid_pos(self, coords: tuple[int, int]) -> tuple[int, int]:
+    def world_to_canvas_grid_pos(self, coords: tuple[int, int]) -> tuple[int, int]:
+        """
+        Converts grid coordinates from the level map's absolute world space to
+        the canvas's relative space.
+
+        This is used to determine the grid position on the canvas where a world
+        element should be drawn or tagged, accounting for the current scroll offset.
+
+        Args:
+            coords: A tuple (x, y) representing the absolute grid position in the world map.
+
+        Returns:
+            A tuple (x, y) representing the grid position relative to the canvas.
+        """
         return (
-            coords[0] + (self.draw_offset[0] // level_loader.level.map.tile_size[0]),
-            coords[1] + (self.draw_offset[1] // level_loader.level.map.tile_size[1]),
+            coords[0] + self._grid_draw_offset[0],
+            coords[1] + self._grid_draw_offset[1],
         )
 
-    # @property
-    # def grid_lines(self):
-    #     return level_loader.level.toggler.vars["grid_lines"].get()
+    @property
+    def zoomed_draw_offset(self):
+        return (
+            self._grid_draw_offset[0] * self.tile_size[0],
+            self._grid_draw_offset[1] * self.tile_size[1],
+        )
 
-    # @property
-    # def map_size(self):
-    #     return level_loader.level.map.size
-    #         coords[0] + (self.draw_offset[0] // level_loader.level.map.tile_size[0]),
-    #         coords[1] + (self.draw_offset[1] // level_loader.level.map.tile_size[1]),
-    #     )
+    @property
+    def draw_offset(self):
+        return (
+            self._grid_draw_offset[0] * level_loader.level.map.tile_size[0],
+            self._grid_draw_offset[1] * level_loader.level.map.tile_size[1],
+        )
 
     @property
     def grid_lines(self):
@@ -169,6 +191,7 @@ class LevelCanvas(ctk.CTkCanvas):
 
     @property
     def tile_size(self):
+        """Return the current tile size, adjusted for zoom level."""
         return (
             level_loader.level.map.tile_size[0] * self.zoom_level,
             level_loader.level.map.tile_size[1] * self.zoom_level,

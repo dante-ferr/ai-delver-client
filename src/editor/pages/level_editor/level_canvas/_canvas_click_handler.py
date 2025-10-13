@@ -45,7 +45,7 @@ class CanvasClickHandler:
         )
         for pos in line_positions:
             if level_loader.level.map.position_is_valid(
-                self.canvas.get_absolute_grid_pos(pos)
+                self.canvas.canvas_to_world_grid_pos(pos)
             ):
                 self._process_single_canvas_grid_position(pos)
 
@@ -84,7 +84,7 @@ class CanvasClickHandler:
         )
         self.selected_tool_name = level_editor_manager.selector.get_selection("tool")
 
-        grid_pos = self.canvas.get_absolute_grid_pos(canvas_grid_pos)
+        grid_pos = self.canvas.canvas_to_world_grid_pos(canvas_grid_pos)
         self._handle_interaction(grid_pos)
 
     def _handle_interaction(self, grid_pos: tuple[int, int]):
