@@ -21,12 +21,12 @@ class LevelCanvas(ctk.CTkCanvas):
 
         self._add_event_listeners()
 
+        self._grid_draw_offset: tuple[int, int] = (0, 0)
+
         self.click_handler = CanvasClickHandler(self)
         self.grid_element_renderer = CanvasGridElementRenderer(self)
         self.overlay = CanvasOverlay(self)
         self.scroller = CanvasScroller(self)
-
-        self._grid_draw_offset: tuple[int, int] = (0, 0)
 
         self.refresh()
 
@@ -95,10 +95,12 @@ class LevelCanvas(ctk.CTkCanvas):
         self.overlay.draw_border()
 
     def refresh(self):
+        from src.core.state_managers import canvas_state_manager
+
         self.grid_element_renderer.erase_all_grid_elements()
         self.grid_element_renderer.draw_all_grid_elements()
 
-        if level_loader.level.toggler.vars["grid_lines"].get():
+        if canvas_state_manager.vars["grid_lines"].get():
             self.overlay.draw_grid_lines()
         else:
             self.delete("line")
@@ -180,7 +182,9 @@ class LevelCanvas(ctk.CTkCanvas):
 
     @property
     def grid_lines(self):
-        return level_loader.level.toggler.vars["grid_lines"].get()
+        from src.core.state_managers import canvas_state_manager
+
+        return canvas_state_manager.vars["grid_lines"].get()
 
     @property
     def map_size(self):

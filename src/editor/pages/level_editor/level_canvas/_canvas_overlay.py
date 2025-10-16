@@ -1,4 +1,3 @@
-from level_loader import level_loader
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -8,11 +7,11 @@ if TYPE_CHECKING:
 
 class CanvasOverlay:
     def __init__(self, canvas: "LevelCanvas"):
+        from src.core.state_managers import canvas_state_manager
+
         self.canvas = canvas
 
-        level_loader.level.toggler.set_toggle_callback(
-            "grid_lines", self._handle_grid_lines_toggle
-        )
+        canvas_state_manager.add_callback("grid_lines", self._handle_grid_lines_toggle)
 
     def _handle_grid_lines_toggle(self, value: bool):
         """Handle the grid lines toggle."""
@@ -31,6 +30,8 @@ class CanvasOverlay:
 
     def draw_grid_lines(self):
         """Draw grid lines on the canvas using micro lines per tile."""
+        from level_loader import level_loader
+
         if not self.grid_lines_activated:
             return
 
@@ -79,7 +80,9 @@ class CanvasOverlay:
 
     @property
     def grid_lines_activated(self):
-        return level_loader.level.toggler.vars["grid_lines"].get()
+        from src.core.state_managers import canvas_state_manager
+
+        return canvas_state_manager.vars["grid_lines"].get()
 
     def erase_tile_lines(self, grid_pos: tuple[int, int]):
         """Erase micro lines around a tile."""

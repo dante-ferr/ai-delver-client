@@ -7,10 +7,11 @@ from .level_file_container import LevelFileContainer
 from level_loader import level_loader
 from editor.utils import verify_level_issues
 from src.editor.components import SectionTitle
-
+from typing import cast
 
 class Sidebar(ctk.CTkFrame):
     def __init__(self, parent):
+        from src.core.state_managers import canvas_state_manager
         from ..level_editor_manager import level_editor_manager
 
         level_editor_manager.objects_manager.assign_level_to_objects(level_loader.level)
@@ -48,7 +49,7 @@ class Sidebar(ctk.CTkFrame):
         bottom_frame = ctk.CTkFrame(self, fg_color="transparent")
         bottom_frame.pack(side="bottom", fill="x")
 
-        grid_toggle_var = level_loader.level.toggler.get_var("grid_lines")
+        grid_toggle_var = cast(ctk.BooleanVar, canvas_state_manager.vars["grid_lines"])
         grid_toggle_var.set(True)
         grid_toggle = ctk.CTkCheckBox(
             bottom_frame,
