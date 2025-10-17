@@ -1,5 +1,7 @@
 from level_loader import level_loader
-from typing import TYPE_CHECKING
+from src.config import config
+import customtkinter as ctk
+from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
     from .level_canvas import LevelCanvas
@@ -15,13 +17,18 @@ class CanvasScroller:
 
         self.scrolling = False
 
-        self.min_zoom = 1
-        self.max_zoom = 5
+        self.min_zoom = config.MIN_CANVAS_ZOOM
+        self.max_zoom = config.MAX_CANVAS_ZOOM
+        self._execute_zoom(config.INITIAL_CANVAS_ZOOM)
 
         self._bind_scroll_events()
         self.canvas.bind("<Configure>", self._on_resize)
 
     def _bind_scroll_events(self):
+        from src.core.state_managers import canvas_state_manager
+
+        canvas_state_manager.add_callback("zoom", self._execute_zoom)
+
         self.canvas.bind("<ButtonPress-3>", self._start_scroll)
         self.canvas.bind("<B3-Motion>", self._on_scroll)
         self.canvas.bind("<ButtonRelease-3>", self._stop_scroll)
@@ -91,19 +98,25 @@ class CanvasScroller:
 
     def _on_mouse_wheel(self, event):
         """Handle mouse wheel scrolling for zooming."""
-        current_zoom = self.canvas.zoom_level
+        from src.core.state_managers import canvas_state_manager
 
-        # Determine scroll direction
+        zoom = -1
         if event.num == 5 or event.delta < 0:
             # Scroll down, zoom out
-            new_zoom = max(self.min_zoom, current_zoom - 1)
+            zoom = self.canvas.zoom_level - 1
         elif event.num == 4 or event.delta > 0:
             # Scroll up, zoom in
-            new_zoom = min(self.max_zoom, current_zoom + 1)
-        else:
-            return
+            zoom = self.canvas.zoom_level + 1
 
-        if abs(new_zoom - current_zoom) > 1e-9:
+        if zoom != -1:
+            self._execute_zoom(zoom)
+            zoom_var = cast(ctk.IntVar, canvas_state_manager.vars["zoom"])
+            zoom_var.set(zoom)
+
+    def _execute_zoom(self, new_zoom):
+        """Clamp new_zoom and execute the zoom at each frame."""
+        new_zoom = max(self.min_zoom, min(self.max_zoom, new_zoom))
+        if new_zoom != self.canvas.zoom_level:
             self.canvas.set_zoom_level(new_zoom, 0, 0)
 
     @property

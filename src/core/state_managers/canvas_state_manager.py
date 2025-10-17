@@ -10,9 +10,11 @@ class CanvasStateManager:
     def __init__(self):
         self.vars: Dict[str, CtkVariable] = {
             "grid_lines": ctk.BooleanVar(value=True),
+            "zoom": ctk.DoubleVar(value=1.0),
         }
         self._callbacks: Dict[str, list[Callable[[Any], None]]] = {
             "grid_lines": [],
+            "zoom": [],
         }
 
         for name, var in self.vars.items():

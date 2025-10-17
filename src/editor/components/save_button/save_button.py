@@ -1,6 +1,6 @@
 from pathlib import Path
 from editor.components import IconButton
-from src.config import ASSETS_PATH
+from src.config import config
 from editor.components.overlay.message_overlay import MessageOverlay
 
 
@@ -8,7 +8,7 @@ class SaveButton(IconButton):
     """Base class for save buttons that handle saving files with a confirmation dialog. This cannot be used directly and must be subclassed, because the _save method doesn't handle saving."""
 
     def __init__(self, parent, save_folder_path: str, file_type: str):
-        super().__init__(parent, svg_path=str(ASSETS_PATH / "svg" / "save.svg"))
+        super().__init__(parent, svg_path=str(config.ASSETS_PATH / "svg" / "save.svg"))
         if not save_folder_path:
             raise ValueError("Save folder path must be provided.")
         if not file_type:

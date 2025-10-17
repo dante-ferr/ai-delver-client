@@ -7,7 +7,7 @@ from pyglet.gl import glClearColor
 from typing import TYPE_CHECKING, cast
 from .utils import get_average_color_from_raw_data
 from pytiling.pyglet_support import TilemapRenderer
-from src.config import FPS
+from src.config import config
 
 if TYPE_CHECKING:
     from level.level import Level
@@ -121,7 +121,7 @@ class ViewableRuntime(Runtime):
     def run(self):
         """Schedules the update loop with pyglet's clock."""
         super().run()
-        pyglet.clock.schedule_interval(self.update, 1 / float(FPS))
+        pyglet.clock.schedule_interval(self.update, 1 / float(config.FPS))
 
     def stop(self):
         """Un-schedules the update loop and properly closes its own window."""

@@ -3,5 +3,8 @@
   "window_width": 1280,
   "window_height": 720,
   "window_title": "AI Delver",
-  "fps": 60
+  "fps": 60,
+  "min_canvas_zoom": 1,
+  "max_canvas_zoom": 5,
+  "initial_canvas_zoom": 2
 }

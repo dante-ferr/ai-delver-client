@@ -1,9 +1,9 @@
 import json
-from src.config import ASSETS_PATH
+from src.config import config
 
 class Theme:
     def __init__(self, theme_name: str):
-        self.path = ASSETS_PATH / "themes" / f"{theme_name}.json"
+        self.path = config.ASSETS_PATH / "themes" / f"{theme_name}.json"
 
         with open(self.path, "r") as file:
             data = json.load(file)

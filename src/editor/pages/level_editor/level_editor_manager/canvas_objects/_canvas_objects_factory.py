@@ -1,5 +1,5 @@
 from ._canvas_objects_layer import CanvasObjectsLayer
-from src.config import ASSETS_PATH
+from src.config import config
 from .canvas_object import CanvasObject
 from typing import Any
 
@@ -30,7 +30,7 @@ class CanvasObjectsFactory:
             canvas_object = self._create_canvas_object(
                 variation,
                 path=str(
-                    ASSETS_PATH
+                    config.ASSETS_PATH
                     / f"img/representations/{world_object_name}/{variation}.png"
                 ),
                 name=world_object_name,
@@ -51,6 +51,8 @@ class CanvasObjectsFactory:
             world_object_args["name"] = canvas_object_name
 
         if path is None:
-            path = str(ASSETS_PATH / f"img/representations/{canvas_object_name}.png")
+            path = str(
+                config.ASSETS_PATH / f"img/representations/{canvas_object_name}.png"
+            )
 
         return CanvasObject(canvas_object_name, path, world_object_args)

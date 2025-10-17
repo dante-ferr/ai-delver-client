@@ -5,7 +5,6 @@ from pathlib import Path
 import os
 import re
 import customtkinter as ctk
-from src.config import ASSETS_PATH
 
 class SvgImage(ImageTk.PhotoImage):
     def __init__(
