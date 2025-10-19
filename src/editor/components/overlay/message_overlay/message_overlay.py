@@ -41,6 +41,10 @@ class MessageOverlay(Overlay):
         self._create_buttons(button_commands)
 
     def _create_buttons(self, button_commands: dict[str, Callable] | None):
+        """
+        Dynamically creates buttons based on the provided commands.
+        Each button's command is wrapped to ensure the overlay closes itself first.
+        """
         if button_commands is None:
             buttons = [
                 ctk.CTkButton(self.button_container, text="Ok", command=self._close)
@@ -50,6 +54,7 @@ class MessageOverlay(Overlay):
             for text, command in button_commands.items():
 
                 def _command_callback(command=command):
+                    """Wraps the original command to close the overlay first."""
                     self._close()
                     command()
 

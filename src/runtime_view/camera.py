@@ -6,7 +6,14 @@ if TYPE_CHECKING:
 
 
 class Camera:
-    """A simple 2D camera that contains the speed and offset."""
+    """
+    A 2D camera for the pyglet window that handles zooming, panning, and following objects.
+
+    This camera uses a context manager (`with camera:`) to apply its transformations
+    to the window's view matrix. It supports smooth zooming and smooth following of a
+    target `WorldObject`. The transformations are calculated to keep the camera's
+    focal point at the center of the screen.
+    """
 
     offset_x: float = 0
     offset_y: float = 0
@@ -18,7 +25,6 @@ class Camera:
     _zoom: float = 1.0
     zoom_smoothing_factor: float = 0.1
 
-    # This will hold the original view matrix to restore it later
     _original_view = None
 
     def __init__(
@@ -38,7 +44,7 @@ class Camera:
         self.max_zoom = max_zoom
         self.min_zoom = min_zoom
 
-        # Set the initial zoom without applying transformations yet
+        # Set the initial zoom without smoothing.
         self.immediate_zoom(start_zoom)
 
     def immediate_zoom(self, value: float):
@@ -90,14 +96,12 @@ class Camera:
 
     def begin(self):
         """Saves the current view and applies camera transformations."""
-        from pyglet.math import Vec3
-
         # Save the original, clean view matrix
         self._original_view = self._window.view
 
         # Update camera logic (smoothing, following, etc.)
         self._follow_world_object()
-        self._execute_zoom()
+        self._smooth_zoom()
 
         # Apply the actual transformation for drawing
         self._apply_view_matrix_transformation()
@@ -111,7 +115,7 @@ class Camera:
         """Converts window coordinates to world coordinates."""
         from pyglet.math import Vec3
 
-        x, y = coords
+        x, y = coords  # type: ignore
         # Invert the view matrix to go from screen->world
         inv_matrix = self._window.view.inverse()
         world_x, world_y, _ = inv_matrix @ Vec3(x, y, 0)
@@ -143,8 +147,8 @@ class Camera:
 
         self._window.view = view_matrix
 
-    def _execute_zoom(self):
-        """Execute the zoom at each frame."""
+    def _smooth_zoom(self):
+        """Smoothly interpolates the current zoom level towards the target zoom."""
         if abs(self._zoom_target - self._zoom) > 0.001:
             self._zoom += (self._zoom_target - self._zoom) * self.zoom_smoothing_factor
 
@@ -153,7 +157,7 @@ class Camera:
         if not self.world_object_being_followed:
             return
 
-        # The target position is simply the object's position
+        # Calculate the distance to the target object.
         dx, dy = (
             self.distance_to_world_object[0],
             self.distance_to_world_object[1],
@@ -165,6 +169,7 @@ class Camera:
 
     @property
     def distance_to_world_object(self):
+        """The vector from the camera's current position to the followed object."""
         if not self.world_object_being_followed:
             return (0.0, 0.0)
         return (
@@ -174,6 +179,7 @@ class Camera:
 
     @property
     def world_object_position(self):
+        """The position of the object being followed."""
         if not self.world_object_being_followed:
             return (0.0, 0.0)
         return (

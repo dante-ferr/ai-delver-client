@@ -15,6 +15,12 @@ if TYPE_CHECKING:
 
 
 class CanvasGridElementRenderer:
+    """
+    Manages rendering, caching, and manipulation of all grid-based visual elements
+    (tiles and world objects) on the LevelCanvas. It handles drawing, erasing,
+    and updating elements in response to model changes and user interactions like
+    zooming.
+    """
     def __init__(self, canvas: "LevelCanvas"):
         self.canvas = canvas
 
@@ -27,6 +33,7 @@ class CanvasGridElementRenderer:
         self.pil_image_registry: dict[int, Image.Image] = {}
 
     def _add_event_listeners(self):
+        """Binds methods to events from the level's tilemap and world objects map."""
         level_loader.level.map.tilemap.on_layer_event(
             "element_created", self._handle_tile_created
         )
@@ -45,23 +52,23 @@ class CanvasGridElementRenderer:
         )
 
     def _handle_tile_created(self, sender, element: "GridElement"):
-        # print(f"Tile created at {element.position}")
+        """Callback to draw a tile when it's created in the model."""
         self.draw_tile(cast("Tile", element))
 
     def _handle_tile_formatted(self, sender, tile: "Tile"):
-        # print(f"Tile formatted at {tile.position}")
+        """Callback to redraw a tile when its properties (e.g., display) change."""
         self.draw_tile(tile)
 
     def _handle_element_removed(self, sender, element: "GridElement", layer_name: str):
-        # print(f"Element removed at {element.position}")
+        """Callback to erase a grid element when it's removed from the model."""
         self.erase_grid_element(element, layer_name)
 
     def _handle_world_object_created(self, sender, element: "GridElement"):
-        # print(f"World object created at {element.position}")
+        """Callback to draw a world object when it's created in the model."""
         self.draw_world_object(cast("WorldObjectRepresentation", element))
 
     def _initialize_tileset_images(self):
-        """Create a dictionary of numpy 2d arrays of tileset images."""
+        """Create a dictionary of TilesetImage objects for each tileset."""
         self.tileset_images: dict[Tileset, TilesetImage] = {}
         for tileset in level_loader.level.map.tilemap.tilesets:
             self.tileset_images[tileset] = TilesetImage(tileset)
@@ -104,9 +111,10 @@ class CanvasGridElementRenderer:
         photo_image = self.photo_image_cache.get(cache_key)
 
         if photo_image is None:
-            # Use ANTIALIAS for better quality on zoom-out, NEAREST for pixel art style
+            # Use NEAREST for a crisp, pixel-art style during scaling.
             resized_image = pil_image.resize(
-                (scaled_width, scaled_height), Image.NEAREST
+                (scaled_width, scaled_height),
+                Image.NEAREST,  # Type is ignored because Image.NEAREST actually exists # type: ignore
             )
             photo_image = ImageTk.PhotoImage(resized_image)
             self.photo_image_cache[cache_key] = photo_image
@@ -121,21 +129,15 @@ class CanvasGridElementRenderer:
 
         self.pil_image_registry[id(pil_image)] = pil_image
 
-        # Use the new helper method to get the correctly sized image
         photo_image = self.get_scaled_photo_image(pil_image)
 
-        # Simplified and corrected coordinate calculation
         canvas_grid_pos = self.canvas.world_to_canvas_grid_pos(element.position)
-        tile_w, tile_h = (
-            self.canvas.tile_size
-        )  # This property correctly uses the current zoom level
+        tile_w, tile_h = self.canvas.tile_size
 
         screen_x = canvas_grid_pos[0] * tile_w
         screen_y = canvas_grid_pos[1] * tile_h
 
-        # --- Improvement: Update existing item or create a new one ---
         tags_to_find = self._get_grid_element_tags(element, "element's")
-        # We only need position and layer to uniquely identify an element's canvas item
         items = self.canvas.items_with_tags(tags_to_find[0], tags_to_find[1])
 
         if items:
@@ -180,7 +182,7 @@ class CanvasGridElementRenderer:
         origin_y: int,
     ):
         """Resizes and repositions a single canvas item based on a zoom change."""
-        # 1. Get the original PIL Image for this item
+        # Get the original PIL Image for this item using its ID tag.
         tags = self.canvas.gettags(item_id)
         pil_id_tag = next((tag for tag in tags if tag.startswith("pil_id=")), None)
         if not pil_id_tag:
@@ -191,11 +193,11 @@ class CanvasGridElementRenderer:
         if not pil_image:
             return
 
-        # 2. Get a new PhotoImage of the correct size
+        # Get a new, scaled PhotoImage and update the canvas item.
         new_photo_image = self.get_scaled_photo_image(pil_image)
         self.canvas.itemconfig(item_id, image=new_photo_image)
 
-        # 3. Get grid position and calculate new screen coordinates
+        # Get grid position and calculate new screen coordinates relative to the zoom origin.
         grid_pos = self._get_position_from_tag(item_id)
         if not grid_pos:
             return
@@ -241,7 +243,7 @@ class CanvasGridElementRenderer:
         self,
         element: "GridElement",
         layer_name: str | Literal["element's"] = "element's",
-        pil_image: "Image.Image | None" = None,  # Add this parameter
+        pil_image: "Image.Image | None" = None,
     ):
         """Return the tag for a grid element."""
         canvas_grid_x, canvas_grid_y = self.canvas.world_to_canvas_grid_pos(

@@ -12,6 +12,11 @@ if TYPE_CHECKING:
 
 
 class AppManager:
+    """
+    The central controller for the entire application. It manages the lifecycle
+    of the main editor window, game runtime, and replay runtime, and orchestrates
+    the main application tick that drives both tkinter and pyglet.
+    """
     def __init__(self):
         self._game = None
         self._replay = None
@@ -27,8 +32,7 @@ class AppManager:
             return
 
         try:
-            # This line tells pyglet to process all pending events and call any
-            # functions scheduled with its clock.
+            # Process all pending pyglet events and call scheduled functions.
             pyglet.clock.tick(poll=True)
         except Exception as e:
             logging.error(
@@ -47,10 +51,8 @@ class AppManager:
             return
 
         # Reschedule this function to be called again by tkinter's loop.
-        # This creates the continuous, non-blocking loop that drives the game.
+        # This creates the continuous, non-blocking loop that drives pyglet.
         if self._editor:
-            # We schedule it to run every 1ms. The actual frame rate is
-            # still controlled by pyglet's schedule_interval in ViewableRuntime.
             self._editor.after(16, self.master_tick)
 
     def start_editor(self):
@@ -70,8 +72,8 @@ class AppManager:
             # Start the master tick loop, which will drive pyglet.
             self.master_tick()
 
-            # Run the tkinter main loop. This is a blocking call, but our
-            # master_tick is now integrated into its event chain.
+            # Run the tkinter main loop. This is a blocking call, but master_tick
+            # is now integrated into its event chain.
             self._editor.mainloop()
         else:
             self._editor.deiconify()
@@ -79,7 +81,7 @@ class AppManager:
     def _on_editor_close(self):
         """Handles the editor window closing, which shuts down everything."""
         logging.info("Editor closing, shutting down application.")
-        self._is_running = False  # This will stop the master_tick loop
+        self._is_running = False  # Stop the master_tick loop.
         self.stop_viewable_runtimes()
         if self._editor:
             self._editor.destroy()
@@ -97,7 +99,7 @@ class AppManager:
         runtime_instance = runtime_class(*args)
         setattr(self, f"_{runtime_name}", runtime_instance)
 
-        # The runtime will schedule its own update with pyglet's clock.
+        # The runtime schedules its own update loop with pyglet's clock.
         runtime_instance.run()
 
     def _stop_runtime(self, runtime_name):
@@ -111,7 +113,6 @@ class AppManager:
             self._editor.deiconify()
             self._editor.focus_force()
 
-    # The rest of the methods remain the same
     def start_game(self):
         self._start_runtime("game", Game, level_loader.level)
 

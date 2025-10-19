@@ -6,6 +6,13 @@ if TYPE_CHECKING:
 
 
 class TrainingStateManager:
+    """
+    Manages the global state related to the agent training process.
+
+    This includes tracking whether a training request is in flight, if training is
+    active, or if an interruption has been requested. It also holds references to UI
+    elements to automatically update their state (e.g., enabled/disabled).
+    """
     def __init__(self):
         self._sending_training_request = False
         self._training = False
@@ -15,7 +22,7 @@ class TrainingStateManager:
         self.enable_on_train_elements: "set[ctk.CTkBaseClass]" = set()
         self.train_logs_panel: "TrainLogsPanel | None" = None
 
-        # Defined by the user before training starts, on the episodes slider
+        # Set by the UI before training starts.
         self.amount_of_episodes: int = 0
 
     def set_train_logs_panel(self, panel: "TrainLogsPanel"):
@@ -35,6 +42,11 @@ class TrainingStateManager:
             self.train_logs_panel.update_training_progress(current_episodes)
 
     def _update_ui_state(self):
+        """
+        Updates the state of all registered UI elements based on the current
+        training state flags. This is the central method for ensuring UI
+        consistency during the training lifecycle.
+        """
         is_busy = (
             self._sending_training_request
             or self._training
@@ -75,6 +87,7 @@ class TrainingStateManager:
                 self.train_logs_panel.remove_log("interrupting")
 
     def reset_states(self):
+        """Resets all state flags to their initial (idle) values and updates the UI."""
         self._sending_training_request = False
         self._training = False
         self._sending_interrupt_training_request = False

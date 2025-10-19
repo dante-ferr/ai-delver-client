@@ -7,6 +7,11 @@ import threading
 
 
 class TrainContainer(ctk.CTkFrame):
+    """
+    A UI container with buttons to start and interrupt agent training.
+    It handles running the asynchronous training requests in a separate thread
+    to prevent blocking the main GUI thread.
+    """
     def __init__(self, parent):
         super().__init__(parent)
         self.train_button = ctk.CTkButton(
@@ -25,14 +30,6 @@ class TrainContainer(ctk.CTkFrame):
         training_state_manager.add_enable_on_train_element(
             self.interrupt_training_button
         )
-
-    #     self.after(100, self._add_buttons_to_training_manager)
-
-    # def _add_buttons_to_training_manager(self):
-    #     training_state_manager.add_disable_on_train_element(self.train_button)
-    #     training_state_manager.add_enable_on_train_element(
-    #         self.interrupt_training_button
-    #     )
 
     def _start_train_thread(self):
         """
@@ -54,10 +51,12 @@ class TrainContainer(ctk.CTkFrame):
 
     async def _train(self):
         if not verify_level_issues():
-            # This coroutine will now run in a new event loop
-            # within a background thread.
+            # This coroutine runs in a new event loop within a background thread,
+            # initiated by _start_train_thread.
             await client_requester.send_training_request()
 
     async def _interrupt_training(self):
-        # This coroutine will also run in a background thread.
+        """Wrapper for the interrupt request coroutine."""
+        # This coroutine runs in a new event loop within a background thread,
+        # initiated by _start_interrupt_thread.
         await client_requester.send_interrupt_training_request()

@@ -19,7 +19,7 @@ class Config:
             return json.load(f)
 
     def __getattr__(self, name: str) -> Any:
-        # Converts Python's UPPER_SNAKE_CASE to json's snake_case for lookup
+        # Converts Python's UPPER_SNAKE_CASE attribute access to json's snake_case for lookup.
         key = name.lower()
         if key in self._data:
             return self._data[key]
@@ -33,14 +33,12 @@ class Config:
         or as a frozen executable (e.g., from PyInstaller).
         """
         if getattr(sys, "frozen", False):
-            # If it is frozen, the root is the directory containing the executable.
-            # sys.executable gives the path to MyGame.exe.
+            # If frozen, the root is the directory containing the executable.
             application_path = Path(sys.executable)
             return application_path.parent
         else:
-            # If it's not frozen, we are running from source code.
-            # The project root is three levels up from this config file's location.
-            # (src/ -> ai-delver-client/ -> ai-delver/)
+            # If not frozen, we are running from source. The project root is derived
+            # from this file's location.
             return Path(__file__).resolve().parent.parent.parent
 
 

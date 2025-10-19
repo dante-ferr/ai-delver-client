@@ -9,6 +9,10 @@ if TYPE_CHECKING:
 
 
 class TrajectoryHeader(ctk.CTkFrame):
+    """
+    The header component for the TrajectoryViewer, providing UI for loading
+    a specific trajectory by index and initiating a replay.
+    """
     def __init__(self, parent):
         super().__init__(parent, fg_color="transparent")
 
@@ -28,6 +32,7 @@ class TrajectoryHeader(ctk.CTkFrame):
         replay_button.grid(row=0, column=2, padx=4, pady=(0, 4))
 
     def _load_trajectory(self):
+        """Loads a trajectory by the index specified in the entry field."""
         self.master = cast("TrajectoryViewer", self.master)
 
         index_str = self.index_entry.get()
@@ -53,6 +58,7 @@ class TrajectoryHeader(ctk.CTkFrame):
         self.master.display_trajectory()
 
     def _replay(self):
+        """Starts a replay of the currently loaded trajectory."""
         from app_manager import app_manager
 
         self.master = cast("TrajectoryViewer", self.master)

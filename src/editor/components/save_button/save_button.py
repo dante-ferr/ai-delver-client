@@ -5,7 +5,13 @@ from editor.components.overlay.message_overlay import MessageOverlay
 
 
 class SaveButton(IconButton):
-    """Base class for save buttons that handle saving files with a confirmation dialog. This cannot be used directly and must be subclassed, because the _save method doesn't handle saving."""
+    """
+    A base class for save buttons that handles saving files with an overwrite
+    confirmation dialog.
+
+    This class cannot be used directly and must be subclassed. Subclasses must
+    implement the `file_name` property and can override the `_save` method.
+    """
 
     def __init__(self, parent, save_folder_path: str, file_type: str):
         super().__init__(parent, svg_path=str(config.ASSETS_PATH / "svg" / "save.svg"))
@@ -35,6 +41,10 @@ class SaveButton(IconButton):
             self._save()
 
     def _save(self):
+        """
+        Performs the save operation and shows a success message. Subclasses can
+        override this to add the actual file-saving logic before calling super().
+        """
         MessageOverlay(
             f"Sucessfully saved the {self.file_type}.",
             button_commands={
@@ -45,5 +55,8 @@ class SaveButton(IconButton):
 
     @property
     def file_name(self) -> str:
-        """Returns the name of the file to save. OBS: this class must be overridden in subclasses."""
+        """
+        Returns the name of the file to save.
+        NOTE: This property must be overridden in subclasses.
+        """
         return ""

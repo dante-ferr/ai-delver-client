@@ -9,6 +9,12 @@ if TYPE_CHECKING:
 
 
 class CanvasClickHandler:
+    """
+    Manages all mouse-based interactions on the LevelCanvas, including
+    clicking, dragging, and tool-based actions like drawing or erasing tiles.
+    It translates mouse coordinates to grid positions and applies the
+    currently selected tool's logic.
+    """
     def __init__(self, canvas: "LevelCanvas"):
         self.canvas = canvas
 
@@ -19,6 +25,7 @@ class CanvasClickHandler:
         self._bind_click_hold_events()
 
     def _bind_click_hold_events(self):
+        """Binds mouse events to their corresponding handler methods."""
         self.canvas.bind("<Enter>", lambda e: self.canvas.focus_set())
         self.canvas.bind("<ButtonPress-1>", self._start_click)
         self.canvas.bind("<B1-Motion>", self._on_click_hold)
@@ -26,7 +33,7 @@ class CanvasClickHandler:
         self.canvas.bind("<KeyPress-i>", self._debug_inspect_tile)
 
     def _start_click(self, event):
-        """Handle starting a click on the canvas."""
+        """Handles the initial mouse button press on the canvas."""
         self.drawn_tile_positions = []
         initial_canvas_grid_pos = self._get_canvas_grid_position((event.x, event.y))
         if initial_canvas_grid_pos:
@@ -34,7 +41,10 @@ class CanvasClickHandler:
             self._process_single_canvas_grid_position(initial_canvas_grid_pos)
 
     def _on_click_hold(self, event):
-        """Handle click holding on the canvas by interpolating tiles along the path."""
+        """
+        Handles mouse movement while the button is held down. It uses Bresenham's
+        line algorithm to ensure a continuous line of tiles is drawn or erased.
+        """
         current_canvas_grid_pos = self._get_canvas_grid_position((event.x, event.y))
         if not current_canvas_grid_pos:
             return
@@ -55,7 +65,7 @@ class CanvasClickHandler:
         self.last_canvas_grid_pos = current_canvas_grid_pos
 
     def _stop_click(self, event):
-        """Handle stopping a click on the canvas."""
+        """Handles the mouse button release event."""
         self.drawn_tile_positions = []
         if hasattr(self, "last_canvas_grid_pos"):
             del self.last_canvas_grid_pos
@@ -63,7 +73,10 @@ class CanvasClickHandler:
     def _get_canvas_grid_position(
         self, mouse_position: tuple[int, int]
     ) -> Optional[tuple[int, int]]:
-        """Convert mouse coordinates to grid coordinates, adjusting for scroll."""
+        """
+        Converts raw mouse coordinates into canvas grid coordinates, accounting
+        for canvas scrolling and zoom level.
+        """
         canvas_x = self.canvas.canvasx(mouse_position[0])
         canvas_y = self.canvas.canvasy(mouse_position[1])
         tile_width, tile_height = level_loader.level.map.tile_size
@@ -73,7 +86,10 @@ class CanvasClickHandler:
         return (canvas_grid_x, canvas_grid_y)
 
     def _process_single_canvas_grid_position(self, canvas_grid_pos: tuple[int, int]):
-        """Process a single grid position if it's valid and not already processed."""
+        """
+        Processes a single grid position by applying the selected tool's action.
+        It ensures a position is not processed multiple times in a single drag motion.
+        """
         if canvas_grid_pos in self.drawn_tile_positions:
             return
         self.drawn_tile_positions.append(canvas_grid_pos)
@@ -91,6 +107,13 @@ class CanvasClickHandler:
         self._handle_interaction(grid_pos)
 
     def _handle_interaction(self, grid_pos: tuple[int, int]):
+        """
+        Applies the logic for the currently selected tool ('pencil' or 'eraser')
+        at the given world grid position.
+
+        Args:
+            grid_pos: The world-space grid position to interact with.
+        """
         if not level_loader.level.map.position_is_valid(grid_pos):
             return
 
@@ -116,8 +139,8 @@ class CanvasClickHandler:
 
     def _debug_inspect_tile(self, event):
         """
-        Debug function to print properties of a tile when 'i' is pressed
-        over it. Currently prints the tile's display property.
+        A debug utility to print properties of the grid element under the mouse
+        cursor when the 'i' key is pressed.
         """
         canvas_grid_pos = self._get_canvas_grid_position((event.x, event.y))
         if not canvas_grid_pos:
