@@ -49,12 +49,12 @@ class CanvasOverlay:
             return
 
         tile_width, tile_height = self.canvas.tile_size
-        offset_x, offset_y = self.canvas.zoomed_draw_offset
+        offset_x, offset_y = self.canvas.camera.zoomed_draw_offset
 
         grid_x, grid_y = grid_pos
         x = grid_x * tile_width
         y = grid_y * tile_height
-        canvas_grid_x, canvas_grid_y = self.canvas.world_to_canvas_grid_pos(
+        canvas_grid_x, canvas_grid_y = self.canvas.camera.world_to_canvas_grid_pos(
             (grid_x, grid_y)
         )
 
@@ -86,7 +86,9 @@ class CanvasOverlay:
 
     def erase_tile_lines(self, grid_pos: tuple[int, int]):
         """Erase micro lines around a tile."""
-        canvas_grid_x, canvas_grid_y = self.canvas.world_to_canvas_grid_pos(grid_pos)
+        canvas_grid_x, canvas_grid_y = self.canvas.camera.world_to_canvas_grid_pos(
+            grid_pos
+        )
 
         self.canvas.delete(f"{canvas_grid_x},{canvas_grid_y}")
 
@@ -96,10 +98,10 @@ class CanvasOverlay:
 
         map_width, map_height = self.canvas.map_size
         self.canvas.create_rectangle(
-            self.canvas.zoomed_draw_offset[0],
-            self.canvas.zoomed_draw_offset[1],
-            map_width + self.canvas.zoomed_draw_offset[0],
-            map_height + self.canvas.zoomed_draw_offset[1],
+            self.canvas.camera.zoomed_draw_offset[0],
+            self.canvas.camera.zoomed_draw_offset[1],
+            map_width + self.canvas.camera.zoomed_draw_offset[0],
+            map_height + self.canvas.camera.zoomed_draw_offset[1],
             outline="gray",
             width=2,
             tags="border",

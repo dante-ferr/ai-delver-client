@@ -104,8 +104,8 @@ class CanvasGridElementRenderer:
         Creates or retrieves from cache a PhotoImage for a given PIL Image at the current canvas zoom level.
         """
         tile_width, tile_height = level_loader.level.map.tile_size
-        scaled_width = int(tile_width * self.canvas.zoom_level)
-        scaled_height = int(tile_height * self.canvas.zoom_level)
+        scaled_width = int(tile_width * self.canvas.camera.zoom_level)
+        scaled_height = int(tile_height * self.canvas.camera.zoom_level)
 
         cache_key = (id(pil_image), scaled_width, scaled_height)
         photo_image = self.photo_image_cache.get(cache_key)
@@ -131,7 +131,7 @@ class CanvasGridElementRenderer:
 
         photo_image = self.get_scaled_photo_image(pil_image)
 
-        canvas_grid_pos = self.canvas.world_to_canvas_grid_pos(element.position)
+        canvas_grid_pos = self.canvas.camera.world_to_canvas_grid_pos(element.position)
         tile_w, tile_h = self.canvas.tile_size
 
         screen_x = canvas_grid_pos[0] * tile_w
@@ -177,7 +177,6 @@ class CanvasGridElementRenderer:
         self,
         item_id: int,
         old_zoom: float,
-        new_zoom: float,
         origin_x: int,
         origin_y: int,
     ):
@@ -202,16 +201,9 @@ class CanvasGridElementRenderer:
         if not grid_pos:
             return
 
-        canvas_grid_x, canvas_grid_y = grid_pos
-        scale_factor = new_zoom / old_zoom
-
-        old_tile_w = level_loader.level.map.tile_size[0] * old_zoom
-        old_tile_h = level_loader.level.map.tile_size[1] * old_zoom
-        old_x = canvas_grid_x * old_tile_w
-        old_y = canvas_grid_y * old_tile_h
-
-        new_x = origin_x + (old_x - origin_x) * scale_factor
-        new_y = origin_y + (old_y - origin_y) * scale_factor
+        new_x, new_y = self.canvas.camera.calculate_zoomed_coords(
+            grid_pos, old_zoom, origin_x, origin_y
+        )
         self.canvas.coords(item_id, new_x, new_y)
 
     def _get_image_for_element(self, element: "GridElement") -> "Image.Image | None":
@@ -246,7 +238,7 @@ class CanvasGridElementRenderer:
         pil_image: "Image.Image | None" = None,
     ):
         """Return the tag for a grid element."""
-        canvas_grid_x, canvas_grid_y = self.canvas.world_to_canvas_grid_pos(
+        canvas_grid_x, canvas_grid_y = self.canvas.camera.world_to_canvas_grid_pos(
             element.position
         )
 

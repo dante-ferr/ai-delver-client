@@ -57,9 +57,8 @@ class CanvasClickHandler:
             self.last_canvas_grid_pos, current_canvas_grid_pos
         )
         for pos in line_positions:
-            if level_loader.level.map.position_is_valid(
-                self.canvas.canvas_to_world_grid_pos(pos)
-            ):
+            world_pos = self.canvas.camera.canvas_to_world_grid_pos(pos)
+            if level_loader.level.map.position_is_valid(world_pos):
                 self._process_single_canvas_grid_position(pos)
 
         self.last_canvas_grid_pos = current_canvas_grid_pos
@@ -80,8 +79,8 @@ class CanvasClickHandler:
         canvas_x = self.canvas.canvasx(mouse_position[0])
         canvas_y = self.canvas.canvasy(mouse_position[1])
         tile_width, tile_height = level_loader.level.map.tile_size
-        canvas_grid_x = int(canvas_x // (tile_width * self.canvas.zoom_level))
-        canvas_grid_y = int(canvas_y // (tile_height * self.canvas.zoom_level))
+        canvas_grid_x = int(canvas_x // (tile_width * self.canvas.camera.zoom_level))
+        canvas_grid_y = int(canvas_y // (tile_height * self.canvas.camera.zoom_level))
 
         return (canvas_grid_x, canvas_grid_y)
 
@@ -103,7 +102,7 @@ class CanvasClickHandler:
         )
         self.selected_tool_name = level_editor_manager.selector.get_selection("tool")
 
-        grid_pos = self.canvas.canvas_to_world_grid_pos(canvas_grid_pos)
+        grid_pos = self.canvas.camera.canvas_to_world_grid_pos(canvas_grid_pos)
         self._handle_interaction(grid_pos)
 
     def _handle_interaction(self, grid_pos: tuple[int, int]):
@@ -147,7 +146,7 @@ class CanvasClickHandler:
             print("DEBUG: No canvas grid position found")
             return
 
-        grid_pos = self.canvas.canvas_to_world_grid_pos(canvas_grid_pos)
+        grid_pos = self.canvas.camera.canvas_to_world_grid_pos(canvas_grid_pos)
 
         if not level_loader.level.map.position_is_valid(grid_pos):
             print("DEBUG: Invalid grid position")

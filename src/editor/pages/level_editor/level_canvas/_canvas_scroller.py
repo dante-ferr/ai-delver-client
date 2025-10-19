@@ -66,8 +66,8 @@ class CanvasScroller:
         scale_y = self.canvas.zoom_level
 
         canvas_offset_x, canvas_offset_y = (
-            self.canvas.draw_offset[0],
-            self.canvas.draw_offset[1],
+            self.canvas.grid_draw_offset[0],
+            self.canvas.grid_draw_offset[1],
         )
         canvas_width, canvas_height = self.canvas_size
         level_width, level_height = (
@@ -78,8 +78,8 @@ class CanvasScroller:
         min_x = -canvas_offset_x * scale_x - level_width + canvas_width // 2
         max_x = -canvas_offset_x * scale_x + canvas_width // 2
 
-        min_y = -canvas_offset_y + -level_height + canvas_height // 2
-        max_y = -canvas_offset_y + canvas_height // 2
+        min_y = -canvas_offset_y * scale_y - level_height + canvas_height // 2
+        max_y = -canvas_offset_y * scale_y + canvas_height // 2
 
         x = int(max(min_x, min(max_x, x)))
         y = int(max(min_y, min(max_y, y)))
