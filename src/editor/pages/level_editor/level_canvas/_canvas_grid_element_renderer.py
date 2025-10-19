@@ -20,9 +20,11 @@ class CanvasGridElementRenderer:
 
         self._add_event_listeners()
 
-        self.photo_image_cache: dict[int, ImageTk.PhotoImage] = {}
+        self.photo_image_cache: dict[tuple[int, int, int], ImageTk.PhotoImage] = {}
         self._initialize_tileset_images()
         self.world_objects_image = WorldObjectsImage()
+
+        self.pil_image_registry: dict[int, Image.Image] = {}
 
     def _add_event_listeners(self):
         level_loader.level.map.tilemap.on_layer_event(
@@ -90,48 +92,71 @@ class CanvasGridElementRenderer:
         pil_image = self.world_objects_image.get_image(world_object.canvas_object_name)
         self._draw_grid_element(world_object, pil_image)
 
-    def _draw_grid_element(self, element: "GridElement", pil_image: "Image.Image | None"):
+    def get_scaled_photo_image(self, pil_image: "Image.Image") -> "PhotoImage":
+        """
+        Creates or retrieves from cache a PhotoImage for a given PIL Image at the current canvas zoom level.
+        """
+        tile_width, tile_height = level_loader.level.map.tile_size
+        scaled_width = int(tile_width * self.canvas.zoom_level)
+        scaled_height = int(tile_height * self.canvas.zoom_level)
+
+        cache_key = (id(pil_image), scaled_width, scaled_height)
+        photo_image = self.photo_image_cache.get(cache_key)
+
+        if photo_image is None:
+            # Use ANTIALIAS for better quality on zoom-out, NEAREST for pixel art style
+            resized_image = pil_image.resize(
+                (scaled_width, scaled_height), Image.NEAREST
+            )
+            photo_image = ImageTk.PhotoImage(resized_image)
+            self.photo_image_cache[cache_key] = photo_image
+        return photo_image
+
+    def _draw_grid_element(
+        self, element: "GridElement", pil_image: "Image.Image | None"
+    ):
         """Draw a grid element on the canvas, applying zoom and offset."""
         if pil_image is None:
             return
 
-        tile_width, tile_height = level_loader.level.map.tile_size
+        self.pil_image_registry[id(pil_image)] = pil_image
 
-        scaled_width = int(tile_width * self.canvas.zoom_level)
-        scaled_height = int(tile_height * self.canvas.zoom_level)
+        # Use the new helper method to get the correctly sized image
+        photo_image = self.get_scaled_photo_image(pil_image)
 
-        # Use a simple cache key. id(pil_image) is a good candidate.
-        cache_key = id(pil_image)
-        photo_image = self.photo_image_cache.get(cache_key)
+        # Simplified and corrected coordinate calculation
+        canvas_grid_pos = self.canvas.world_to_canvas_grid_pos(element.position)
+        tile_w, tile_h = (
+            self.canvas.tile_size
+        )  # This property correctly uses the current zoom level
 
-        # If the image is not in cache or its size has changed, create a new one.
-        if (
-            photo_image is None
-            or photo_image.width() != scaled_width
-            or photo_image.height() != scaled_height
-        ):
-            resized_image = pil_image.resize((scaled_width, scaled_height), Image.NEAREST)  # type: ignore
-            photo_image = ImageTk.PhotoImage(resized_image)
-            self.photo_image_cache[cache_key] = photo_image
+        screen_x = canvas_grid_pos[0] * tile_w
+        screen_y = canvas_grid_pos[1] * tile_h
 
-        # Calculate screen coordinates using zoom and offset
-        # The absolute grid position is the "world" coordinate
-        world_x = element.position[0] * tile_width
-        world_y = element.position[1] * tile_height
+        # --- Improvement: Update existing item or create a new one ---
+        tags_to_find = self._get_grid_element_tags(element, "element's")
+        # We only need position and layer to uniquely identify an element's canvas item
+        items = self.canvas.items_with_tags(tags_to_find[0], tags_to_find[1])
 
-        # Apply offset, then zoom
-        screen_x = (world_x + self.canvas.draw_offset[0]) * self.canvas.zoom_level
-        screen_y = (world_y + self.canvas.draw_offset[1]) * self.canvas.zoom_level
-
-        self.erase_grid_element(element=element)
-
-        self.canvas.create_image(
-            screen_x,
-            screen_y,
-            image=photo_image,
-            anchor="nw",
-            tags=self._get_grid_element_tags(element),
-        )
+        if items:
+            # Item exists, so update it
+            item_id = items[0]
+            self.canvas.coords(item_id, screen_x, screen_y)
+            # Also update the tags to ensure the pil_id is correct
+            self.canvas.itemconfig(
+                item_id,
+                image=photo_image,
+                tags=self._get_grid_element_tags(element, pil_image=pil_image),
+            )
+        else:
+            # Item does not exist, so create it
+            self.canvas.create_image(
+                screen_x,
+                screen_y,
+                image=photo_image,
+                anchor="nw",
+                tags=self._get_grid_element_tags(element, pil_image=pil_image),
+            )
 
         self.canvas.update_draw_order()
 
@@ -146,17 +171,84 @@ class CanvasGridElementRenderer:
         ):
             self.canvas.delete(item)
 
+    def rescale_and_reposition_item(
+        self,
+        item_id: int,
+        old_zoom: float,
+        new_zoom: float,
+        origin_x: int,
+        origin_y: int,
+    ):
+        """Resizes and repositions a single canvas item based on a zoom change."""
+        # 1. Get the original PIL Image for this item
+        tags = self.canvas.gettags(item_id)
+        pil_id_tag = next((tag for tag in tags if tag.startswith("pil_id=")), None)
+        if not pil_id_tag:
+            return
+
+        pil_id = int(pil_id_tag.split("=")[1])
+        pil_image = self.pil_image_registry.get(pil_id)
+        if not pil_image:
+            return
+
+        # 2. Get a new PhotoImage of the correct size
+        new_photo_image = self.get_scaled_photo_image(pil_image)
+        self.canvas.itemconfig(item_id, image=new_photo_image)
+
+        # 3. Get grid position and calculate new screen coordinates
+        grid_pos = self._get_position_from_tag(item_id)
+        if not grid_pos:
+            return
+
+        canvas_grid_x, canvas_grid_y = grid_pos
+        scale_factor = new_zoom / old_zoom
+
+        old_tile_w = level_loader.level.map.tile_size[0] * old_zoom
+        old_tile_h = level_loader.level.map.tile_size[1] * old_zoom
+        old_x = canvas_grid_x * old_tile_w
+        old_y = canvas_grid_y * old_tile_h
+
+        new_x = origin_x + (old_x - origin_x) * scale_factor
+        new_y = origin_y + (old_y - origin_y) * scale_factor
+        self.canvas.coords(item_id, new_x, new_y)
+
+    def _get_image_for_element(self, element: "GridElement") -> "Image.Image | None":
+        """Helper to get the correct image for any grid element."""
+        if isinstance(element, Tile):
+            tile = cast("Tile", element)
+            return self.tileset_images[element.layer.tileset].get_tile_image(
+                tile.display
+            )
+        elif isinstance(element, WorldObjectRepresentation):
+            world_object = cast("WorldObjectRepresentation", element)
+            return self.world_objects_image.get_image(world_object.canvas_object_name)
+        return None
+
+    def _get_position_from_tag(self, item_id: int) -> tuple[int, int] | None:
+        """Extracts canvas grid coordinates from an item's 'position' tag."""
+        tags = self.canvas.gettags(item_id)
+        pos_tag = next((tag for tag in tags if tag.startswith("position=")), None)
+        if not pos_tag:
+            return None
+
+        try:
+            canvas_grid_x, canvas_grid_y = map(int, pos_tag.split("=")[1].split(","))
+            return canvas_grid_x, canvas_grid_y
+        except (ValueError, IndexError):
+            return None
+
     def _get_grid_element_tags(
         self,
         element: "GridElement",
         layer_name: str | Literal["element's"] = "element's",
+        pil_image: "Image.Image | None" = None,  # Add this parameter
     ):
         """Return the tag for a grid element."""
         canvas_grid_x, canvas_grid_y = self.canvas.world_to_canvas_grid_pos(
             element.position
         )
 
-        position_tag = f"position={(canvas_grid_x, canvas_grid_y)}"
+        position_tag = f"position={canvas_grid_x},{canvas_grid_y}"
         if layer_name == "element's":
             layer = element.layer
             layer_tag = f"layer={layer.name}"
@@ -165,14 +257,8 @@ class CanvasGridElementRenderer:
 
         grid_element_tag = "grid_element"
 
-        return (position_tag, layer_tag, grid_element_tag)
+        if pil_image:
+            image_id_tag = f"pil_id={id(pil_image)}"
+            return (position_tag, layer_tag, grid_element_tag, image_id_tag)
 
-    def _get_image_for_element(self, element: "GridElement") -> "Image.Image | None":
-        """Helper to get the correct image for any grid element."""
-        if isinstance(element, Tile):
-            tile = cast("Tile", element)
-            return self.tileset_images[element.layer.tileset].get_tile_image(tile.display)
-        elif isinstance(element, WorldObjectRepresentation):
-            world_object = cast("WorldObjectRepresentation", element)
-            return self.world_objects_image.get_image(world_object.canvas_object_name)
-        return None
+        return (position_tag, layer_tag, grid_element_tag)

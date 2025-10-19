@@ -37,17 +37,25 @@ class LevelCanvas(ctk.CTkCanvas):
 
     def set_zoom_level(self, value: int, origin_x: int, origin_y: int):
         """
-        Sets the zoom level of the canvas, scaling relative to a given
-        origin point (usually the mouse cursor).
+        Sets the zoom level by re-rendering and repositioning existing canvas items
+        relative to a given origin point.
         """
         if value <= 0:
-            raise ValueError("scale must be positive")
-        if abs(value - self._zoom_level) < 1e-9:  # Floating point comparison
+            raise ValueError("Zoom level must be positive")
+        if abs(value - self._zoom_level) < 1e-9:
             return
 
+        old_zoom = self._zoom_level
         self._zoom_level = value
 
-        self.refresh()
+        # Iterate over all existing grid elements on the canvas
+        for item_id in self.find_withtag("grid_element"):
+            self.grid_element_renderer.rescale_and_reposition_item(
+                item_id, old_zoom, self.zoom_level, origin_x, origin_y
+            )
+
+        # Redraw non-image overlays like grid lines and borders
+        self.overlay.refresh()
 
     def _add_event_listeners(self):
         level_loader.level.map.events["expanded"].connect(
@@ -95,16 +103,10 @@ class LevelCanvas(ctk.CTkCanvas):
         self.overlay.draw_border()
 
     def refresh(self):
-        from src.core.state_managers import canvas_state_manager
-
         self.grid_element_renderer.erase_all_grid_elements()
         self.grid_element_renderer.draw_all_grid_elements()
 
-        if canvas_state_manager.vars["grid_lines"].get():
-            self.overlay.draw_grid_lines()
-        else:
-            self.delete("line")
-        self.overlay.draw_border()
+        self.overlay.refresh()
 
     def update_draw_order(self):
         """Ensure layers are drawn in the correct Z-index order."""

@@ -104,3 +104,12 @@ class CanvasOverlay:
             width=2,
             tags="border",
         )
+
+    def refresh(self):
+        from src.core.state_managers import canvas_state_manager
+
+        if canvas_state_manager.vars["grid_lines"].get():
+            self.draw_grid_lines()
+        else:
+            self.canvas.delete("line")
+        self.draw_border()
