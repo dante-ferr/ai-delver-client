@@ -11,14 +11,34 @@ class CanvasStateManager:
         self.vars: Dict[str, CtkVariable] = {
             "grid_lines": ctk.BooleanVar(value=True),
             "zoom": ctk.DoubleVar(value=1.0),
+            "dynamic_resizing": ctk.BooleanVar(value=False),
         }
         self._callbacks: Dict[str, list[Callable[[Any], None]]] = {
             "grid_lines": [],
             "zoom": [],
+            "dynamic_resizing": [],
         }
+
+        self._add_core_callbacks()
 
         for name, var in self.vars.items():
             var.trace_add("write", lambda *args, n=name: self._notify_callbacks(n))
+
+    def _add_core_callbacks(self):
+        """Add callbacks related to core objects."""
+
+        def _dynamic_resizing_callback(value: bool):
+            from level_loader import level_loader
+
+            tilemap = level_loader.level.map.tilemap
+
+            if value:
+                tilemap.unlock_expandable_edges()
+                tilemap.reduce_if_needed()
+            else:
+                tilemap.lock_all_edges()
+
+        self.add_callback("dynamic_resizing", _dynamic_resizing_callback)
 
     def add_callback(self, name: str, callback: Callable[[Any], None]):
         """Register a callback for a state variable change and call it immediately."""

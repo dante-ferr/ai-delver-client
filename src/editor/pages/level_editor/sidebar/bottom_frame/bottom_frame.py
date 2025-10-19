@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from typing import cast
 from src.config import config
+from .resize_level_dialog.resize_level_dialog import ResizeLevelDialog
 from .level_file_container import LevelFileContainer
 
 
@@ -11,7 +12,7 @@ class BottomFrame(ctk.CTkFrame):
     }
 
     def __init__(self, parent):
-        from src.core.state_managers import canvas_state_manager
+        from state_managers import canvas_state_manager
 
         super().__init__(parent, fg_color="transparent")
 
@@ -54,6 +55,14 @@ class BottomFrame(ctk.CTkFrame):
         grid_toggle.grid(row=0, column=1, **self.GRID_CELL_SPACEMENT)
 
         level_file_container = LevelFileContainer(self)
-        level_file_container.grid(
-            row=1, column=0, columnspan=2, **self.GRID_CELL_SPACEMENT
+        level_file_container.grid(row=1, column=0, **self.GRID_CELL_SPACEMENT)
+
+        resize_level_button = ctk.CTkButton(
+            self,
+            text="Resize Level",
+            command=self._open_resize_level_dialog,
         )
+        resize_level_button.grid(row=1, column=1, **self.GRID_CELL_SPACEMENT)
+
+    def _open_resize_level_dialog(self):
+        ResizeLevelDialog(self)

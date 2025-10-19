@@ -75,7 +75,8 @@ class CanvasGridElementRenderer:
 
     def handle_reduction(self, removed_positions: "GridMap.RemovedPositions"):
         for position in removed_positions:
-            self.canvas.delete(f"position={position}")
+            pos = self.canvas.camera.world_to_canvas_grid_pos(position)
+            self.canvas.delete(f"position={pos[0]},{pos[1]}")
 
     def erase_all_grid_elements(self):
         """Erase all tiles on the canvas."""

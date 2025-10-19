@@ -27,24 +27,30 @@ class CanvasObjectsManager:
         self._level = level
 
     def assign_level_to_objects(self, level: "Level"):
-        self.level = level
+        from state_managers import canvas_state_manager
 
-        tilemap = level.map.tilemap
+        self.level = level
+        self._dynamic_resizing_var = canvas_state_manager.vars["dynamic_resizing"]
 
         platform_co = self.get_canvas_object("platform")
-        platform_co.create_element_callback = (
-            lambda position: tilemap.create_basic_platform_at(
-                position, apply_formatting=True
-            )
-        )
-        platform_co.remove_element_callback = (
-            lambda position: tilemap.remove_platform_at(position, apply_formatting=True)
-        )
+        platform_co.create_element_callback = self._create_platform_callback
+        platform_co.remove_element_callback = self._remove_platform_callback
 
         self._assign_layer_to_world_canvas_object("delver")
+        self._assign_layer_to_variated_world_canvas_object("goal")
 
-        self._assign_layer_to_variated_world_canvas_object(
-            "goal",
+    def _create_platform_callback(self, position: tuple[int, int]):
+        self.level.map.tilemap.create_basic_platform_at(
+            position,
+            dynamic_resizing=cast(bool, self._dynamic_resizing_var.get()),
+            apply_formatting=True,
+        )
+
+    def _remove_platform_callback(self, position: tuple[int, int]):
+        self.level.map.tilemap.remove_platform_at(
+            position,
+            dynamic_resizing=cast(bool, self._dynamic_resizing_var.get()),
+            apply_formatting=True,
         )
 
     def _assign_layer_to_world_canvas_object(self, object_name: str):

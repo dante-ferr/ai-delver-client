@@ -25,7 +25,7 @@ class CanvasScroller:
         self.canvas.bind("<Configure>", self._on_resize)
 
     def _bind_scroll_events(self):
-        from src.core.state_managers import canvas_state_manager
+        from state_managers import canvas_state_manager
 
         canvas_state_manager.add_callback("zoom", self._execute_zoom)
 
@@ -98,7 +98,7 @@ class CanvasScroller:
 
     def _on_mouse_wheel(self, event):
         """Handle mouse wheel scrolling for zooming."""
-        from src.core.state_managers import canvas_state_manager
+        from state_managers import canvas_state_manager
 
         zoom = -1
         if event.num == 5 or event.delta < 0:

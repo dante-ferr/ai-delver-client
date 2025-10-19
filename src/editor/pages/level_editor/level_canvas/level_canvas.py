@@ -99,7 +99,6 @@ class LevelCanvas(ctk.CTkCanvas):
         """
         self.grid_element_renderer.handle_reduction(removed_positions)
         self.overlay.handle_reduction(removed_positions)
-
         self.camera.handle_reduction(direction, size)
 
         self._on_map_size_change()
@@ -165,7 +164,7 @@ class LevelCanvas(ctk.CTkCanvas):
     @property
     def grid_lines(self):
         """Whether grid lines should be visible, based on the global state."""
-        from src.core.state_managers import canvas_state_manager
+        from state_managers import canvas_state_manager
 
         return canvas_state_manager.vars["grid_lines"].get()
 

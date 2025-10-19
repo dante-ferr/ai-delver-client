@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 
 class CanvasOverlay:
     def __init__(self, canvas: "LevelCanvas"):
-        from src.core.state_managers import canvas_state_manager
+        from state_managers import canvas_state_manager
 
         self.canvas = canvas
 
@@ -80,7 +80,7 @@ class CanvasOverlay:
 
     @property
     def grid_lines_activated(self):
-        from src.core.state_managers import canvas_state_manager
+        from state_managers import canvas_state_manager
 
         return canvas_state_manager.vars["grid_lines"].get()
 
@@ -108,7 +108,7 @@ class CanvasOverlay:
         )
 
     def refresh(self):
-        from src.core.state_managers import canvas_state_manager
+        from state_managers import canvas_state_manager
 
         if canvas_state_manager.vars["grid_lines"].get():
             self.draw_grid_lines()
