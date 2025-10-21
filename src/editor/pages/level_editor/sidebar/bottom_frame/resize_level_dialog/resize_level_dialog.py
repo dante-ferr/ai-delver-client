@@ -151,12 +151,14 @@ class ResizeLevelDialog(ctk.CTkToplevel):
                 )
                 return
 
-            for direction in directions:
-                if amount > 0:
-                    level_loader.level.map.expand_towards(direction, amount)
-                else:
-                    # Use abs() because reduce_towards expects a positive size
-                    level_loader.level.map.reduce_towards(direction, abs(amount))
+            if amount > 0:
+                level_loader.level.map.multidirectional_expand_towards(
+                    directions, amount
+                )
+            else:
+                level_loader.level.map.multidirectional_reduce_towards(
+                    directions, amount
+                )
 
             self.destroy()
 
