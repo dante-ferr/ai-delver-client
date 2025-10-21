@@ -54,32 +54,29 @@ class CanvasScroller:
         if self.scrolling:
             scroll_x = int(event.x - self.scroll_start_x)
             scroll_y = int(event.y - self.scroll_start_y)
-            scroll_x, scroll_y = self._clamp_scroll_position(scroll_x, scroll_y)
+            scroll_x, scroll_y = self._clamped_scroll_position(scroll_x, scroll_y)
 
             self.canvas.scan_dragto(scroll_x, scroll_y, gain=1)
             self.last_x = scroll_x
             self.last_y = scroll_y
 
-    def _clamp_scroll_position(self, x, y):
+    def _clamped_scroll_position(self, x: int, y: int) -> tuple[int, int]:
         """Clamp the scroll position to the canvas boundaries."""
-        scale_x = self.canvas.zoom_level
-        scale_y = self.canvas.zoom_level
+        zoom = self.canvas.zoom_level
 
-        canvas_offset_x, canvas_offset_y = (
-            self.canvas.grid_draw_offset[0],
-            self.canvas.grid_draw_offset[1],
-        )
+        map_origin_x, map_origin_y = self.canvas.zoomed_draw_offset
+
         canvas_width, canvas_height = self.canvas_size
-        level_width, level_height = (
-            level_loader.level.map.size[0] * scale_x,
-            level_loader.level.map.size[1] * scale_y,
+        map_pixel_width, map_pixel_height = (
+            level_loader.level.map.size[0] * zoom,
+            level_loader.level.map.size[1] * zoom,
         )
 
-        min_x = -canvas_offset_x * scale_x - level_width + canvas_width // 2
-        max_x = -canvas_offset_x * scale_x + canvas_width // 2
-
-        min_y = -canvas_offset_y * scale_y - level_height + canvas_height // 2
-        max_y = -canvas_offset_y * scale_y + canvas_height // 2
+        # Calculate boundaries to ensure map corners don't pass the canvas center.
+        min_x = -map_origin_x - map_pixel_width + canvas_width // 2
+        max_x = -map_origin_x + canvas_width // 2
+        min_y = -map_origin_y - map_pixel_height + canvas_height // 2
+        max_y = -map_origin_y + canvas_height // 2
 
         x = int(max(min_x, min(max_x, x)))
         y = int(max(min_y, min(max_y, y)))
