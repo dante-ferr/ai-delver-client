@@ -10,7 +10,7 @@ class ResizeLevelDialog(ctk.CTkToplevel):
     """
     A dialog window to get user input for level resizing.
     It prompts for a direction (top, bottom, left, right) and an amount.
-    Positive amounts expand the level, negative amounts reduce it.
+    The user can select whether to expand or reduce the level.
     """
 
     def __init__(self, parent):
@@ -28,6 +28,7 @@ class ResizeLevelDialog(ctk.CTkToplevel):
         self._direction_left = ctk.BooleanVar(value=False)
         self._direction_right = ctk.BooleanVar(value=True)
         self._amount = ctk.StringVar(value="1")
+        self._operation = ctk.StringVar(value="Expand")
         self._dynamic_resizing_var = canvas_state_manager.vars["dynamic_resizing"]
 
         self._create_widgets()
@@ -54,6 +55,15 @@ class ResizeLevelDialog(ctk.CTkToplevel):
         self._manual_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
         self._manual_frame.pack(fill="both", expand=True)
 
+        # --- Operation Selection ---
+        operation_label = ctk.CTkLabel(self._manual_frame, text="Operation:")
+        operation_label.pack(pady=(0, 5), anchor="w")
+
+        self._operation_selector = ctk.CTkSegmentedButton(
+            self._manual_frame, values=["Expand", "Reduce"], variable=self._operation
+        )
+        self._operation_selector.pack(fill="x", pady=(0, 15))
+
         # --- Direction Selection ---
         direction_label = ctk.CTkLabel(self._manual_frame, text="Direction:")
         direction_label.pack(pady=(0, 10), anchor="w")
@@ -79,9 +89,7 @@ class ResizeLevelDialog(ctk.CTkToplevel):
         self._check_right.pack(anchor="w", padx=20)
 
         # --- Amount Input ---
-        amount_label = ctk.CTkLabel(
-            self._manual_frame, text="Amount (tiles, negative to reduce):"
-        )
+        amount_label = ctk.CTkLabel(self._manual_frame, text="Amount (tiles):")
         amount_label.pack(pady=(15, 5), anchor="w")
 
         self._amount_entry = ctk.CTkEntry(self._manual_frame, textvariable=self._amount)
@@ -114,6 +122,7 @@ class ResizeLevelDialog(ctk.CTkToplevel):
         is_dynamic = self._dynamic_resizing_var.get()
         new_state = "disabled" if is_dynamic else "normal"
 
+        self._operation_selector.configure(state=new_state)
         self._check_top.configure(state=new_state)
         self._check_bottom.configure(state=new_state)
         self._check_left.configure(state=new_state)
@@ -139,36 +148,35 @@ class ResizeLevelDialog(ctk.CTkToplevel):
         from level_loader import level_loader
 
         try:
-            # Validate that the amount is a non-zero integer
+            # Validate that the amount is a positive integer
             amount = int(self._amount.get())
-            if amount == 0:
-                raise ValueError
-
-            directions = self._get_selected_directions()
-            if not directions:
-                messagebox.showwarning(
-                    "No Direction", "Please select at least one direction.", parent=self
-                )
-                return
-
-            if amount > 0:
-                level_loader.level.map.multidirectional_expand_towards(
-                    directions, amount
-                )
-            else:
-                level_loader.level.map.multidirectional_reduce_towards(
-                    directions, amount
-                )
-
-            self.destroy()
-
-        except (ValueError, TypeError):
+            if amount <= 0:
+                raise ValueError("Amount must be positive.")
+        except ValueError:
             messagebox.showerror(
-                "Invalid Input",
-                "Please provide only integer values.",
+                "Invalid Amount",
+                "Please provide a positive integer value for the amount.",
                 parent=self,
             )
             self._amount.set("1")
+            return
+
+        directions = self._get_selected_directions()
+        if not directions:
+            messagebox.showwarning(
+                "No Direction", "Please select at least one direction.", parent=self
+            )
+            return
+
+        operation = self._operation.get()
+        if operation == "Expand":
+            level_loader.level.map.multidirectional_expand_towards(directions, amount)
+        elif operation == "Reduce":
+            level_loader.level.map.multidirectional_reduce_towards(
+                directions, abs(amount)
+            )
+
+        self.destroy()
 
     def _on_cancel(self):
         """Handle window close or cancel button click."""
