@@ -63,7 +63,7 @@ class ViewableRuntime(Runtime):
         if not self._window:
             return
         self._lock_window_size()
-        self.camera = Camera(self.window, start_zoom=1, min_zoom=0.25, max_zoom=2)
+        self.camera = Camera(self.window)
         self.camera.start_following(self.delver)
         self.controls.append_camera(self.camera)
         self.window.push_handlers(on_mouse_scroll=self.controls.on_mouse_scroll)

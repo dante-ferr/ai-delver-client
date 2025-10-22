@@ -6,5 +6,12 @@
   "fps": 60,
   "min_canvas_zoom": 2,
   "max_canvas_zoom": 5,
-  "initial_canvas_zoom": 2
+  "initial_canvas_zoom": 2,
+  "camera": {
+    "start_zoom": 1.0,
+    "min_zoom": 1.0,
+    "max_zoom": 4.0,
+    "scroll_speed": 1.0,
+    "zoom_speed": 0.3
+  }
 }

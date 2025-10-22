@@ -23,8 +23,7 @@ class ViewControls:
     def _handle_zoom(self, scroll_y):
         if not self.camera:
             raise ValueError("Camera not set")
-        zoom_speed = 0.1
-        self.camera.zoom = self.camera.zoom + scroll_y * zoom_speed
+        self.camera.scroll_zoom(scroll_y)
 
     def update(self, dt):
         pass

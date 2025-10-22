@@ -1,3 +1,4 @@
+from src.config import config
 from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
@@ -30,10 +31,11 @@ class Camera:
     def __init__(
         self,
         window: "Window",
-        scroll_speed=1.0,
-        start_zoom=1.0,
-        min_zoom=1.0,
-        max_zoom=4.0,
+        start_zoom=config.CAMERA.START_ZOOM,
+        min_zoom=config.CAMERA.MIN_ZOOM,
+        max_zoom=config.CAMERA.MAX_ZOOM,
+        scroll_speed=config.CAMERA.SCROLL_SPEED,
+        zoom_speed=config.CAMERA.ZOOM_SPEED,
     ):
         assert (
             min_zoom <= max_zoom
@@ -44,6 +46,8 @@ class Camera:
         self.max_zoom = max_zoom
         self.min_zoom = min_zoom
 
+        self.zoom_speed = zoom_speed
+
         # Set the initial zoom without smoothing.
         self.immediate_zoom(start_zoom)
 
@@ -52,6 +56,9 @@ class Camera:
         clamped_value = self._clamp_zoom(value)
         self._zoom_target = clamped_value
         self._zoom = clamped_value
+
+    def scroll_zoom(self, scroll_y):
+        self.zoom = self.zoom + scroll_y * self.zoom_speed
 
     @property
     def zoom(self):

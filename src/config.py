@@ -1,20 +1,30 @@
 import sys
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, Dict, Union
 
 
 class Config:
     """A class to hold and provide access to configuration settings from a JSON file."""
 
-    def __init__(self, config_path: str = "src/config.json"):
-        self._config_path = Path(config_path)
-        self._data = self._load_config()
+    def __init__(self, config_source: Union[str, Dict[str, Any]] = "src/config.json"):
+        if isinstance(config_source, str):
+            self._config_path: Path | None = Path(config_source)
+            self._data = self._load_config()
+        elif isinstance(config_source, dict):
+            self._config_path = None  # No file path for nested configs
+            self._data = config_source
+        else:
+            raise TypeError("config_source must be a string path or a dictionary.")
 
-        self.PROJECT_ROOT = self.get_project_root()
-        self.ASSETS_PATH = self.PROJECT_ROOT / "assets"
+        # These are top-level properties, only set for the main config instance
+        if self._config_path is not None:
+            self.PROJECT_ROOT = self.get_project_root()
+            self.ASSETS_PATH = self.PROJECT_ROOT / "assets"
 
     def _load_config(self) -> dict:
+        if self._config_path is None:
+            return {}
         with open(self._config_path, "r") as f:
             return json.load(f)
 
@@ -22,9 +32,13 @@ class Config:
         # Converts Python's UPPER_SNAKE_CASE attribute access to json's snake_case for lookup.
         key = name.lower()
         if key in self._data:
-            return self._data[key]
+            value = self._data[key]
+            if isinstance(value, dict):
+                # If the value is a dictionary, return a new Config instance for it
+                return Config(value)
+            return value
         raise AttributeError(
-            f"Configuration '{self._config_path}' has no setting '{key}'"
+            f"Configuration '{self._config_path or 'nested config'}' has no setting '{key}'"
         )
 
     def get_project_root(self) -> Path:
