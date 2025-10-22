@@ -8,7 +8,6 @@ from trajectory_stats_state_manager import trajectory_stats_state_manager
 from training_state_manager import training_state_manager
 import json
 from editor.components.overlay.message_overlay import MessageOverlay
-from utils import json_to_sha256
 import os
 
 class ClientRequester:
