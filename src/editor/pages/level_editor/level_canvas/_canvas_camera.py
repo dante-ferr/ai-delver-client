@@ -5,6 +5,7 @@ from pytiling import Direction, direction_vectors, opposite_directions
 if TYPE_CHECKING:
     from .level_canvas import LevelCanvas
 
+# TODO: Remove the offset logic from here
 
 class CanvasCamera:
     """
@@ -19,7 +20,6 @@ class CanvasCamera:
     def __init__(self, canvas: "LevelCanvas"):
         self.canvas = canvas
         self._zoom_level = 1
-        # The offset (in grid units) for drawing, used to simulate camera movement.
         self._grid_draw_offset: tuple[int, int] = (0, 0)
 
     @property

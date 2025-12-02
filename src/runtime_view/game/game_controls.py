@@ -16,10 +16,9 @@ class GameControls(ViewControls):
             run_vector[0] += 1
         if self.keys[window.key.LEFT]:
             run_vector[0] -= 1
-        if self.keys[window.key.UP]:
-            run_vector[1] += 1
-        if self.keys[window.key.DOWN]:
-            run_vector[1] -= 1
+
+        if self.keys[window.key.SPACE]:
+            self.delver.jump(dt)
 
         if run_vector == [0, 0]:
             # self.delver.stand()
