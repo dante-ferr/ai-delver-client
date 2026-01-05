@@ -1,12 +1,11 @@
 from editor.components import FileLoaderOverlay, LoadButton
 from agent.config import AGENT_SAVE_FOLDER_PATH
+from editor.components.overlay.file_loader_overlay.file_loader_overlay_spawner import (
+    FileLoaderOverlaySpawner,
+)
 
 
-class _LoadAgentOverlay(FileLoaderOverlay):
-
-    def __init__(self):
-        super().__init__(AGENT_SAVE_FOLDER_PATH, "agent")
-
+class _AgentLoaderOverlay(FileLoaderOverlay):
     def _load(self):
         from agent_loader import agent_loader
         from app_manager import app_manager
@@ -18,4 +17,4 @@ class _LoadAgentOverlay(FileLoaderOverlay):
 
 class AgentLoadButton(LoadButton):
     def _on_click(self, event):
-        _LoadAgentOverlay()
+        FileLoaderOverlaySpawner(AGENT_SAVE_FOLDER_PATH, "agent", _AgentLoaderOverlay)

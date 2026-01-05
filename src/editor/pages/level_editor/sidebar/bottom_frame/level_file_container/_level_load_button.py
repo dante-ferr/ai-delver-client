@@ -1,12 +1,11 @@
 from editor.components import FileLoaderOverlay, LoadButton
 from level.config import LEVEL_SAVE_FOLDER_PATH
+from editor.components.overlay.file_loader_overlay.file_loader_overlay_spawner import (
+    FileLoaderOverlaySpawner,
+)
 
 
-class _LoadLevelOverlay(FileLoaderOverlay):
-
-    def __init__(self):
-        super().__init__(LEVEL_SAVE_FOLDER_PATH, "level")
-
+class _LevelLoaderOverlay(FileLoaderOverlay):
     def _load(self):
         from level_loader import level_loader
         from app_manager import app_manager
@@ -21,4 +20,4 @@ class _LoadLevelOverlay(FileLoaderOverlay):
 
 class LevelLoadButton(LoadButton):
     def _on_click(self, event):
-        _LoadLevelOverlay()
+        FileLoaderOverlaySpawner(LEVEL_SAVE_FOLDER_PATH, "level", _LevelLoaderOverlay)

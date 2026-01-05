@@ -22,6 +22,7 @@ uvicorn = "*"
 requests = "*"
 httpx = "*"
 websockets = "*"
+inflect = "*"
 
 # Local editable packages
 pytiling = { path = "../pytiling-lib", develop = true }

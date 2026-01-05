@@ -3,11 +3,12 @@ from editor.components.overlay import Overlay
 import customtkinter as ctk
 from pathlib import Path
 
-
 class FileLoaderOverlay(Overlay):
-    def __init__(self, file_path: str, file_type: str):
+
+    def __init__(self, file_dirs: dict[str, Path], file_type: str):
         super().__init__("file_loader")
-        self.file_path = file_path
+
+        self.file_dirs = file_dirs
         self.file_type = file_type
 
         label = ctk.CTkLabel(
@@ -20,12 +21,6 @@ class FileLoaderOverlay(Overlay):
 
         interaction_container = ctk.CTkFrame(self, fg_color="transparent")
         interaction_container.pack(pady=4)
-
-        self.file_dirs: dict[str, Path] = {}
-        for file_dir in [
-            file_dir for file_dir in Path(file_path).iterdir() if file_dir.is_dir()
-        ]:
-            self.file_dirs[file_dir.name] = file_dir
 
         self.option_menu = ctk.CTkOptionMenu(
             interaction_container, values=list(self.file_dirs.keys())
