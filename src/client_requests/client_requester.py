@@ -148,7 +148,7 @@ class ClientRequester:
                     if trajectory_data:
                         trajectory = trajectory_factory.from_json(trajectory_data)
                         trajectory.level_hash = level_hash
-                        trajectory.save(agent_loader.agent.name)
+                        await trajectory.save(agent_loader.agent.name)
 
                         current_episode += 1
                         training_state_manager.update_training_process_log(

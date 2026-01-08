@@ -7,7 +7,7 @@ from training_state_manager import training_state_manager
 
 
 class AgentPanel(ctk.CTkFrame):
-    COLLECT_STEPS_PER_ITERATION = 150
+    COLLECT_STEPS_PER_ITERATION = 200
     """
     A CustomTkinter panel for creating, editing, saving, and loading Agents.
     """

@@ -1,5 +1,4 @@
 from pyglet import window
-from src.utils import vector_to_angle
 from ..view_controls import ViewControls
 
 
@@ -10,21 +9,18 @@ class GameControls(ViewControls):
         super().__init__(keys)
 
     def _update_delver_controls(self, dt):
-        run_vector = [0, 0]
+        run_direction = 0
 
         if self.keys[window.key.RIGHT]:
-            run_vector[0] += 1
+            run_direction += 1
         if self.keys[window.key.LEFT]:
-            run_vector[0] -= 1
+            run_direction -= 1
 
         if self.keys[window.key.SPACE]:
             self.delver.jump(dt)
 
-        if run_vector == [0, 0]:
-            # self.delver.stand()
-            pass
-        else:
-            self.delver.move(dt, vector_to_angle(run_vector))
+        if run_direction != 0:
+            self.delver.run(dt, run_direction)
 
     def update(self, dt):
         self._update_delver_controls(dt)
