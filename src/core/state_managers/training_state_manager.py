@@ -2,7 +2,9 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     import customtkinter as ctk
-    from src.editor.pages.agent.agent_panel._train_logs_panel import TrainLogsPanel
+    from editor.pages.agent.agent_panel.train_logs_panel.train_logs_panel import (
+        TrainLogsPanel,
+    )
 
 
 class TrainingStateManager:

@@ -9,6 +9,7 @@ from training_state_manager import training_state_manager
 import json
 from editor.components.overlay.message_overlay import MessageOverlay
 import os
+import time
 
 class ClientRequester:
     """
@@ -19,6 +20,7 @@ class ClientRequester:
     def __init__(self, server_url="localhost:8001"):
         self.server_url = server_url
         self.session_id: None | str = None
+        self.start_time: float = 0.0
 
     async def send_training_request(self):
         """
@@ -44,6 +46,7 @@ class ClientRequester:
                 self.session_id = session_id
                 training_state_manager.sending_training_request = False
                 training_state_manager.training = True
+                self.start_time = time.time()
             else:
                 logging.error("Failed to get a valid session_id from the server.")
                 training_state_manager.reset_states()
@@ -154,13 +157,24 @@ class ClientRequester:
                         training_state_manager.update_training_process_log(
                             current_episode
                         )
-
                     elif is_end_signal:
+                        duration = time.time() - self.start_time
+                        minutes, seconds = divmod(duration, 60)
+                        time_str = (
+                            f"{int(minutes)}m {int(seconds)}s"
+                            if minutes > 0
+                            else f"{seconds:.2f}s"
+                        )
+
                         training_state_manager.training = False
                         training_state_manager.sending_interrupt_training_request = (
                             False
                         )
                         trajectory_stats_state_manager.refresh_stats()
+                        MessageOverlay(
+                            f"Training session completed in {time_str}.",
+                            subject="Success",
+                        )
 
         except websockets.exceptions.ConnectionClosed as e:
             logging.warning(f"WebSocket connection closed: {e}")

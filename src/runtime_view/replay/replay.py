@@ -29,6 +29,8 @@ class Replay(ViewableRuntime):
         self.time_accumulator = 0.0
         self.current_step_index = 0
 
+        self.is_replay = True
+
     @property
     def actions_per_second(self) -> int:
         return self.trajectory.actions_per_second
