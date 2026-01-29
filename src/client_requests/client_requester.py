@@ -1,13 +1,13 @@
 import logging
 import httpx
-from level_loader import level_loader
-from agent_loader import agent_loader
+from loaders import level_loader
+from loaders import agent_loader
 import websockets
 from runtime.episode_trajectory import EpisodeTrajectoryFactory
-from trajectory_stats_state_manager import trajectory_stats_state_manager
-from training_state_manager import training_state_manager
+from state_managers import trajectory_stats_state_manager
+from state_managers import training_state_manager
 import json
-from editor.components.overlay.message_overlay import MessageOverlay
+from app.components.overlay.message_overlay import MessageOverlay
 import os
 import time
 

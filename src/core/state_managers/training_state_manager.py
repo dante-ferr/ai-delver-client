@@ -1,13 +1,15 @@
 from typing import TYPE_CHECKING
+import customtkinter as ctk
+from .state_manager import StateManager
 
 if TYPE_CHECKING:
     import customtkinter as ctk
-    from editor.pages.agent.agent_panel.train_logs_panel.train_logs_panel import (
+    from app.pages.agent.agent_panel._train_logs_panel import (
         TrainLogsPanel,
     )
 
 
-class TrainingStateManager:
+class TrainingStateManager(StateManager):
     """
     Manages the global state related to the agent training process.
 
@@ -16,9 +18,7 @@ class TrainingStateManager:
     elements to automatically update their state (e.g., enabled/disabled).
     """
     def __init__(self):
-        self._sending_training_request = False
-        self._training = False
-        self._sending_interrupt_training_request = False
+        super().__init__()
 
         self.disable_on_train_elements: "set[ctk.CTkBaseClass]" = set()
         self.enable_on_train_elements: "set[ctk.CTkBaseClass]" = set()
@@ -26,6 +26,19 @@ class TrainingStateManager:
 
         # Set by the UI before training starts.
         self.amount_of_episodes: int = 0
+
+        self.add_variable("sending_training_request", ctk.BooleanVar, False)
+        self.add_variable("training", ctk.BooleanVar, False)
+        self.add_variable("sending_interrupt_training_request", ctk.BooleanVar, False)
+
+        # Register callbacks to update UI when these change.
+        # We use a lambda to discard the value argument since _update_ui_state reads all.
+        # Note: add_callback calls the callback immediately, so UI state is initialized here.
+        self.add_callback("sending_training_request", lambda _: self._update_ui_state())
+        self.add_callback("training", lambda _: self._update_ui_state())
+        self.add_callback(
+            "sending_interrupt_training_request", lambda _: self._update_ui_state()
+        )
 
     def set_train_logs_panel(self, panel: "TrainLogsPanel"):
         self.train_logs_panel = panel
@@ -50,13 +63,13 @@ class TrainingStateManager:
         consistency during the training lifecycle.
         """
         is_busy = (
-            self._sending_training_request
-            or self._training
-            or self._sending_interrupt_training_request
+            self.get_value("sending_training_request")
+            or self.get_value("training")
+            or self.get_value("sending_interrupt_training_request")
         )
-        is_training_and_not_interrupting = (
-            self._training and not self._sending_interrupt_training_request
-        )
+        is_training_and_not_interrupting = self.get_value(
+            "training"
+        ) and not self.get_value("sending_interrupt_training_request")
 
         state_for_disable_elements = "disabled" if is_busy else "normal"
         for element in self.disable_on_train_elements:
@@ -69,19 +82,19 @@ class TrainingStateManager:
             element.configure(state=state_for_enable_elements)
 
         if self.train_logs_panel:
-            if self._sending_training_request:
+            if self.get_value("sending_training_request"):
                 self.train_logs_panel.show_log(
                     "sending_request", "Sending training request..."
                 )
             else:
                 self.train_logs_panel.remove_log("sending_request")
 
-            if self._training:
+            if self.get_value("training"):
                 self.train_logs_panel.show_training_progress(self.amount_of_episodes)
             else:
                 self.train_logs_panel.remove_training_progress()
 
-            if self._sending_interrupt_training_request:
+            if self.get_value("sending_interrupt_training_request"):
                 self.train_logs_panel.show_log(
                     "interrupting", "Interrupting training..."
                 )
@@ -90,43 +103,39 @@ class TrainingStateManager:
 
     def reset_states(self):
         """Resets all state flags to their initial (idle) values and updates the UI."""
-        self._sending_training_request = False
-        self._training = False
-        self._sending_interrupt_training_request = False
-        self._update_ui_state()
+        self.set_value("sending_training_request", False)
+        self.set_value("training", False)
+        self.set_value("sending_interrupt_training_request", False)
 
     @property
     def sending_training_request(self):
-        return self._sending_training_request
+        return self.get_value("sending_training_request")
 
     @sending_training_request.setter
     def sending_training_request(self, value: bool):
-        if self._sending_training_request == value:
+        if self.get_value("sending_training_request") == value:
             return
-        self._sending_training_request = value
-        self._update_ui_state()
+        self.set_value("sending_training_request", value)
 
     @property
     def training(self):
-        return self._training
+        return self.get_value("training")
 
     @training.setter
     def training(self, value: bool):
-        if self._training == value:
+        if self.get_value("training") == value:
             return
-        self._training = value
-        self._update_ui_state()
+        self.set_value("training", value)
 
     @property
     def sending_interrupt_training_request(self):
-        return self._sending_interrupt_training_request
+        return self.get_value("sending_interrupt_training_request")
 
     @sending_interrupt_training_request.setter
     def sending_interrupt_training_request(self, value: bool):
-        if self._sending_interrupt_training_request == value:
+        if self.get_value("sending_interrupt_training_request") == value:
             return
-        self._sending_interrupt_training_request = value
-        self._update_ui_state()
+        self.set_value("sending_interrupt_training_request", value)
 
 
 training_state_manager = TrainingStateManager()

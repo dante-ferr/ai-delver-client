@@ -2,13 +2,13 @@ import pyglet
 from runtime_view.game import Game
 from typing import Optional
 import logging
-from level_loader import level_loader
+from loaders import level_loader
 from runtime_view.replay import StateSyncReplay
-from agent_loader import agent_loader
+from loaders import agent_loader
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from editor import EditorApp
+    from app import EditorApp
 
 
 class AppManager:
@@ -39,7 +39,7 @@ class AppManager:
                 "An unhandled exception occurred in the application loop.",
                 exc_info=True,
             )
-            from editor.components.overlay.message_overlay import MessageOverlay
+            from app.components.overlay.message_overlay import MessageOverlay
 
             MessageOverlay(
                 f"An unexpected error occurred: {e}\n\n"
@@ -60,7 +60,7 @@ class AppManager:
         Starts the editor, which is the master application.
         It will manage the main event loop.
         """
-        from editor import EditorApp
+        from app import EditorApp
 
         if self._editor is None:
             self._editor = EditorApp()

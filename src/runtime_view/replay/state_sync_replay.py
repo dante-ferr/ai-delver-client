@@ -3,9 +3,9 @@ from typing import TYPE_CHECKING, Dict, cast, List
 from pymunk import Vec2d
 from runtime.world_objects.entities.entity import Entity
 from runtime.episode_trajectory.snapshots import interpolate_frame_snapshots
-from level_loader import level_loader
-from agent_loader import agent_loader
-from editor.components.overlay.message_overlay import MessageOverlay
+from loaders import level_loader
+from loaders import agent_loader
+from app.components.overlay.message_overlay import MessageOverlay
 import logging
 
 if TYPE_CHECKING:

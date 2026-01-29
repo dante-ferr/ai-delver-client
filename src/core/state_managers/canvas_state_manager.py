@@ -1,34 +1,23 @@
 import customtkinter as ctk
-from typing import Callable, Dict, Any, Union
-
-CtkVariable = Union[ctk.BooleanVar, ctk.StringVar, ctk.IntVar, ctk.DoubleVar]
+from .state_manager import StateManager
 
 
-class CanvasStateManager:
+class CanvasStateManager(StateManager):
     """A centralized state manager for canvas-related UI properties."""
 
     def __init__(self):
-        self.vars: Dict[str, CtkVariable] = {
-            "grid_lines": ctk.BooleanVar(value=True),
-            "zoom": ctk.DoubleVar(value=1.0),
-            "dynamic_resizing": ctk.BooleanVar(value=False),
-        }
-        self._callbacks: Dict[str, list[Callable[[Any], None]]] = {
-            "grid_lines": [],
-            "zoom": [],
-            "dynamic_resizing": [],
-        }
+        super().__init__()
+        self.add_variable("grid_lines", ctk.BooleanVar, True)
+        self.add_variable("zoom", ctk.DoubleVar, 1.0)
+        self.add_variable("dynamic_resizing", ctk.BooleanVar, False)
 
         self._add_core_callbacks()
-
-        for name, var in self.vars.items():
-            var.trace_add("write", lambda *args, n=name: self._notify_callbacks(n))
 
     def _add_core_callbacks(self):
         """Add callbacks related to core objects."""
 
         def _dynamic_resizing_callback(value: bool):
-            from level_loader import level_loader
+            from loaders import level_loader
 
             tilemap = level_loader.level.map.tilemap
 
@@ -39,22 +28,6 @@ class CanvasStateManager:
                 tilemap.lock_all_edges()
 
         self.add_callback("dynamic_resizing", _dynamic_resizing_callback)
-
-    def add_callback(self, name: str, callback: Callable[[Any], None]):
-        """Register a callback for a state variable change and call it immediately."""
-        if name in self._callbacks:
-            self._callbacks[name].append(callback)
-            # Immediately call callback with current value
-            callback(self.vars[name].get())
-        else:
-            raise ValueError(f"Unknown state variable: {name}")
-
-    def _notify_callbacks(self, name: str):
-        value = self.vars[name].get()
-
-        if name in self._callbacks:
-            for callback in self._callbacks[name]:
-                callback(value)
 
 
 canvas_state_manager = CanvasStateManager()
