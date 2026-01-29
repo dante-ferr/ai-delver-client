@@ -34,7 +34,6 @@ class StateManager:
         Creates the actual CustomTkinter variables and triggers initial callbacks.
         This must be called after the root CTk window has been created.
         """
-        print(self._variable_defs)
         for name, (var_class, value) in self._variable_defs.items():
             if name not in self.vars:
                 var = var_class(value=value)
@@ -44,8 +43,6 @@ class StateManager:
 
                 # Immediately notify callbacks with the initial value
                 self._notify_callbacks(name)
-
-        print(self.vars)
 
     def _notify_callbacks(self, name: str):
         if name in self.vars:

@@ -2,14 +2,12 @@ import logging
 import httpx
 from loaders import level_loader
 from loaders import agent_loader
-import websockets
-from runtime.episode_trajectory import EpisodeTrajectoryFactory
-from state_managers import trajectory_stats_state_manager
+from ._trajectory_listener import TrajectoryListener
 from state_managers import training_state_manager
-import json
 from app.components.overlay.message_overlay import MessageOverlay
 import os
 import time
+
 
 class ClientRequester:
     """
@@ -24,53 +22,30 @@ class ClientRequester:
 
     async def send_training_request(self):
         """
-        Sends a training request and then
-        listens for the episode trajectory data from the server. It handles
-        the entire lifecycle of a training session from the client's perspective.
+        Initiates the training session.
         """
         training_state_manager.sending_training_request = True
         try:
+            payload = self._create_training_payload()
             uri = f"http://{self.server_url}/train"
 
-            level_json = level_loader.level.to_dict()
-            payload = {
-                "level": level_json,
-                "amount_of_episodes": training_state_manager.amount_of_episodes,
-            }
-
             response_json = await self._send_request(uri, payload)
-            logging.info(f"Server responded: {response_json.get('message')}")
 
-            session_id = response_json.get("session_id")
-            if session_id:
-                self.session_id = session_id
-                training_state_manager.sending_training_request = False
-                training_state_manager.training = True
-                self.start_time = time.time()
-            else:
-                logging.error("Failed to get a valid session_id from the server.")
-                training_state_manager.reset_states()
+            if not self._handle_training_response(response_json):
                 return
 
-            # Each level configuration is saved with a unique hash as its filename, into the agent's directory.
-            # This is done in order to allow the trajectories to point to a specific level configuration through
-            # its specific hash. So when the trajectory is loaded to render a replay, the correct level will be
-            # loaded as well.
-            level_hash = level_loader.level.to_hash()
-            level_path = (
-                f"data/agents/{agent_loader.agent.name}/level_saves/{level_hash}.json"
-            )
-            if not os.path.exists(level_path):
-                level_loader.level.save(level_path)
+            level_hash = self._ensure_level_saved()
 
-            await self.listen_for_trajectories(level_hash)
+            if not self.session_id:
+                raise ValueError("No session ID received from the server.")
+
+            listener = TrajectoryListener(
+                self.server_url, self.session_id, self.start_time
+            )
+            await listener.listen(level_hash)
 
         except Exception as e:
-            logging.error(f"An error occurred during the process: {e}")
-            MessageOverlay(
-                f"An error occurred during the process: {e}", subject="Error"
-            )
-            training_state_manager.reset_states()
+            self._handle_error(e)
 
     async def send_interrupt_training_request(self):
         """
@@ -82,17 +57,51 @@ class ClientRequester:
             uri = f"http://{self.server_url}/interrupt-training/{self.session_id}"
 
             response_json = await self._send_request(uri, {})
-            logging.info(f"Server responded: {response_json.get('message')}")
 
             if response_json.get("success"):
                 pass
 
         except Exception as e:
-            logging.error(f"An error occurred during the process: {e}")
-            MessageOverlay(
-                f"An error occurred during the process: {e}", subject="Error"
-            )
+            self._handle_error(e)
+
+    def _create_training_payload(self) -> dict:
+        level_json = level_loader.level.to_dict()
+        return {
+            "level": level_json,
+            "amount_of_cycles": training_state_manager.amount_of_cycles,
+            "episodes_per_cycle": training_state_manager.episodes_per_cycle,
+        }
+
+    def _handle_training_response(self, response_json: dict) -> bool:
+        session_id = response_json.get("session_id")
+        if session_id:
+            self.session_id = session_id
+            training_state_manager.sending_training_request = False
+            training_state_manager.training = True
+            self.start_time = time.time()
+            return True
+        else:
+            logging.error("Failed to get a valid session_id from the server.")
             training_state_manager.reset_states()
+            return False
+
+    def _ensure_level_saved(self) -> str:
+        # Each level configuration is saved with a unique hash as its filename, into the agent's directory.
+        # This is done in order to allow the trajectories to point to a specific level configuration through
+        # its specific hash. So when the trajectory is loaded to render a replay, the correct level will be
+        # loaded as well.
+        level_hash = level_loader.level.to_hash()
+        level_path = (
+            f"data/agents/{agent_loader.agent.name}/level_saves/{level_hash}.json"
+        )
+        if not os.path.exists(level_path):
+            level_loader.level.save(level_path)
+        return level_hash
+
+    def _handle_error(self, e: Exception):
+        logging.error(f"An error occurred during the process: {e}")
+        MessageOverlay(f"An error occurred during the process: {e}", subject="Error")
+        training_state_manager.reset_states()
 
     async def _send_request(self, uri, payload):
         """
@@ -112,77 +121,6 @@ class ClientRequester:
             response_data = response.json()
             logging.info(f"Server responded: {response_data.get('message')}")
             return response_data
-
-    async def listen_for_trajectories(self, level_hash: str):
-        """
-        Connects to the WebSocket endpoint to receive and process episode
-        trajectories as they are generated by the training server.
-
-        Args:
-            level_hash (str): The hash of the level being trained, used to
-                              associate the resulting trajectories with the correct level data.
-        """
-        if not self.session_id:
-            raise ValueError("Session ID is not set.")
-
-        uri = f"ws://{self.server_url}/episode-trajectory/{self.session_id}"
-
-        logging.info(
-            f"Connecting to WebSocket at {uri} to receive episode trajectory data..."
-        )
-        trajectory_factory = EpisodeTrajectoryFactory()
-
-        current_episode = 0
-
-        try:
-            # The 'async with' ensures the connection is properly closed
-            async with websockets.connect(uri) as websocket:
-                logging.info(
-                    "WebSocket connection established. Waiting for episode trajectory frames..."
-                )
-
-                # This loop waits for messages and yields them one by one
-                async for response in websocket:
-                    response_json = json.loads(response)
-
-                    trajectory_data = response_json.get("trajectory")
-                    is_end_signal = response_json.get("end")
-
-                    if trajectory_data:
-                        trajectory = trajectory_factory.from_json(trajectory_data)
-                        trajectory.level_hash = level_hash
-                        await trajectory.save(agent_loader.agent.name)
-
-                        current_episode += 1
-                        training_state_manager.update_training_process_log(
-                            current_episode
-                        )
-                    elif is_end_signal:
-                        duration = time.time() - self.start_time
-                        minutes, seconds = divmod(duration, 60)
-                        time_str = (
-                            f"{int(minutes)}m {int(seconds)}s"
-                            if minutes > 0
-                            else f"{seconds:.2f}s"
-                        )
-
-                        training_state_manager.training = False
-                        training_state_manager.sending_interrupt_training_request = (
-                            False
-                        )
-                        trajectory_stats_state_manager.refresh_stats()
-                        MessageOverlay(
-                            f"Training session completed in {time_str}.",
-                            subject="Success",
-                        )
-
-        except websockets.exceptions.ConnectionClosed as e:
-            logging.warning(f"WebSocket connection closed: {e}")
-            training_state_manager.reset_states()
-        except Exception as e:
-            logging.error(f"An unexpected error occurred in WebSocket listener: {e}")
-            training_state_manager.reset_states()
-            raise
 
 
 client_requester = ClientRequester()

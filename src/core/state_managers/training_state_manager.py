@@ -25,7 +25,8 @@ class TrainingStateManager(StateManager):
         self.train_logs_panel: "TrainLogsPanel | None" = None
 
         # Set by the UI before training starts.
-        self.amount_of_episodes: int = 0
+        self.amount_of_cycles: int = 0
+        self.episodes_per_cycle: int = 0
 
         self.add_variable("sending_training_request", ctk.BooleanVar, False)
         self.add_variable("training", ctk.BooleanVar, False)
@@ -52,9 +53,9 @@ class TrainingStateManager(StateManager):
         self.enable_on_train_elements.add(element)
         self._update_ui_state()
 
-    def update_training_process_log(self, current_episodes: int):
+    def update_training_process_log(self, current_cycle: int):
         if self.train_logs_panel:
-            self.train_logs_panel.update_training_progress(current_episodes)
+            self.train_logs_panel.update_training_progress(current_cycle)
 
     def _update_ui_state(self):
         """
@@ -90,7 +91,7 @@ class TrainingStateManager(StateManager):
                 self.train_logs_panel.remove_log("sending_request")
 
             if self.get_value("training"):
-                self.train_logs_panel.show_training_progress(self.amount_of_episodes)
+                self.train_logs_panel.show_training_progress(self.amount_of_cycles)
             else:
                 self.train_logs_panel.remove_training_progress()
 
