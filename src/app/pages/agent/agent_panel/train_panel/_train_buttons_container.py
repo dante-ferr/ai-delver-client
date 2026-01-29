@@ -6,7 +6,7 @@ from client_requests import client_requester
 import threading
 
 
-class TrainContainer(ctk.CTkFrame):
+class TrainButtonsContainer(ctk.CTkFrame):
     """
     A UI container with buttons to start and interrupt agent training.
     It handles running the asynchronous training requests in a separate thread

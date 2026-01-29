@@ -75,6 +75,31 @@ class RangeSliderInput(ctk.CTkFrame):
         self.slider.set(init_val)
         self._update_entry_text(init_val)
 
+    def configure(self, require_redraw=False, **kwargs):
+        update_steps = False
+
+        if "min_val" in kwargs:
+            self.min_val = kwargs.pop("min_val")
+            self.slider.configure(from_=self.min_val)
+            update_steps = True
+
+        if "max_val" in kwargs:
+            self.max_val = kwargs.pop("max_val")
+            self.slider.configure(to=self.max_val)
+            update_steps = True
+
+        if "step" in kwargs:
+            self.step = kwargs.pop("step")
+            update_steps = True
+
+        if update_steps:
+            if self.step:
+                self.slider.configure(
+                    number_of_steps=(self.max_val - self.min_val) // self.step
+                )
+
+        super().configure(require_redraw=require_redraw, **kwargs)
+
     def _update_from_slider(self, value: float):
         """
         Callback for when the slider value changes. Updates the entry text and triggers the on_update callback.
@@ -93,6 +118,18 @@ class RangeSliderInput(ctk.CTkFrame):
         else:
             self.entry.insert(0, f"{value:.2f}")
 
+    def set_value(self, value: float):
+        if value < self.min_val:
+            value = self.min_val
+        elif value > self.max_val:
+            value = self.max_val
+
+        if self.step:
+            value = round(value / self.step) * self.step
+
+        self.slider.set(value)
+        self._update_entry_text(value)
+
     def _validate_input(self, event=None):
         """
         Validates the input in the entry widget when focus is lost or Enter is pressed.
@@ -103,19 +140,7 @@ class RangeSliderInput(ctk.CTkFrame):
         """
         try:
             val = float(self.entry.get())
-
-            # Clamp value
-            if val < self.min_val:
-                val = self.min_val
-            elif val > self.max_val:
-                val = self.max_val
-
-            # Snap to step
-            if self.step:
-                val = round(val / self.step) * self.step
-
-            self.slider.set(val)
-            self._update_entry_text(val)
+            self.set_value(val)
 
         except ValueError:
             self._update_entry_text(self.slider.get())

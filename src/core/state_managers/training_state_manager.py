@@ -4,7 +4,7 @@ from .state_manager import StateManager
 
 if TYPE_CHECKING:
     import customtkinter as ctk
-    from app.pages.agent.agent_panel._train_logs_panel import (
+    from app.pages.agent.agent_panel.train_panel._train_logs_panel import (
         TrainLogsPanel,
     )
 
@@ -28,6 +28,10 @@ class TrainingStateManager(StateManager):
         self.amount_of_cycles: int = 0
         self.episodes_per_cycle: int = 0
 
+        self.add_variable(
+            "connected_to_server", ctk.StringVar, "no"
+        )  # no, yes, loading
+        self.add_variable("env_batch_size", ctk.IntVar, 32)
         self.add_variable("sending_training_request", ctk.BooleanVar, False)
         self.add_variable("training", ctk.BooleanVar, False)
         self.add_variable("sending_interrupt_training_request", ctk.BooleanVar, False)

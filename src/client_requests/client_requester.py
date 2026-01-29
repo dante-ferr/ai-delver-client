@@ -20,6 +20,24 @@ class ClientRequester:
         self.session_id: None | str = None
         self.start_time: float = 0.0
 
+    async def initial_request(self):
+        """Pings the server for the first time to get relevant initial data."""
+        try:
+            uri = f"http://{self.server_url}/init"
+            response_json = await self._send_get_request(uri)
+
+            training_state_manager.set_value(
+                "env_batch_size", response_json.get("env_batch_size")
+            )
+            training_state_manager.set_value("connected_to_server", "yes")
+
+            return True
+
+        except Exception as e:
+            training_state_manager.set_value("connected_to_server", "no")
+
+            return False
+
     async def send_training_request(self):
         """
         Initiates the training session.
@@ -29,7 +47,7 @@ class ClientRequester:
             payload = self._create_training_payload()
             uri = f"http://{self.server_url}/train"
 
-            response_json = await self._send_request(uri, payload)
+            response_json = await self._send_post_request(uri, payload)
 
             if not self._handle_training_response(response_json):
                 return
@@ -56,7 +74,7 @@ class ClientRequester:
 
             uri = f"http://{self.server_url}/interrupt-training/{self.session_id}"
 
-            response_json = await self._send_request(uri, {})
+            response_json = await self._send_post_request(uri, {})
 
             if response_json.get("success"):
                 pass
@@ -103,7 +121,21 @@ class ClientRequester:
         MessageOverlay(f"An error occurred during the process: {e}", subject="Error")
         training_state_manager.reset_states()
 
-    async def _send_request(self, uri, payload):
+    async def _send_get_request(self, uri) -> dict:
+        """
+        A helper method to send a GET request to the server.
+
+        Args:
+            uri (str): The full URI for the request.
+
+        Returns:
+            The JSON response from the server as a dictionary.
+        """
+        async with httpx.AsyncClient() as client:
+            response = await client.get(uri, timeout=30.0)
+            return self._get_response_data(response)
+
+    async def _send_post_request(self, uri, payload) -> dict:
         """
         A helper method to send a POST request to the server.
 
@@ -116,11 +148,14 @@ class ClientRequester:
         """
         async with httpx.AsyncClient() as client:
             response = await client.post(uri, json=payload, timeout=30.0)
-            response.raise_for_status()
+            return self._get_response_data(response)
 
-            response_data = response.json()
-            logging.info(f"Server responded: {response_data.get('message')}")
-            return response_data
+    def _get_response_data(self, response) -> dict:
+        response.raise_for_status()
+
+        response_data = response.json()
+        logging.info(f"Server responded: {response_data.get('message')}")
+        return response_data
 
 
 client_requester = ClientRequester()

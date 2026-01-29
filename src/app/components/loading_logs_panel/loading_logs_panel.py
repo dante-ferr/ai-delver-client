@@ -4,7 +4,7 @@ from ._loading_log import LoadingLog
 
 class LoadingLogsPanel(ctk.CTkFrame):
     """
-    A CustomTkinter panel for displaying training logs.
+    A CustomTkinter panel for displaying multiple logs.
     """
 
     def __init__(self, master):

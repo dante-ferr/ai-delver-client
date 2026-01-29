@@ -46,6 +46,31 @@ class App(ctk.CTk):
 
         self.bind("<Button-1>", self.clear_focus)
 
+        self._try_to_connect_to_server()
+
+    def _try_to_connect_to_server(self):
+        from client_requests import client_requester
+        import threading
+        import asyncio
+
+        async def _connect():
+            response = await client_requester.initial_request()
+
+            if not response:
+                self.after(
+                    5000,
+                    lambda: threading.Thread(
+                        target=lambda: asyncio.run(_connect()), daemon=True
+                    ).start(),
+                )
+
+        self.after(
+            100,
+            lambda: threading.Thread(
+                target=lambda: asyncio.run(_connect()), daemon=True
+            ).start(),
+        )
+
     def restart_page(self, page_name: str):
         if self.pages[page_name]:
             self.pages[page_name].pack_forget()

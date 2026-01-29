@@ -1,14 +1,13 @@
 from src.app.components import LoadingLogsPanel
-from ._training_progress_log import (
-    TrainingProgressLog,
-)
+from ._train_process_log import TrainProcessLog
+
 
 class TrainLogsPanel(LoadingLogsPanel):
 
     def __init__(self, master):
         super().__init__(master)
 
-        self.training_progress_log: TrainingProgressLog | None = None
+        self.training_progress_log: TrainProcessLog | None = None
         self.showing_training_progress = False
 
     def show_training_progress(self, total_cycles: int):
@@ -16,7 +15,7 @@ class TrainLogsPanel(LoadingLogsPanel):
             return
         self.showing_training_progress = True
 
-        self.training_progress_log = TrainingProgressLog(self, total_cycles)
+        self.training_progress_log = TrainProcessLog(self, total_cycles)
         self.training_progress_log.pack(fill="x", expand=True)
 
     def update_training_progress(self, current_cycle: int):

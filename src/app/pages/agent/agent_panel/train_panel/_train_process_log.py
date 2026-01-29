@@ -1,7 +1,7 @@
 import customtkinter as ctk
 
 
-class TrainingProgressLog(ctk.CTkFrame):
+class TrainProcessLog(ctk.CTkFrame):
     """A CustomTkinter container for displaying training progress."""
 
     def __init__(self, master, total_cycles: int):
