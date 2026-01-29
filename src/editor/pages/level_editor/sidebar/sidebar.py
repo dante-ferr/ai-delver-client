@@ -10,12 +10,12 @@ from .bottom_frame import BottomFrame
 
 class Sidebar(ctk.CTkFrame):
 
-    def __init__(self, parent):
+    def __init__(self, master):
         from ..level_editor_manager import level_editor_manager
 
         level_editor_manager.objects_manager.assign_level_to_objects(level_loader.level)
 
-        super().__init__(parent, fg_color="transparent")
+        super().__init__(master, fg_color="transparent")
 
         self.pack_propagate(False)
 

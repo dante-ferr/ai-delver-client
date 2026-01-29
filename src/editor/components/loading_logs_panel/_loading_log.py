@@ -4,8 +4,8 @@ import customtkinter as ctk
 class LoadingLog(ctk.CTkFrame):
     """A CustomTkinter container for displaying a single loading log entry."""
 
-    def __init__(self, parent, text: str):
-        super().__init__(parent, fg_color="transparent")
+    def __init__(self, master, text: str):
+        super().__init__(master, fg_color="transparent")
 
         self.grid_columnconfigure(1, weight=1)
 

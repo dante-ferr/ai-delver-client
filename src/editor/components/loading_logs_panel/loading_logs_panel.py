@@ -7,8 +7,8 @@ class LoadingLogsPanel(ctk.CTkFrame):
     A CustomTkinter panel for displaying training logs.
     """
 
-    def __init__(self, parent):
-        super().__init__(parent, fg_color="transparent", width=0, height=0)
+    def __init__(self, master):
+        super().__init__(master, fg_color="transparent", width=0, height=0)
         self.loading_containers: dict[str, ctk.CTkFrame] = {}
 
     def show_log(self, key: str, text: str):

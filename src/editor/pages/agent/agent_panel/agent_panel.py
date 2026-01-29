@@ -12,8 +12,8 @@ class AgentPanel(ctk.CTkFrame):
     A CustomTkinter panel for creating, editing, saving, and loading Agents.
     """
 
-    def __init__(self, parent):
-        super().__init__(parent, fg_color="transparent", width=128)
+    def __init__(self, master):
+        super().__init__(master, fg_color="transparent", width=128)
 
         title_textbox = AgentTitleTextbox(self)
         title_textbox.pack(padx=0, pady=(0, 8), fill="x")

@@ -4,7 +4,8 @@ from editor.theme import theme
 
 
 class IconButton(ctk.CTkButton):
-    def __init__(self, parent, svg_path: str):
+
+    def __init__(self, master, svg_path: str):
         icon = SvgImage(
             svg_path=svg_path,
             size=(20, 20),
@@ -12,7 +13,7 @@ class IconButton(ctk.CTkButton):
         )
 
         super().__init__(
-            parent,
+            master,
             text="",
             fg_color="transparent",
             width=24,

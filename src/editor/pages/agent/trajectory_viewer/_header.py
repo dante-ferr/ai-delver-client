@@ -13,8 +13,8 @@ class TrajectoryHeader(ctk.CTkFrame):
     The header component for the TrajectoryViewer, providing UI for loading
     a specific trajectory by index and initiating a replay.
     """
-    def __init__(self, parent):
-        super().__init__(parent, fg_color="transparent")
+    def __init__(self, master):
+        super().__init__(master, fg_color="transparent")
 
         self.index_entry = ctk.CTkEntry(
             self, placeholder_text="Trajectory Index", width=128

@@ -13,8 +13,8 @@ class SaveButton(IconButton):
     implement the `file_name` property and can override the `_save` method.
     """
 
-    def __init__(self, parent, save_folder_path: str, file_type: str):
-        super().__init__(parent, svg_path=str(config.ASSETS_PATH / "svg" / "save.svg"))
+    def __init__(self, master, save_folder_path: str, file_type: str):
+        super().__init__(master, svg_path=str(config.ASSETS_PATH / "svg" / "save.svg"))
         if not save_folder_path:
             raise ValueError("Save folder path must be provided.")
         if not file_type:

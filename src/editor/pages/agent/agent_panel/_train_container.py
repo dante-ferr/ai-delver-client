@@ -12,8 +12,8 @@ class TrainContainer(ctk.CTkFrame):
     It handles running the asynchronous training requests in a separate thread
     to prevent blocking the main GUI thread.
     """
-    def __init__(self, parent):
-        super().__init__(parent)
+    def __init__(self, master):
+        super().__init__(master)
         self.train_button = ctk.CTkButton(
             self, text="Train", command=self._start_train_thread
         )

@@ -11,10 +11,10 @@ class BottomFrame(ctk.CTkFrame):
         "pady": 8,
     }
 
-    def __init__(self, parent):
+    def __init__(self, master):
         from state_managers import canvas_state_manager
 
-        super().__init__(parent, fg_color="transparent")
+        super().__init__(master, fg_color="transparent")
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)

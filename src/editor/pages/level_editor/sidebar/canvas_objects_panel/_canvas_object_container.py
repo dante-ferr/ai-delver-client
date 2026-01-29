@@ -8,8 +8,8 @@ if TYPE_CHECKING:
 class CanvasObjectContainer(ctk.CTkFrame):
     image_size = (32, 32)
 
-    def __init__(self, parent, canvas_object: "CanvasObject"):
-        super().__init__(parent, fg_color="transparent")
+    def __init__(self, master, canvas_object: "CanvasObject"):
+        super().__init__(master, fg_color="transparent")
         self.canvas_object = canvas_object
 
         image = ctk.CTkImage(canvas_object.image, size=self.image_size)

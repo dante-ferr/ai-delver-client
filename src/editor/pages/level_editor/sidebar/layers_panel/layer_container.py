@@ -7,8 +7,8 @@ class LayerContainer(ctk.CTkFrame):
     active_color: Color = ("gray75", "gray25")
     inactive_color: Color = "transparent"
 
-    def __init__(self, parent, layer_name: str, icon_image: ctk.CTkImage):
-        super().__init__(parent, fg_color="transparent")
+    def __init__(self, master, layer_name: str, icon_image: ctk.CTkImage):
+        super().__init__(master, fg_color="transparent")
         self.layer_name = layer_name
 
         self.selected = False

@@ -3,8 +3,9 @@ import platform
 
 
 class MouseWheelScrollableFrame(ctk.CTkScrollableFrame):
-    def __init__(self, parent, *args, max_height: float | None = None, **kwargs):
-        super().__init__(parent, *args, **kwargs)
+
+    def __init__(self, master, *args, max_height: float | None = None, **kwargs):
+        super().__init__(master, *args, **kwargs)
         self.max_height = max_height
 
         self._bind_scroll_events()

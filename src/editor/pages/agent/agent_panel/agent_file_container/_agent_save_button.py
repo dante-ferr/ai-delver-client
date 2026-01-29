@@ -4,8 +4,9 @@ from agent.config import AGENT_SAVE_FOLDER_PATH
 
 
 class AgentSaveButton(SaveButton):
-    def __init__(self, parent):
-        super().__init__(parent, AGENT_SAVE_FOLDER_PATH, "agent")
+
+    def __init__(self, master):
+        super().__init__(master, AGENT_SAVE_FOLDER_PATH, "agent")
 
     def _save(self):
         super()._save()

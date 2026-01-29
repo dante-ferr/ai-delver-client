@@ -7,8 +7,9 @@ from src.config import config
 
 
 class ToolBox(ctk.CTkFrame):
-    def __init__(self, parent, tool_name: str, icon_image: ctk.CTkImage):
-        super().__init__(parent)
+
+    def __init__(self, master, tool_name: str, icon_image: ctk.CTkImage):
+        super().__init__(master)
         self.tool_name = tool_name
 
         label = ctk.CTkLabel(self, image=icon_image, text="")
@@ -16,8 +17,9 @@ class ToolBox(ctk.CTkFrame):
 
 
 class ToolsFrame(ctk.CTkFrame):
-    def __init__(self, parent):
-        super().__init__(parent, fg_color="transparent")
+
+    def __init__(self, master):
+        super().__init__(master, fg_color="transparent")
 
         self.tool_boxes = self._create_tool_boxes()
 

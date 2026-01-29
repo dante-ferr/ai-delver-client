@@ -1,6 +1,6 @@
-def get_children_height(parent):
+def get_children_height(master):
     total_height = 0
-    for child in parent.winfo_children():
+    for child in master.winfo_children():
         # Get height of child widget
         child_height = child.winfo_height()
 

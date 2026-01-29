@@ -4,8 +4,9 @@ from ._agent_load_button import AgentLoadButton
 
 
 class AgentFileContainer(ctk.CTkFrame):
-    def __init__(self, parent):
-        super().__init__(parent, fg_color="transparent")
+
+    def __init__(self, master):
+        super().__init__(master, fg_color="transparent")
 
         save_button = AgentSaveButton(self)
         save_button.pack(side="left", padx=0, pady=0)

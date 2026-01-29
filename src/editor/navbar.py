@@ -7,15 +7,17 @@ if TYPE_CHECKING:
 
 
 class SelectorFrame(ctk.CTkFrame):
-    def __init__(self, parent, page_name: str):
-        super().__init__(parent, fg_color="transparent")
+
+    def __init__(self, master, page_name: str):
+        super().__init__(master, fg_color="transparent")
         self.page_name = page_name
 
 
 class Navbar(ctk.CTkFrame):
-    def __init__(self, parent):
-        super().__init__(parent, fg_color="transparent", height=32)
-        self.parent = parent
+
+    def __init__(self, master):
+        super().__init__(master, fg_color="transparent", height=32)
+        self.master = master
 
     def create_page_selectors(self, pages: dict[str, "Page"], default_page_name: str):
         selector_frames: list[ctk.CTkFrame] = []
@@ -43,5 +45,5 @@ class Navbar(ctk.CTkFrame):
             SelectionManager(),
             frames=selector_frames,
             default_frame=default_frame,
-            on_select=lambda frame: self.parent.select_page(frame.page_name),
+            on_select=lambda frame: self.master.select_page(frame.page_name),
         )

@@ -10,8 +10,8 @@ if TYPE_CHECKING:
 class TrajectoryViewer(ctk.CTkFrame):
     DISPLAY_TRAJECTORY_JSON = True
 
-    def __init__(self, parent):
-        super().__init__(parent, fg_color="transparent")
+    def __init__(self, master):
+        super().__init__(master, fg_color="transparent")
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=1)

@@ -5,8 +5,9 @@ from ...level_editor_manager import level_editor_manager
 
 
 class CanvasObjectPanelsWrapper(ctk.CTkFrame):
-    def __init__(self, parent):
-        super().__init__(parent, fg_color="transparent")
+
+    def __init__(self, master):
+        super().__init__(master, fg_color="transparent")
 
         self.current_canvas_objects_panel: CanvasObjectsPanel | None = None
         self.canvas_objects_panels = self._create_canvas_objects_panels()

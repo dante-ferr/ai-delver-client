@@ -2,8 +2,9 @@ import customtkinter as ctk
 
 
 class TitleTextbox(ctk.CTkTextbox):
-    def __init__(self, parent, default_text=""):
-        super().__init__(parent, height=4, wrap="none")
+
+    def __init__(self, master, default_text=""):
+        super().__init__(master, height=4, wrap="none")
 
         self.insert("0.0", default_text)
         self.bind("<KeyRelease>", self._update_name)

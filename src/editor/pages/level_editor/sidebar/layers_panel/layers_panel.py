@@ -17,8 +17,9 @@ if TYPE_CHECKING:
 
 
 class LayersPanel(ctk.CTkFrame):
-    def __init__(self, parent):
-        super().__init__(parent, fg_color="transparent")
+
+    def __init__(self, master):
+        super().__init__(master, fg_color="transparent")
 
         title = SectionTitle(self, text="Layers")
         title.pack(pady=8, side="top", anchor="w")

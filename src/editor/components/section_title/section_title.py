@@ -2,9 +2,10 @@ import customtkinter as ctk
 
 
 class SectionTitle(ctk.CTkLabel):
-    def __init__(self, parent, text: str):
+
+    def __init__(self, master, text: str):
         super().__init__(
-            parent,
+            master,
             text=text,
             font=ctk.CTkFont(size=16, weight="bold"),
             anchor="w",

@@ -5,8 +5,9 @@ from .. import Page
 
 
 class LevelEditor(Page):
-    def __init__(self, parent):
-        super().__init__(parent, "Level Editor")
+
+    def __init__(self, master):
+        super().__init__(master, "Level Editor")
 
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)

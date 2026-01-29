@@ -13,14 +13,14 @@ class ResizeLevelDialog(ctk.CTkToplevel):
     The user can select whether to expand or reduce the level.
     """
 
-    def __init__(self, parent):
+    def __init__(self, master):
         from state_managers.canvas_state_manager import canvas_state_manager
 
-        super().__init__(parent)
+        super().__init__(master)
 
         self.title("Resize Grid")
         self.geometry("300x400")
-        self.transient(parent)  # Keep window on top of the parent
+        self.transient(master)  # Keep window on top of the master
         self.resizable(False, False)
 
         self._direction_top = ctk.BooleanVar(value=False)
@@ -156,7 +156,7 @@ class ResizeLevelDialog(ctk.CTkToplevel):
             messagebox.showerror(
                 "Invalid Amount",
                 "Please provide a positive integer value for the amount.",
-                parent=self,
+                master=self,
             )
             self._amount.set("1")
             return
@@ -164,7 +164,7 @@ class ResizeLevelDialog(ctk.CTkToplevel):
         directions = self._get_selected_directions()
         if not directions:
             messagebox.showwarning(
-                "No Direction", "Please select at least one direction.", parent=self
+                "No Direction", "Please select at least one direction.", master=self
             )
             return
 

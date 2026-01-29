@@ -4,8 +4,9 @@ from .agent_panel import AgentPanel
 from .trajectory_stats_panel import TrajectoryStatsPanel
 
 class AgentPage(Page):
-    def __init__(self, parent):
-        super().__init__(parent, "Agent")
+
+    def __init__(self, master):
+        super().__init__(master, "Agent")
 
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=0, minsize=128)

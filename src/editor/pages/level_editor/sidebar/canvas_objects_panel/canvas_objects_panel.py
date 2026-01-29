@@ -11,9 +11,9 @@ if TYPE_CHECKING:
 
 class CanvasObjectsPanel(MouseWheelScrollableFrame):
 
-    def __init__(self, parent, layer_name: str, *args, **kwargs):
+    def __init__(self, master, layer_name: str, *args, **kwargs):
         self.layer_name = layer_name
-        super().__init__(parent, *args, fg_color="transparent", **kwargs)
+        super().__init__(master, *args, fg_color="transparent", **kwargs)
 
         self.configure(border_width=0)
 

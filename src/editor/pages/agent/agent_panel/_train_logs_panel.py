@@ -5,8 +5,9 @@ from src.editor.components.loading_logs_panel._training_progress_log import (
 
 
 class TrainLogsPanel(LoadingLogsPanel):
-    def __init__(self, parent):
-        super().__init__(parent)
+
+    def __init__(self, master):
+        super().__init__(master)
 
         self.training_progress_log: TrainingProgressLog | None = None
         self.showing_training_progress = False

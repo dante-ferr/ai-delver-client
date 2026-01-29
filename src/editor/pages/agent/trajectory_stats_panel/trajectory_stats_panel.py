@@ -30,8 +30,8 @@ class TrajectoryStatsPanel(ctk.CTkFrame):
     # for multiprocessing safety on some platforms.
     executor = ProcessPoolExecutor(max_workers=2)
 
-    def __init__(self, parent, **kwargs):
-        super().__init__(parent, fg_color="transparent", width=256, **kwargs)
+    def __init__(self, master, **kwargs):
+        super().__init__(master, fg_color="transparent", width=256, **kwargs)
 
         title = SectionTitle(self, text="Trajectory Stats")
         title.pack(pady=(0, 8), side="top", anchor="w")

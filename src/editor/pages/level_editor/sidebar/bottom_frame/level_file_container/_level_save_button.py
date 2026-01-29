@@ -4,8 +4,9 @@ from level.config import LEVEL_SAVE_FOLDER_PATH
 
 
 class LevelSaveButton(SaveButton):
-    def __init__(self, parent):
-        super().__init__(parent, LEVEL_SAVE_FOLDER_PATH, "level")
+
+    def __init__(self, master):
+        super().__init__(master, LEVEL_SAVE_FOLDER_PATH, "level")
 
     def _save(self):
         super()._save()

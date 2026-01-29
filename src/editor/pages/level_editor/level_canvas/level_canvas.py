@@ -20,8 +20,8 @@ class LevelCanvas(ctk.CTkCanvas):
     and dispatches events to its various handler components (renderer, click handler,
     scroller, overlay).
     """
-    def __init__(self, parent):
-        super().__init__(parent, highlightthickness=0)
+    def __init__(self, master):
+        super().__init__(master, highlightthickness=0)
 
         self.configure(bg="black")
 

@@ -4,8 +4,8 @@ import customtkinter as ctk
 class TrainingProgressLog(ctk.CTkFrame):
     """A CustomTkinter container for displaying training progress."""
 
-    def __init__(self, parent, total_episodes: int):
-        super().__init__(parent, fg_color="transparent")
+    def __init__(self, master, total_episodes: int):
+        super().__init__(master, fg_color="transparent")
 
         self.grid_columnconfigure(0, weight=1)
 
