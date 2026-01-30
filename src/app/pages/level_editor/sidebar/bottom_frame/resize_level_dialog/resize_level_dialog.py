@@ -1,12 +1,13 @@
 import customtkinter as ctk
 from tkinter import messagebox
-from typing import cast, TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List
+from app.components.overlay import Overlay
 
 if TYPE_CHECKING:
     from pytiling import Direction
 
 
-class ResizeLevelDialog(ctk.CTkToplevel):
+class ResizeLevelDialog(Overlay):
     """
     A dialog window to get user input for level resizing.
     It prompts for a direction (top, bottom, left, right) and an amount.
@@ -35,6 +36,7 @@ class ResizeLevelDialog(ctk.CTkToplevel):
 
         # This is crucial to wait for the user to close the dialog
         self.protocol("WM_DELETE_WINDOW", self._on_cancel)
+        self._post_init_config()
         self.wait_window(self)
 
     def _create_widgets(self):

@@ -39,6 +39,7 @@ class MessageOverlay(Overlay):
         self.button_container.pack(pady=4)
 
         self._create_buttons(button_commands)
+        self._post_init_config()
 
     def _create_buttons(self, button_commands: dict[str, Callable] | None):
         """
