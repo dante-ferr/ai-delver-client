@@ -19,5 +19,9 @@ class _LevelLoaderOverlay(FileLoaderOverlay):
 
 
 class LevelLoadButton(LoadButton):
-    def _on_click(self, event):
+
+    def __init__(self, master, **kwargs):
+        super().__init__(master, command=self._on_click, **kwargs)
+
+    def _on_click(self):
         FileLoaderOverlaySpawner(LEVEL_SAVE_FOLDER_PATH, "level", _LevelLoaderOverlay)

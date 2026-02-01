@@ -1,6 +1,6 @@
 import customtkinter as ctk
-from ._draggable_box import DraggableBox
-
+from .draggable_box.draggable_box import DraggableBox
+from typing import Optional, cast
 
 class SortableList(ctk.CTkScrollableFrame):
     """
@@ -8,12 +8,14 @@ class SortableList(ctk.CTkScrollableFrame):
     using a placeholder to reserve space.
     """
 
-    def __init__(self, master, **kwargs):
+    def __init__(self, master, remove_box_button=False, **kwargs):
         super().__init__(master, **kwargs)
+
+        self.remove_box_button = remove_box_button
 
         self.boxes = []
 
-        self.dragged_item = None
+        self.dragged_item: Optional[DraggableBox] = None
         self.drag_start_y_offset = 0
         self.placeholder_index = -1
 
@@ -42,7 +44,9 @@ class SortableList(ctk.CTkScrollableFrame):
         self.bind("<MouseWheel>", self.on_mouse_wheel)
 
     def add_box(self, name, **kwargs):
-        new_box = DraggableBox(self, name, **kwargs)
+        new_box = DraggableBox(
+            self, name, remove_box_button=self.remove_box_button, **kwargs
+        )
         self.boxes.append(new_box)
         new_box.pack(fill="x", pady=4, padx=(0, 8))
 
@@ -150,6 +154,9 @@ class SortableList(ctk.CTkScrollableFrame):
         self.after(self.scroll_interval, lambda: self._auto_scroll_loop(last_event))
 
     def _update_dragged_item_position(self, event):
+        if not self.dragged_item:
+            return
+
         canvas = self._parent_canvas
         mouse_y_viewport = event.y_root - canvas.winfo_rooty()
         mouse_y_content = canvas.canvasy(mouse_y_viewport)
@@ -204,6 +211,7 @@ class SortableList(ctk.CTkScrollableFrame):
 
     def _repack_layout(self, with_placeholder: bool):
         for child in self.winfo_children():
+            child = cast("DraggableBox", child)
             if child is not self.dragged_item:
                 child.pack_forget()
 

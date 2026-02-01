@@ -5,9 +5,8 @@ from src.config import config
 
 class LoadButton(IconButton):
 
-    def __init__(self, master):
-        super().__init__(master, svg_path=str(config.ASSETS_PATH / "svg" / "load.svg"))
+    def __init__(self, master, **kwargs):
+        super().__init__(
+            master, svg_path=str(config.ASSETS_PATH / "svg" / "load.svg"), **kwargs
+        )
         self.option_menu: Menu | None = None
-
-    def _on_click(self, event):
-        pass

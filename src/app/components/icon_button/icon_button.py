@@ -5,24 +5,24 @@ from app.theme import theme
 
 class IconButton(ctk.CTkButton):
 
-    def __init__(self, master, svg_path: str):
+    def __init__(self, master, svg_path: str, **kwargs):
+
         icon = SvgImage(
             svg_path=svg_path,
-            size=(20, 20),
+            size=(kwargs.get("width", 20), kwargs.get("height", 20)),
             fill=theme.icon_color,
         )
 
-        super().__init__(
-            master,
-            text="",
-            fg_color="transparent",
-            width=24,
-            height=24,
-            hover_color="#555",
-            image=icon.get_ctk_image(),
-        )
+        if kwargs.get("text"):
+            raise ValueError("IconButton cannot have text")
+        if kwargs.get("image"):
+            raise ValueError("IconButton cannot have image")
 
-        self.bind("<Button-1>", self._on_click)
+        kwargs.setdefault("fg_color", "transparent")
+        kwargs.setdefault("width", 24)
+        kwargs.setdefault("height", 24)
+        kwargs.setdefault("hover_color", "#555")
 
-    def _on_click(self, event):
-        pass
+        super().__init__(master, text="", image=icon.get_ctk_image(), **kwargs)
+
+        # self.bind("<Button-1>", self._on_click)

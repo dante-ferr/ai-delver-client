@@ -30,7 +30,7 @@ class TrainPanel(ctk.CTkFrame):
             on_update=self._set_training_cycles,
         )
         training_state_manager.amount_of_cycles = init_val
-        self.training_cycles_input.pack(pady=(0, 24), fill="x")
+        self.training_cycles_input.pack(pady=(0, 16), fill="x")
 
         init_val = 50
         self.episodes_per_cycle_input = RangeSliderInput(
@@ -48,7 +48,7 @@ class TrainPanel(ctk.CTkFrame):
 
         self._set_amount_of_episodes()
 
-        sortable_list = SortableList(self, height=300)
+        sortable_list = SortableList(self, height=300, remove_box_button=True)
         sortable_list.pack(pady=(0, 24), fill="x")
         sortable_list.add_box("aaaaaaaaaaaaaaa")
         sortable_list.add_box("bbbbbbbbbbbbbb")
