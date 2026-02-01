@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from typing import Callable, Optional
-
+from src.config import config
 
 class RangeSliderInput(ctk.CTkFrame):
     """
@@ -39,7 +39,11 @@ class RangeSliderInput(ctk.CTkFrame):
         self._on_update = on_update
 
         # Label and entry
-        self.label = ctk.CTkLabel(self, text=label_text)
+        self.label = ctk.CTkLabel(
+            self,
+            text=label_text,
+            font=ctk.CTkFont(size=config.STYLE.FONT.STANDARD_SIZE, weight="bold"),
+        )
         self.label.pack(anchor="w")
 
         # Grid configuration
@@ -50,7 +54,11 @@ class RangeSliderInput(ctk.CTkFrame):
         input_frame.grid_columnconfigure(1, weight=1)  # Slider (expands)
 
         # Entry
-        self.entry = ctk.CTkEntry(input_frame, width=72)
+        self.entry = ctk.CTkEntry(
+            input_frame,
+            width=72,
+            font=ctk.CTkFont(size=config.STYLE.FONT.STANDARD_SIZE),
+        )
         self.entry.grid(row=1, column=0, padx=(0, 10), sticky="ew")
 
         self.entry.bind("<FocusOut>", self._validate_input)

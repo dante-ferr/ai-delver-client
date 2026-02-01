@@ -1,7 +1,9 @@
 import customtkinter as ctk
-from app.components.overlay.message_overlay import MessageOverlay
+from app.components import MessageOverlay
 from loaders import agent_loader
 from app.utils import verify_level_issues
+from app.components import StandardButton
+from src.config import config
 from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
@@ -18,16 +20,19 @@ class TrajectoryHeader(ctk.CTkFrame):
         super().__init__(master, fg_color="transparent")
 
         self.index_entry = ctk.CTkEntry(
-            self, placeholder_text="Trajectory Index", width=128
+            self,
+            placeholder_text="Trajectory Index",
+            width=128,
+            font=ctk.CTkFont(size=config.STYLE.FONT.STANDARD_SIZE),
         )
         self.index_entry.grid(row=0, column=0, padx=4, pady=(0, 4))
 
-        load_button = ctk.CTkButton(
+        load_button = StandardButton(
             self, text="Load", command=self._load_trajectory, width=128
         )
         load_button.grid(row=0, column=1, padx=4, pady=(0, 4))
 
-        replay_button = ctk.CTkButton(
+        replay_button = StandardButton(
             self, text="Replay", command=lambda: self._replay()
         )
         replay_button.grid(row=0, column=2, padx=4, pady=(0, 4))

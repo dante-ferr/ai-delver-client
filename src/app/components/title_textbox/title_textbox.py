@@ -1,10 +1,15 @@
 import customtkinter as ctk
-
+from src.config import config
 
 class TitleTextbox(ctk.CTkTextbox):
 
     def __init__(self, master, default_text=""):
-        super().__init__(master, height=4, wrap="none")
+        super().__init__(
+            master,
+            height=4,
+            wrap="none",
+            font=ctk.CTkFont(size=config.STYLE.FONT.STANDARD_SIZE),
+        )
 
         self.insert("0.0", default_text)
         self.bind("<KeyRelease>", self._update_name)

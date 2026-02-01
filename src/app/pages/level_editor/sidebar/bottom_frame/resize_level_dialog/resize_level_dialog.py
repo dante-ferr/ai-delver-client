@@ -1,7 +1,8 @@
 import customtkinter as ctk
 from tkinter import messagebox
 from typing import TYPE_CHECKING, List
-from app.components.overlay import Overlay
+from app.components import Overlay, StandardButton
+from src.config import config
 
 if TYPE_CHECKING:
     from pytiling import Direction
@@ -50,6 +51,7 @@ class ResizeLevelDialog(Overlay):
             text="Dynamic resizing (it may be too slow)",
             variable=self._dynamic_resizing_var,
             command=self._toggle_manual_controls,
+            font=ctk.CTkFont(size=config.STYLE.FONT.STANDARD_SIZE),
         )
         dynamic_resize_switch.pack(anchor="w", pady=(0, 15))
 
@@ -58,7 +60,11 @@ class ResizeLevelDialog(Overlay):
         self._manual_frame.pack(fill="both", expand=True)
 
         # --- Operation Selection ---
-        operation_label = ctk.CTkLabel(self._manual_frame, text="Operation:")
+        operation_label = ctk.CTkLabel(
+            self._manual_frame,
+            text="Operation:",
+            font=ctk.CTkFont(size=config.STYLE.FONT.STANDARD_SIZE),
+        )
         operation_label.pack(pady=(0, 5), anchor="w")
 
         self._operation_selector = ctk.CTkSegmentedButton(
@@ -67,7 +73,11 @@ class ResizeLevelDialog(Overlay):
         self._operation_selector.pack(fill="x", pady=(0, 15))
 
         # --- Direction Selection ---
-        direction_label = ctk.CTkLabel(self._manual_frame, text="Direction:")
+        direction_label = ctk.CTkLabel(
+            self._manual_frame,
+            text="Direction:",
+            font=ctk.CTkFont(size=config.STYLE.FONT.STANDARD_SIZE),
+        )
         direction_label.pack(pady=(0, 10), anchor="w")
 
         self._check_top = ctk.CTkCheckBox(
@@ -91,7 +101,11 @@ class ResizeLevelDialog(Overlay):
         self._check_right.pack(anchor="w", padx=20)
 
         # --- Amount Input ---
-        amount_label = ctk.CTkLabel(self._manual_frame, text="Amount (tiles):")
+        amount_label = ctk.CTkLabel(
+            self._manual_frame,
+            text="Amount (tiles):",
+            font=ctk.CTkFont(size=config.STYLE.FONT.STANDARD_SIZE),
+        )
         amount_label.pack(pady=(15, 5), anchor="w")
 
         self._amount_entry = ctk.CTkEntry(self._manual_frame, textvariable=self._amount)
@@ -103,12 +117,12 @@ class ResizeLevelDialog(Overlay):
         button_frame.pack(fill="x", padx=15, pady=(0, 15))
         button_frame.grid_columnconfigure((0, 1), weight=1)
 
-        self._confirm_button = ctk.CTkButton(
+        self._confirm_button = StandardButton(
             button_frame, text="Confirm", command=self._on_confirm
         )
         self._confirm_button.grid(row=0, column=0, padx=(0, 5), sticky="ew")
 
-        cancel_button = ctk.CTkButton(
+        cancel_button = StandardButton(
             button_frame,
             text="Cancel",
             fg_color="#D33",

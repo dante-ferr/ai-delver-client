@@ -2,11 +2,13 @@ from app.components.overlay.message_overlay import MessageOverlay
 from app.components.overlay import Overlay
 import customtkinter as ctk
 from pathlib import Path
-
+from src.config import config
 
 class FileLoaderOverlay(Overlay):
 
     def __init__(self, file_dirs: dict[str, Path], file_type: str):
+        from app.components import StandardButton
+
         super().__init__("file_loader")
 
         self.file_dirs = file_dirs
@@ -17,6 +19,7 @@ class FileLoaderOverlay(Overlay):
             text=f"Choose a {file_type} file to load.",
             height=100,
             wraplength=240,
+            font=ctk.CTkFont(size=config.STYLE.FONT.STANDARD_SIZE),
         )
         label.pack(pady=0, anchor="w", fill="x")
 
@@ -28,8 +31,12 @@ class FileLoaderOverlay(Overlay):
         )
         self.option_menu.grid(row=0, column=0, padx=4)
 
-        load_button = ctk.CTkButton(
-            interaction_container, text="Load", command=self._load, width=32
+        load_button = StandardButton(
+            interaction_container,
+            text="Load",
+            command=self._load,
+            width=32,
+            font=ctk.CTkFont(size=config.STYLE.FONT.STANDARD_SIZE),
         )
         load_button.grid(row=0, column=1, padx=4)
 

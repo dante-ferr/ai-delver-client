@@ -7,7 +7,8 @@ from concurrent.futures import ProcessPoolExecutor
 from state_managers import trajectory_stats_state_manager
 from src.app.components import LoadingLogsPanel, SectionTitle
 from loaders import agent_loader  # Assuming agent_loader is accessible
-
+from app.components import StandardButton
+from src.config import config
 
 # This function must be defined at the top level of the module so that it
 # can be "pickled" and sent to the other process.
@@ -39,7 +40,7 @@ class TrajectoryStatsPanel(ctk.CTkFrame):
         fetch_container = ctk.CTkFrame(self)
         fetch_container.pack(fill="x", pady=(0, 8))
 
-        get_stats_button = ctk.CTkButton(
+        get_stats_button = StandardButton(
             fetch_container, text="Get stats", command=self._start_stats_job
         )
         get_stats_button.grid(row=0, column=1, padx=(0, 8), pady=0, sticky="n")
@@ -112,6 +113,7 @@ class TrajectoryStatsPanel(ctk.CTkFrame):
                     self.stats_container,
                     text=f"Error: {stats['error']}",
                     text_color="red",
+                    font=ctk.CTkFont(size=config.STYLE.FONT.STANDARD_SIZE),
                 )
                 label.pack(anchor="w", padx=4, pady=2)
             elif stats:
@@ -119,10 +121,15 @@ class TrajectoryStatsPanel(ctk.CTkFrame):
                     label = ctk.CTkLabel(
                         self.stats_container,
                         text=f"{stat_name.capitalize()}: {stat_value}",
+                        font=ctk.CTkFont(size=config.STYLE.FONT.STANDARD_SIZE),
                     )
                     label.pack(anchor="w", padx=4, pady=2)
             else:
-                label = ctk.CTkLabel(self.stats_container, text="No stats found.")
+                label = ctk.CTkLabel(
+                    self.stats_container,
+                    text="No stats found.",
+                    font=ctk.CTkFont(size=config.STYLE.FONT.STANDARD_SIZE),
+                )
                 label.pack(anchor="w", padx=4, pady=2)
 
         finally:

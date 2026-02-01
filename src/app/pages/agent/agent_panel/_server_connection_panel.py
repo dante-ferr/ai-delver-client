@@ -1,6 +1,7 @@
 import customtkinter as ctk
 import asyncio
-
+from app.components import StandardButton
+from src.config import config
 
 class ServerConnectionPanel(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -9,10 +10,11 @@ class ServerConnectionPanel(ctk.CTkFrame):
         self.label = ctk.CTkLabel(
             self,
             text="Training server is not connected",
+            font=ctk.CTkFont(size=config.STYLE.FONT.STANDARD_SIZE),
         )
         self.label.pack(pady=(20, 5))
 
-        self.connect_button = ctk.CTkButton(
+        self.connect_button = StandardButton(
             self,
             text="Connect now",
             command=lambda: asyncio.run(self._attempt_connection()),

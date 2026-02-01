@@ -1,5 +1,5 @@
 import customtkinter as ctk
-
+from src.config import config
 
 class TrainProcessLog(ctk.CTkFrame):
     """A CustomTkinter container for displaying training progress."""
@@ -11,7 +11,12 @@ class TrainProcessLog(ctk.CTkFrame):
 
         self.total_cycles = total_cycles
 
-        self.label = ctk.CTkLabel(self, text="", anchor="w")
+        self.label = ctk.CTkLabel(
+            self,
+            text="",
+            anchor="w",
+            font=ctk.CTkFont(size=config.STYLE.FONT.STANDARD_SIZE),
+        )
         self.label.grid(row=0, column=0, padx=0, pady=2, sticky="ew")
 
         self.progress_bar = ctk.CTkProgressBar(self, mode="determinate")

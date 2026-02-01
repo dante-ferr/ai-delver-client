@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from src.config import config
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -13,5 +14,10 @@ class CanvasObjectContainer(ctk.CTkFrame):
         self.canvas_object = canvas_object
 
         image = ctk.CTkImage(canvas_object.image, size=self.image_size)
-        label = ctk.CTkLabel(self, image=image, text="")
+        label = ctk.CTkLabel(
+            self,
+            image=image,
+            text="",
+            font=ctk.CTkFont(size=config.STYLE.FONT.STANDARD_SIZE),
+        )
         label.pack(padx=3.2, pady=3.2)

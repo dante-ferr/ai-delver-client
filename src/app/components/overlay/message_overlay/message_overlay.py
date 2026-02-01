@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from typing import Callable
 from ..overlay import Overlay
+from src.config import config
 from typing import Literal, cast
 
 class MessageOverlay(Overlay):
@@ -24,7 +25,12 @@ class MessageOverlay(Overlay):
         text_container = ctk.CTkFrame(self, fg_color="transparent", width=300)
         text_container.pack(pady=4, fill="x", expand=True)
 
-        label = ctk.CTkLabel(text_container, text=message, wraplength=240)
+        label = ctk.CTkLabel(
+            text_container,
+            text=message,
+            wraplength=240,
+            font=ctk.CTkFont(size=config.STYLE.FONT.STANDARD_SIZE),
+        )
         label.pack(pady=6.4, anchor="w", fill="x")
 
         for paragraph in paragraphs:
@@ -32,6 +38,7 @@ class MessageOverlay(Overlay):
                 text_container,
                 text=paragraph,
                 wraplength=240,
+                font=ctk.CTkFont(size=config.STYLE.FONT.STANDARD_SIZE),
             )
             paragraph_label.pack(pady=2, anchor="w", fill="x")
 
@@ -46,9 +53,16 @@ class MessageOverlay(Overlay):
         Dynamically creates buttons based on the provided commands.
         Each button's command is wrapped to ensure the overlay closes itself first.
         """
+        from app.components import StandardButton
+
         if button_commands is None:
             buttons = [
-                ctk.CTkButton(self.button_container, text="Ok", command=self._close)
+                StandardButton(
+                    self.button_container,
+                    text="Ok",
+                    command=self._close,
+                    font=ctk.CTkFont(size=config.STYLE.FONT.STANDARD_SIZE),
+                )
             ]
         else:
             buttons = []
@@ -60,8 +74,11 @@ class MessageOverlay(Overlay):
                     command()
 
                 buttons.append(
-                    ctk.CTkButton(
-                        self.button_container, text=text, command=_command_callback
+                    StandardButton(
+                        self.button_container,
+                        text=text,
+                        command=_command_callback,
+                        font=ctk.CTkFont(size=config.STYLE.FONT.STANDARD_SIZE),
                     )
                 )
 

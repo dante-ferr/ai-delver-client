@@ -7,7 +7,7 @@ from loaders import level_loader
 from app.utils import verify_level_issues
 from src.app.components import SectionTitle
 from .bottom_frame import BottomFrame
-
+from app.components import StandardButton
 
 class Sidebar(ctk.CTkFrame):
 
@@ -25,7 +25,7 @@ class Sidebar(ctk.CTkFrame):
         title_textbox = LevelTitleTextbox(self)
         title_textbox.pack(padx=0, pady=0, fill="x")
 
-        test_level_button = ctk.CTkButton(
+        test_level_button = StandardButton(
             self, text="Test Level", command=self._test_level
         )
         test_level_button.pack(pady=8)

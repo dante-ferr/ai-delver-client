@@ -4,7 +4,7 @@ import asyncio
 from app.utils import verify_level_issues
 from client_requests import client_requester
 import threading
-
+from app.components import StandardButton
 
 class TrainButtonsContainer(ctk.CTkFrame):
     """
@@ -15,12 +15,12 @@ class TrainButtonsContainer(ctk.CTkFrame):
 
     def __init__(self, master):
         super().__init__(master)
-        self.train_button = ctk.CTkButton(
+        self.train_button = StandardButton(
             self, text="Train", command=self._start_train_thread
         )
         self.train_button.grid(row=0, column=0, padx=(0, 4))
 
-        self.interrupt_training_button = ctk.CTkButton(
+        self.interrupt_training_button = StandardButton(
             self,
             text="Interrupt Training",
             command=self._start_interrupt_thread,

@@ -3,7 +3,8 @@ from ._train_logs_panel import TrainLogsPanel
 from state_managers import training_state_manager
 from app.components import RangeSliderInput
 from ._train_buttons_container import TrainButtonsContainer
-
+from app.components import SortableList
+from src.config import config
 
 class TrainPanel(ctk.CTkFrame):
     """
@@ -40,11 +41,39 @@ class TrainPanel(ctk.CTkFrame):
         training_state_manager.episodes_per_cycle = init_val
         self.episodes_per_cycle_input.pack(pady=(0, 24), fill="x")
 
-        self.episodes_label = ctk.CTkLabel(self, text=f"")
+        self.episodes_label = ctk.CTkLabel(
+            self, text=f"", font=ctk.CTkFont(size=config.STYLE.FONT.STANDARD_SIZE)
+        )
         self.episodes_label.pack(anchor="w")
 
-        # Set initial amount of episodes immediately
         self._set_amount_of_episodes()
+
+        sortable_list = SortableList(self, height=300)
+        sortable_list.pack(pady=(0, 24), fill="x")
+        sortable_list.add_box("aaaaaaaaaaaaaaa")
+        sortable_list.add_box("bbbbbbbbbbbbbb")
+        sortable_list.add_box("ccccccccccccccccccc")
+        sortable_list.add_box("ddddddddddddd")
+        sortable_list.add_box("eeeeeeeeeeeeeeeee")
+        sortable_list.add_box("ffffffffffff")
+        sortable_list.add_box("gggggggggggggggg")
+        sortable_list.add_box("hhhhhhhhhhhhhhhhhhh")
+        sortable_list.add_box("aaaaaaaaaaaaaaa")
+        sortable_list.add_box("bbbbbbbbbbbbbb")
+        sortable_list.add_box("ccccccccccccccccccc")
+        sortable_list.add_box("ddddddddddddd")
+        sortable_list.add_box("eeeeeeeeeeeeeeeee")
+        sortable_list.add_box("ffffffffffff")
+        sortable_list.add_box("gggggggggggggggg")
+        sortable_list.add_box("hhhhhhhhhhhhhhhhhhh")
+        sortable_list.add_box("aaaaaaaaaaaaaaa")
+        sortable_list.add_box("bbbbbbbbbbbbbb")
+        sortable_list.add_box("ccccccccccccccccccc")
+        sortable_list.add_box("ddddddddddddd")
+        sortable_list.add_box("eeeeeeeeeeeeeeeee")
+        sortable_list.add_box("ffffffffffff")
+        sortable_list.add_box("gggggggggggggggg")
+        sortable_list.add_box("hhhhhhhhhhhhhhhhhhh")
 
         train_logs_panel = TrainLogsPanel(self)
         train_logs_panel.pack(padx=2, pady=(0, 10), fill="x")

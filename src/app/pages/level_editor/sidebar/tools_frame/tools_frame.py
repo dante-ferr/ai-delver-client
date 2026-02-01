@@ -12,7 +12,12 @@ class ToolBox(ctk.CTkFrame):
         super().__init__(master)
         self.tool_name = tool_name
 
-        label = ctk.CTkLabel(self, image=icon_image, text="")
+        label = ctk.CTkLabel(
+            self,
+            image=icon_image,
+            text="",
+            font=ctk.CTkFont(size=config.STYLE.FONT.STANDARD_SIZE),
+        )
         label.pack(padx=4.8, pady=4.8)
 
 

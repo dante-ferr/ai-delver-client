@@ -1,6 +1,7 @@
 import customtkinter as ctk
-from typing import TYPE_CHECKING
 from app.utils.selection import populate_selection_manager, SelectionManager
+from src.config import config
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from .pages.page import Page
@@ -29,7 +30,10 @@ class Navbar(ctk.CTkFrame):
             selector_frame.pack(side="left")
 
             selector = ctk.CTkLabel(
-                selector_frame, text=page.display_name, fg_color="transparent"
+                selector_frame,
+                text=page.display_name,
+                fg_color="transparent",
+                font=ctk.CTkFont(size=config.STYLE.FONT.SMALL_SIZE),
             )
             selector.pack(padx=16)
 
