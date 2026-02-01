@@ -40,7 +40,8 @@ class SortableList(MouseWheelScrollableFrame):
         self.boxes.append(new_box)
         new_box.pack(fill="x", pady=4, padx=(0, 8))
 
-        self.bind_scroll_events_recursively(new_box)
+        # DraggableBox handles its own scroll binding to manage hover states,
+        # so we don't use bind_scroll_events_recursively here to avoid double-scrolling.
 
         self.after(50, self._check_scroll_visibility)
 
@@ -49,6 +50,7 @@ class SortableList(MouseWheelScrollableFrame):
             if box.name == name:
                 box.destroy()
                 self.boxes.remove(box)
+                # Wait for destroy to propagate before checking scroll
                 self.after(50, self._check_scroll_visibility)
                 return
         print(f"Box '{name}' not found.")

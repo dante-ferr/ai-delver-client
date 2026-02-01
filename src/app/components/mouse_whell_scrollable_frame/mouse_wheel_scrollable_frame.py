@@ -35,15 +35,14 @@ class MouseWheelScrollableFrame(ctk.CTkScrollableFrame):
         """
         self._bind_to_widget(widget)
 
-        # Recursively bind children
         for child in widget.winfo_children():
             self.bind_scroll_events_recursively(child)
 
     def _bind_to_widget(self, widget):
         for event_str in self._scroll_events:
-            widget.bind(event_str, self._on_mouse_wheel, add="+")
+            widget.bind(event_str, self.on_mouse_wheel, add="+")
 
-    def _on_mouse_wheel(self, event):
+    def on_mouse_wheel(self, event):
         if not self._scroll_active:
             return
 
@@ -53,7 +52,6 @@ class MouseWheelScrollableFrame(ctk.CTkScrollableFrame):
             elif event.num == 5:
                 self._parent_canvas.yview_scroll(1, "units")
         else:
-            # Windows/macOS
             # CTk/Tkinter usually handles delta differently.
             # Negative delta is down on Windows.
             direction = -1 if event.delta > 0 else 1
@@ -74,6 +72,7 @@ class MouseWheelScrollableFrame(ctk.CTkScrollableFrame):
                 try:
                     self._scrollbar.grid()
                 except Exception:
+                    # Suppress errors if scrollbar is not ready or widget is destroyed
                     pass
         else:
             if self._scroll_active:

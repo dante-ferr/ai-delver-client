@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from src.config import config
 from ._delete_button import DeleteButton
-from typing import TYPE_CHECKING, cast, Callable, Sequence
+from typing import TYPE_CHECKING, cast, Callable, Sequence, Union
 
 if TYPE_CHECKING:
     from sortable_list import SortableList
@@ -47,9 +47,10 @@ class DraggableBox(ctk.CTkFrame):
             # Initially hidden, placed on hover
 
     def _setup_bindings(self):
-        """Consolidates local event bindings."""
+        """Consolidates all event bindings to avoid repetition."""
         main_targets = [self, self.label]
 
+        # 1. Dragging Logic
         self._bind_events(
             main_targets,
             {
@@ -59,15 +60,30 @@ class DraggableBox(ctk.CTkFrame):
             },
         )
 
+        # 2. Hover Logic
+        # We only bind to the container/label. The delete button is handled via polling.
         self._bind_events(
             main_targets, {"<Enter>": self._on_enter, "<Leave>": self._on_leave}
         )
 
-        # Note: Scroll logic is handled by the parent SortableList/MouseWheelScrollableFrame
+        # 3. Scroll Logic
+        scroll_targets = list(main_targets)
+        if self.remove_box_button:
+            scroll_targets.append(self.delete_button)
+
+        self._bind_events(
+            scroll_targets,
+            {
+                "<MouseWheel>": self._on_scroll,
+                "<Button-4>": self._on_scroll,
+                "<Button-5>": self._on_scroll,
+            },
+        )
 
     def _bind_events(
         self, widgets: Sequence[ctk.CTkBaseClass], events: dict[str, Callable]
     ):
+        """Helper to bind multiple events to multiple widgets."""
         for widget in widgets:
             for sequence, handler in events.items():
                 widget.bind(sequence, handler)
@@ -76,34 +92,35 @@ class DraggableBox(ctk.CTkFrame):
         self.typed_master.remove_box(self.name)
 
     def _on_enter(self, event):
-        self.configure(fg_color=self.hover_color)
-
-        if self.remove_box_button:
-            if not self.delete_button.winfo_viewable():
-                self.delete_button.place(relx=1.0, x=-4, y=4, anchor="ne")
-                self.delete_button.lift()
-                self._monitor_mouse()
+        # Trigger state check immediately for responsiveness
+        self._check_hover_state()
+        self._monitor_mouse()
 
     def _on_leave(self, event):
         self.after(50, self._check_hover_state)
 
     def _monitor_mouse(self):
         """
-        Periodically checks if mouse is inside the widget.
-        Handles cases where scroll moves the widget away from the mouse.
+        Periodically validates hover state.
+        Actively enforces visual state (color/button) based on mouse coordinates.
         """
-        if not self.winfo_exists() or not self.delete_button.winfo_viewable():
-            return
-
-        self._check_hover_state()
-
-        if self.delete_button.winfo_viewable():
-            self.after(200, self._monitor_mouse)
-
-    def _check_hover_state(self):
-        """Hides the delete button if the mouse is outside the frame bounds."""
         if not self.winfo_exists():
             return
+
+        is_inside = self._check_hover_state()
+
+        # If we are inside, we keep looping to ensure state remains correct
+        # (e.g. if drag/drop reset the colors but mouse is still here)
+        if is_inside:
+            self.after(200, self._monitor_mouse)
+
+    def _check_hover_state(self) -> bool:
+        """
+        Calculates if mouse is inside and enforces the corresponding UI state.
+        Returns True if mouse is inside, False otherwise.
+        """
+        if not self.winfo_exists():
+            return False
 
         x, y = self.winfo_pointerxy()
         widget_x = self.winfo_rootx()
@@ -113,10 +130,25 @@ class DraggableBox(ctk.CTkFrame):
 
         is_inside = (widget_x <= x <= widget_x + w) and (widget_y <= y <= widget_y + h)
 
-        if not is_inside:
-            self.configure(fg_color=self.default_color)
+        if is_inside:
+            # Enforce Hover State
+            if self._fg_color != self.hover_color:
+                self.configure(fg_color=self.hover_color)
+
             if self.remove_box_button:
+                # Ensure button is visible and on top
+                if not self.delete_button.winfo_viewable():
+                    self.delete_button.place(relx=1.0, x=-4, y=4, anchor="ne")
+                    self.delete_button.lift()
+        else:
+            # Enforce Default State
+            if self._fg_color != self.default_color:
+                self.configure(fg_color=self.default_color)
+
+            if self.remove_box_button and self.delete_button.winfo_viewable():
                 self.delete_button.place_forget()
+
+        return is_inside
 
     def _on_press(self, event):
         self.typed_master.start_drag(self, event)
@@ -126,6 +158,13 @@ class DraggableBox(ctk.CTkFrame):
 
     def _on_release(self, event):
         self.typed_master.stop_drag(event)
+        # Re-verify hover state immediately after drop
+        self.after(50, self._check_hover_state)
+
+    def _on_scroll(self, event):
+        self.typed_master.on_mouse_wheel(event)
+        # Force an immediate check on scroll
+        self._check_hover_state()
 
     @property
     def typed_master(self) -> "SortableList":
