@@ -1,63 +1,81 @@
 import customtkinter as ctk
 import platform
 
-
 class MouseWheelScrollableFrame(ctk.CTkScrollableFrame):
+    """
+    A CTkScrollableFrame that supports:
+    1. Cross-platform mouse wheel scrolling (Windows, macOS, Linux).
+    2. Recursive scroll binding (children inherit scroll behavior).
+    3. Auto-hiding scrollbar when content fits the viewport.
+    """
 
-    def __init__(self, master, *args, max_height: float | None = None, **kwargs):
-        super().__init__(master, *args, **kwargs)
-        self.max_height = max_height
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
 
-        self._bind_scroll_events()
+        self._scroll_active = True
 
-    def _bind_scroll_events(self):
-        system = platform.system()
-
-        # For Windows/macOS (uses MouseWheel event with delta)
-        if system in ["Windows", "Darwin"]:
-            self.bind(
-                "<Enter>",
-                lambda _: self.bind_all("<MouseWheel>", self._on_mouse_scroll),
-            )
-            self.bind("<Leave>", lambda _: self.unbind_all("<MouseWheel>"))
-
-        # For Linux (uses Button-4 and Button-5 for scroll)
-        elif system == "Linux":
-            self.bind(
-                "<Enter>",
-                lambda _: (
-                    self.bind_all("<Button-4>", self._on_mouse_scroll),
-                    self.bind_all("<Button-5>", self._on_mouse_scroll),
-                ),
-            )
-            self.bind(
-                "<Leave>",
-                lambda _: (
-                    self.unbind_all("<Button-4>"),
-                    self.unbind_all("<Button-5>"),
-                ),
-            )
-
-    def _on_mouse_scroll(self, event):
-        system = platform.system()
-
-        if system in ["Windows", "Darwin"]:  # Windows/macOS
-            self._parent_canvas.yview_scroll(-1 if event.delta > 0 else 1, "units")
-
-        elif system == "Linux":  # Linux (Ubuntu, etc.)
-            if event.num == 4:  # Scroll up
-                self._parent_canvas.yview_scroll(-1, "units")
-            elif event.num == 5:  # Scroll down
-                self._parent_canvas.yview_scroll(1, "units")
-
-    def _update_scrollbar_visibility(self):
-        """
-        Dynamically show or hide the scrollbar based on content size.
-        """
-        content_height = sum(widget.winfo_height() for widget in self.winfo_children())
-        frame_height = self.winfo_height()
-
-        if content_height > frame_height:
-            self._scrollbar.configure(width=16)
+        self._system = platform.system()
+        self._scroll_events = []
+        if self._system == "Linux":
+            self._scroll_events = ["<Button-4>", "<Button-5>"]
         else:
-            self._scrollbar.configure(width=0)
+            self._scroll_events = ["<MouseWheel>"]
+
+        self.bind_scroll_events_recursively(self)
+        self.bind_scroll_events_recursively(self._parent_canvas)
+
+        self._parent_canvas.bind(
+            "<Configure>", lambda e: self._check_scroll_visibility(), add="+"
+        )
+
+    def bind_scroll_events_recursively(self, widget):
+        """
+        Binds scroll events to the widget and all its current children.
+        Use this method when adding complex custom widgets to the frame.
+        """
+        self._bind_to_widget(widget)
+
+        # Recursively bind children
+        for child in widget.winfo_children():
+            self.bind_scroll_events_recursively(child)
+
+    def _bind_to_widget(self, widget):
+        for event_str in self._scroll_events:
+            widget.bind(event_str, self._on_mouse_wheel, add="+")
+
+    def _on_mouse_wheel(self, event):
+        if not self._scroll_active:
+            return
+
+        if self._system == "Linux":
+            if event.num == 4:
+                self._parent_canvas.yview_scroll(-1, "units")
+            elif event.num == 5:
+                self._parent_canvas.yview_scroll(1, "units")
+        else:
+            # Windows/macOS
+            # CTk/Tkinter usually handles delta differently.
+            # Negative delta is down on Windows.
+            direction = -1 if event.delta > 0 else 1
+            self._parent_canvas.yview_scroll(direction, "units")
+
+    def _check_scroll_visibility(self):
+        """
+        Enables or disables scrolling/scrollbar based on content height.
+        """
+        self.update_idletasks()
+
+        content_height = self.winfo_reqheight()
+        viewport_height = self._parent_canvas.winfo_height()
+
+        if content_height > viewport_height:
+            if not self._scroll_active:
+                self._scroll_active = True
+                try:
+                    self._scrollbar.grid()
+                except Exception:
+                    pass
+        else:
+            if self._scroll_active:
+                self._scroll_active = False
+                self._scrollbar.grid_remove()

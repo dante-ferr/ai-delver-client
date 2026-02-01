@@ -1,32 +1,30 @@
 import customtkinter as ctk
 from .draggable_box.draggable_box import DraggableBox
+from app.components import MouseWheelScrollableFrame
 from typing import Optional, cast
 
-class SortableList(ctk.CTkScrollableFrame):
+
+class SortableList(MouseWheelScrollableFrame):
     """
-    A list container that allows reordering its children via drag and drop
-    using a placeholder to reserve space.
+    A list container that allows reordering its children via drag and drop.
+    Inherits scroll capabilities from MouseWheelScrollableFrame.
     """
 
     def __init__(self, master, remove_box_button=False, **kwargs):
         super().__init__(master, **kwargs)
 
         self.remove_box_button = remove_box_button
-
         self.boxes = []
 
         self.dragged_item: Optional[DraggableBox] = None
         self.drag_start_y_offset = 0
         self.placeholder_index = -1
 
-        # Auto-scroll settings
-        self.scroll_zone_height = 50  # Height of the activation zone (pixels)
-        self.scroll_interval = (
-            50  # Speed: Delay in ms between scrolls (higher = slower)
-        )
-        self.scroll_step = 2  # Amount to scroll per interval (units)
-        self._is_scrolling = False
-        self._scroll_direction = 0  # -1 (up), 0 (stop), 1 (down)
+        self.scroll_zone_height = 50
+        self.scroll_interval = 50
+        self.scroll_step = 2
+        self._is_dragging_scroll = False
+        self._drag_scroll_direction = 0
 
         self.placeholder = ctk.CTkFrame(
             self,
@@ -35,14 +33,6 @@ class SortableList(ctk.CTkScrollableFrame):
             border_color=("gray60", "gray40"),
         )
 
-        self._parent_canvas.bind("<Button-4>", self.on_mouse_wheel)
-        self._parent_canvas.bind("<Button-5>", self.on_mouse_wheel)
-        self._parent_canvas.bind("<MouseWheel>", self.on_mouse_wheel)
-
-        self.bind("<Button-4>", self.on_mouse_wheel)
-        self.bind("<Button-5>", self.on_mouse_wheel)
-        self.bind("<MouseWheel>", self.on_mouse_wheel)
-
     def add_box(self, name, **kwargs):
         new_box = DraggableBox(
             self, name, remove_box_button=self.remove_box_button, **kwargs
@@ -50,11 +40,16 @@ class SortableList(ctk.CTkScrollableFrame):
         self.boxes.append(new_box)
         new_box.pack(fill="x", pady=4, padx=(0, 8))
 
+        self.bind_scroll_events_recursively(new_box)
+
+        self.after(50, self._check_scroll_visibility)
+
     def remove_box(self, name):
         for box in self.boxes:
             if box.name == name:
                 box.destroy()
                 self.boxes.remove(box)
+                self.after(50, self._check_scroll_visibility)
                 return
         print(f"Box '{name}' not found.")
 
@@ -85,7 +80,7 @@ class SortableList(ctk.CTkScrollableFrame):
         if not self.dragged_item:
             return
 
-        self._update_scroll_direction(event)
+        self._update_drag_scroll_direction(event)
         self._update_dragged_item_position(event)
         self._calculate_placeholder_index(event)
 
@@ -95,8 +90,8 @@ class SortableList(ctk.CTkScrollableFrame):
         if not self.dragged_item:
             return
 
-        self._is_scrolling = False
-        self._scroll_direction = 0
+        self._is_dragging_scroll = False
+        self._drag_scroll_direction = 0
 
         self.placeholder.pack_forget()
         self.dragged_item.place_forget()
@@ -115,38 +110,33 @@ class SortableList(ctk.CTkScrollableFrame):
 
         self._repack_layout(with_placeholder=False)
 
-    def on_mouse_wheel(self, event):
-        if self.dragged_item:
+    def _update_drag_scroll_direction(self, event):
+        if not self._scrollbar.winfo_viewable():
+            self._drag_scroll_direction = 0
             return
 
-        if event.num == 5 or event.delta < 0:
-            self._parent_canvas.yview_scroll(1, "units")
-        elif event.num == 4 or event.delta > 0:
-            self._parent_canvas.yview_scroll(-1, "units")
-
-    def _update_scroll_direction(self, event):
         canvas = self._parent_canvas
         mouse_y_viewport = event.y_root - canvas.winfo_rooty()
         visible_height = canvas.winfo_height()
 
         if mouse_y_viewport < self.scroll_zone_height:
-            self._scroll_direction = -1
+            self._drag_scroll_direction = -1
         elif mouse_y_viewport > visible_height - self.scroll_zone_height:
-            self._scroll_direction = 1
+            self._drag_scroll_direction = 1
         else:
-            self._scroll_direction = 0
+            self._drag_scroll_direction = 0
 
-        if self._scroll_direction != 0 and not self._is_scrolling:
-            self._is_scrolling = True
+        if self._drag_scroll_direction != 0 and not self._is_dragging_scroll:
+            self._is_dragging_scroll = True
             self._auto_scroll_loop(event)
 
     def _auto_scroll_loop(self, last_event):
-        if not self.dragged_item or self._scroll_direction == 0:
-            self._is_scrolling = False
+        if not self.dragged_item or self._drag_scroll_direction == 0:
+            self._is_dragging_scroll = False
             return
 
         self._parent_canvas.yview_scroll(
-            self._scroll_direction * self.scroll_step, "units"
+            self._drag_scroll_direction * self.scroll_step, "units"
         )
         self._update_dragged_item_position(last_event)
         self._calculate_placeholder_index(last_event)
@@ -164,7 +154,6 @@ class SortableList(ctk.CTkScrollableFrame):
         self.dragged_item.place(x=10, y=final_y, relwidth=0.9)
 
     def _calculate_placeholder_index(self, event):
-        """Calculates where the placeholder should be."""
         mouse_y = event.y_root
         static_boxes = [b for b in self.boxes if b is not self.dragged_item]
 
@@ -172,18 +161,14 @@ class SortableList(ctk.CTkScrollableFrame):
             self._update_placeholder_if_changed(0)
             return
 
-        # 1. FIX: Priority Override based on Auto-Scroll Intent
-        # If we are actively scrolling, we force the index to the extremes.
-        # This bypasses the "shaky" geometry checks during animation.
-        if self._is_scrolling:
-            if self._scroll_direction == 1:
+        if self._is_dragging_scroll:
+            if self._drag_scroll_direction == 1:
                 self._update_placeholder_if_changed(len(static_boxes))
                 return
-            elif self._scroll_direction == -1:
+            elif self._drag_scroll_direction == -1:
                 self._update_placeholder_if_changed(0)
                 return
 
-        # 2. Viewport Boundary Checks (Mouse outside widget)
         viewport_top = self.winfo_rooty()
         viewport_bottom = viewport_top + self.winfo_height()
 
@@ -194,7 +179,6 @@ class SortableList(ctk.CTkScrollableFrame):
             self._update_placeholder_if_changed(len(static_boxes))
             return
 
-        # 3. Standard Geometry Check (Mouse inside widget and not scrolling)
         new_index = len(static_boxes)
         for i, box in enumerate(static_boxes):
             center = box.winfo_rooty() + (box.winfo_height() / 2)
@@ -223,3 +207,5 @@ class SortableList(ctk.CTkScrollableFrame):
 
         for widget in visual_boxes:
             widget.pack(fill="x", padx=10, pady=5)
+
+        self.after(50, self._check_scroll_visibility)

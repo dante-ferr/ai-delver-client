@@ -11,9 +11,11 @@ class CanvasObjectPanelsWrapper(ctk.CTkFrame):
 
         self.current_canvas_objects_panel: CanvasObjectsPanel | None = None
         self.canvas_objects_panels = self._create_canvas_objects_panels()
-        self._set_current_canvas_objects_panel_by_layer_name(
-            level_editor_manager.selector.get_selection("layer")
-        )
+
+        # Initial selection
+        current_layer = level_editor_manager.selector.get_selection("layer")
+        self._set_current_canvas_objects_panel_by_layer_name(current_layer)
+
         level_editor_manager.selector.set_select_callback(
             "layer", self._on_layer_select
         )
@@ -22,7 +24,8 @@ class CanvasObjectPanelsWrapper(ctk.CTkFrame):
         canvas_objects_panels: dict[str, CanvasObjectsPanel] = {}
 
         for layer in level_editor_manager.objects_manager.layers:
-            panel = CanvasObjectsPanel(self, layer.name, max_height=400)
+            # Passing max_height/height to control the scrollable area size
+            panel = CanvasObjectsPanel(self, layer.name, height=400)
             canvas_objects_panels[layer.name] = panel
 
         return canvas_objects_panels
@@ -33,7 +36,12 @@ class CanvasObjectPanelsWrapper(ctk.CTkFrame):
         current_canvas_objects_panel = cast(
             CanvasObjectsPanel, self.current_canvas_objects_panel
         )
-        self.configure(height=current_canvas_objects_panel.winfo_height())
+
+        # Trigger visibility check when showing the panel to ensure scrollbar state is correct
+        current_canvas_objects_panel._check_scroll_visibility()
+
+        # Adjust wrapper height if necessary (though pack fill usually handles this)
+        self.configure(height=current_canvas_objects_panel.winfo_reqheight())
 
     def _set_current_canvas_objects_panel_by_layer_name(self, layer_name: str):
         if self.current_canvas_objects_panel is not None:

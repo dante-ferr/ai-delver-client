@@ -12,7 +12,7 @@ class DeleteButton(IconButton):
             width=15,
             height=15,
             fg_color="transparent",
-            hover_color=("gray80", "gray50"),
+            hover_color=("gray70", "gray40"),
             text_color="white",
             corner_radius=6,
         )

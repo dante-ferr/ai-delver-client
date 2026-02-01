@@ -11,19 +11,26 @@ if TYPE_CHECKING:
 
 class CanvasObjectsPanel(MouseWheelScrollableFrame):
 
-    def __init__(self, master, layer_name: str, *args, **kwargs):
+    def __init__(self, master, layer_name: str, **kwargs):
+        # Map max_height to height for CTkScrollableFrame consistency
+        if "max_height" in kwargs:
+            kwargs["height"] = kwargs.pop("max_height")
+
         self.layer_name = layer_name
-        super().__init__(master, *args, fg_color="transparent", **kwargs)
+        super().__init__(master, fg_color="transparent", **kwargs)
 
         self.configure(border_width=0)
 
         self.canvas_object_containers = self._create_canvas_object_containers()
-        if len(self.canvas_object_containers) == 0:
+        if not self.canvas_object_containers:
             return
 
         for i, container in enumerate(self.canvas_object_containers):
             row, column = divmod(i, 4)
             container.grid(row=row, column=column, sticky="nsew")
+
+            # recursive scroll binding for children
+            self.bind_scroll_events_recursively(container)
 
         selection_manager = SelectionManager(
             activate_callback=self._object_activate_callback,
@@ -32,7 +39,7 @@ class CanvasObjectsPanel(MouseWheelScrollableFrame):
 
         def _on_select(frame: "CanvasObjectContainer"):
             level_editor_manager.selector.set_selection(
-                layer_name + ".canvas_object", frame.canvas_object.name
+                self.layer_name + ".canvas_object", frame.canvas_object.name
             )
 
         populate_selection_manager(
@@ -42,7 +49,7 @@ class CanvasObjectsPanel(MouseWheelScrollableFrame):
             on_select=_on_select,
         )
 
-        self._update_scrollbar_visibility()
+        self.after(50, self._check_scroll_visibility)
 
     def _object_activate_callback(
         self, selection_element_group: "SelectionElementGroup"
