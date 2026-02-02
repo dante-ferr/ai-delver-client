@@ -21,7 +21,7 @@ class TrajectoryListener:
         self.current_cycle = 0
         self.trajectory_factory = EpisodeTrajectoryFactory()
 
-    async def listen(self, level_hash: str):
+    async def listen(self):
         """
         Connects to the WebSocket and processes incoming messages.
         """
@@ -36,7 +36,7 @@ class TrajectoryListener:
                     "WebSocket connection established. Waiting for episode trajectory frames..."
                 )
                 async for response in websocket:
-                    await self._process_message(response, level_hash)
+                    await self._process_message(response)
 
         except websockets.exceptions.ConnectionClosed as e:
             logging.warning(f"WebSocket connection closed: {e}")
@@ -46,19 +46,23 @@ class TrajectoryListener:
             training_state_manager.reset_states()
             raise
 
-    async def _process_message(self, response: str, level_hash: str):
-        response_json = json.loads(response)
+    async def _process_message(self, response: str | bytes):
+        try:
+            response_json = json.loads(response)
+        except json.JSONDecodeError:
+            logging.error("Received invalid JSON from server.")
+            return
+
         trajectory_data = response_json.get("trajectory")
         is_end_signal = response_json.get("end")
 
         if trajectory_data:
-            await self._handle_trajectory(trajectory_data, level_hash)
+            await self._handle_trajectory(trajectory_data)
         elif is_end_signal:
             self._handle_end_signal()
 
-    async def _handle_trajectory(self, trajectory_data: str, level_hash: str):
+    async def _handle_trajectory(self, trajectory_data: str):
         trajectory = self.trajectory_factory.from_json(trajectory_data)
-        trajectory.level_hash = level_hash
         await trajectory.save(agent_loader.agent.name)
 
         self.current_cycle += 1

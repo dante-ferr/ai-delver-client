@@ -54,5 +54,5 @@ class LevelAddButton(AddButton):
             LEVEL_SAVE_FOLDER_PATH,
             "level",
             _LevelAdderOverlay,
-            exclude_files=training_level_list_component().get_order(),
+            exclude_files=training_state_manager.training_levels,
         )

@@ -31,7 +31,7 @@ class EpisodesSettingPanel(ctk.CTkFrame):
             label_text="Episodes per Cycle:",
             on_update=self._set_episodes_per_cycle,
         )
-        self.episodes_per_cycle_input.pack(pady=(0, 24), fill="x")
+        self.episodes_per_cycle_input.pack(pady=0, fill="x")
         training_state_manager.episodes_per_cycle = init_val
 
         training_state_manager.add_callback(

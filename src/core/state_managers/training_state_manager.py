@@ -48,6 +48,17 @@ class TrainingStateManager(StateManager):
             "sending_interrupt_training_request", lambda _: self._update_ui_state()
         )
 
+    @property
+    def total_amount_of_cycles(self) -> int:
+        return self.amount_of_cycles * len(self.training_levels)
+
+    @property
+    def training_levels(self) -> list[str]:
+        if self.training_level_list_component is None:
+            return []
+
+        return self.training_level_list_component.get_order()
+
     def set_train_logs_panel(self, panel: "TrainLogsPanel"):
         self.train_logs_panel = panel
         self._update_ui_state()
@@ -98,7 +109,9 @@ class TrainingStateManager(StateManager):
                 self.train_logs_panel.remove_log("sending_request")
 
             if self.get_value("training"):
-                self.train_logs_panel.show_training_progress(self.amount_of_cycles)
+                self.train_logs_panel.show_training_progress(
+                    self.total_amount_of_cycles
+                )
             else:
                 self.train_logs_panel.remove_training_progress()
 

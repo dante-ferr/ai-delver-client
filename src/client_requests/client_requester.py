@@ -7,7 +7,14 @@ from state_managers import training_state_manager
 from app.components.overlay.message_overlay import MessageOverlay
 import os
 import time
+from level import config as level_config
+import json
+from level import Level
+from pathlib import Path
+from typing import TYPE_CHECKING
 
+if TYPE_CHECKING:
+    from level import Level
 
 class ClientRequester:
     """
@@ -55,7 +62,7 @@ class ClientRequester:
             if not self._handle_training_response(response_json):
                 return
 
-            level_hash = self._ensure_level_saved()
+            self._ensure_levels_saved()
 
             if not self.session_id:
                 raise ValueError("No session ID received from the server.")
@@ -63,7 +70,7 @@ class ClientRequester:
             listener = TrajectoryListener(
                 self.server_url, self.session_id, self.start_time
             )
-            await listener.listen(level_hash)
+            await listener.listen()
 
         except Exception as e:
             self._handle_error(e)
@@ -86,9 +93,18 @@ class ClientRequester:
             self._handle_error(e)
 
     def _create_training_payload(self) -> dict:
-        level_json = level_loader.level.to_dict()
+        if len(training_state_manager.training_levels) == 0:
+            raise ValueError("No levels selected for training.")
+
+        level_jsons = []
+        for level_name in training_state_manager.training_levels:
+            with open(
+                f"{level_config.LEVEL_SAVE_FOLDER_PATH}/{level_name}/level.json", "r"
+            ) as file:
+                level_jsons.append(json.load(file))
+
         return {
-            "level": level_json,
+            "levels": level_jsons,
             "amount_of_cycles": training_state_manager.amount_of_cycles,
             "episodes_per_cycle": training_state_manager.episodes_per_cycle,
         }
@@ -106,18 +122,22 @@ class ClientRequester:
             training_state_manager.reset_states()
             return False
 
-    def _ensure_level_saved(self) -> str:
+    def _ensure_levels_saved(self):
         # Each level configuration is saved with a unique hash as its filename, into the agent's directory.
         # This is done in order to allow the trajectories to point to a specific level configuration through
         # its specific hash. So when the trajectory is loaded to render a replay, the correct level will be
         # loaded as well.
-        level_hash = level_loader.level.to_hash()
-        level_path = (
-            f"data/agents/{agent_loader.agent.name}/level_saves/{level_hash}.json"
-        )
-        if not os.path.exists(level_path):
-            level_loader.level.save(level_path)
-        return level_hash
+        for level_name in training_state_manager.training_levels:
+            level_path = (
+                f"{level_config.LEVEL_SAVE_FOLDER_PATH}/{level_name}/level.json"
+            )
+            level = Level.load(level_path)
+            level_hash = level.to_hash()
+            save_path = (
+                f"data/agents/{agent_loader.agent.name}/level_saves/{level_hash}.json"
+            )
+            if not os.path.exists(save_path):
+                level.save(save_path)
 
     def _handle_error(self, e: Exception):
         logging.error(f"An error occurred during the process: {e}")

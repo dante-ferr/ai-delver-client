@@ -55,7 +55,7 @@ class SortableList(MouseWheelScrollableFrame):
                 return
         print(f"Box '{name}' not found.")
 
-    def get_order(self):
+    def get_order(self) -> list[str]:
         return [box.name for box in self.boxes]
 
     def start_drag(self, item: DraggableBox, event):
