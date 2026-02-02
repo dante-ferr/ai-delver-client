@@ -8,6 +8,7 @@ from app.utils import verify_level_issues
 from src.app.components import SectionTitle
 from .bottom_frame import BottomFrame
 from app.components import StandardButton
+from src.config import config
 
 class Sidebar(ctk.CTkFrame):
 
@@ -28,22 +29,22 @@ class Sidebar(ctk.CTkFrame):
         test_level_button = StandardButton(
             self, text="Test Level", command=self._test_level
         )
-        test_level_button.pack(pady=8)
+        test_level_button.pack(pady=(0, config.STYLE.SECTION_SPACING))
 
         layersPanel = LayersPanel(self)
-        layersPanel.pack(pady=(8, 32), anchor="w", fill="x")
+        layersPanel.pack(pady=(0, config.STYLE.SECTION_SPACING), anchor="w", fill="x")
 
         edit_label = SectionTitle(self, text="Edit")
         edit_label.pack(pady=4, side="top", anchor="w")
 
         tools_frame_container = ctk.CTkFrame(self, fg_color="transparent")
-        tools_frame_container.pack(pady=2, fill="x")
+        tools_frame_container.pack(pady=(0, config.STYLE.SECTION_SPACING), fill="x")
         tools_frame = ToolsFrame(tools_frame_container)
         tools_frame.pack(anchor="center")
 
         canvas_objects_panels_wrapper = CanvasObjectPanelsWrapper(self)
         canvas_objects_panels_wrapper.pack(
-            pady=8, padx=0, anchor="w", fill="both", expand=True
+            pady=0, padx=0, anchor="w", fill="both", expand=True
         )
 
         bottom_frame = BottomFrame(self)

@@ -6,13 +6,19 @@ from src.config import config
 
 class FileLoaderOverlay(Overlay):
 
-    def __init__(self, file_dirs: dict[str, Path], file_type: str):
+    def __init__(
+        self,
+        file_dirs: dict[str, Path],
+        file_type: str,
+        show_sucess_message: bool = True,
+    ):
         from app.components import StandardButton
 
         super().__init__("file_loader")
 
         self.file_dirs = file_dirs
         self.file_type = file_type
+        self.show_sucess_message = show_sucess_message
 
         label = ctk.CTkLabel(
             self,
@@ -26,8 +32,10 @@ class FileLoaderOverlay(Overlay):
         interaction_container = ctk.CTkFrame(self, fg_color="transparent")
         interaction_container.pack(pady=4)
 
+        available_files = list(self.file_dirs.keys())
+
         self.option_menu = ctk.CTkOptionMenu(
-            interaction_container, values=list(self.file_dirs.keys())
+            interaction_container, values=available_files
         )
         self.option_menu.grid(row=0, column=0, padx=4)
 
@@ -48,4 +56,7 @@ class FileLoaderOverlay(Overlay):
 
     def _load(self):
         self._close()
-        MessageOverlay(f"Sucessfully loaded the {self.file_type}.", subject="Success")
+        if self.show_sucess_message:
+            MessageOverlay(
+                f"Sucessfully loaded the {self.file_type}.", subject="Success"
+            )

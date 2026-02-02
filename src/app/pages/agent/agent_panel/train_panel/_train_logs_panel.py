@@ -1,5 +1,6 @@
 from src.app.components import LoadingLogsPanel
 from ._train_process_log import TrainProcessLog
+from state_managers import training_state_manager
 
 
 class TrainLogsPanel(LoadingLogsPanel):
@@ -9,6 +10,8 @@ class TrainLogsPanel(LoadingLogsPanel):
 
         self.training_progress_log: TrainProcessLog | None = None
         self.showing_training_progress = False
+
+        training_state_manager.set_train_logs_panel(self)
 
     def show_training_progress(self, total_cycles: int):
         if self.showing_training_progress:

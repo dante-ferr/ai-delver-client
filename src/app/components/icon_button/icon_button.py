@@ -11,6 +11,7 @@ class IconButton(ctk.CTkButton):
             svg_path=svg_path,
             size=(kwargs.get("width", 20), kwargs.get("height", 20)),
             fill=theme.icon_color,
+            stroke=theme.icon_color,
         )
 
         if kwargs.get("text"):
@@ -24,5 +25,3 @@ class IconButton(ctk.CTkButton):
         kwargs.setdefault("hover_color", "#555")
 
         super().__init__(master, text="", image=icon.get_ctk_image(), **kwargs)
-
-        # self.bind("<Button-1>", self._on_click)

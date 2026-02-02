@@ -14,6 +14,7 @@ from .section_title import SectionTitle
 from .range_slider_input import RangeSliderInput
 from .sortable_list import SortableList
 from .standard_button import StandardButton
+from .add_button import AddButton
 
 __all__ = [
     "IconButton",
@@ -23,11 +24,12 @@ __all__ = [
     "FileLoaderOverlay",
     "MessageOverlay",
     "SaveButton",
-    "LoadButton",
+    "AddButton",
     "TitleTextbox",
     "LoadingLogsPanel",
     "SectionTitle",
     "RangeSliderInput",
     "SortableList",
     "StandardButton",
+    "LoadButton",
 ]

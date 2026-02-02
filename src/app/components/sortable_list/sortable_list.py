@@ -33,7 +33,7 @@ class SortableList(MouseWheelScrollableFrame):
             border_color=("gray60", "gray40"),
         )
 
-    def add_box(self, name, **kwargs):
+    def add_box(self, name: str, **kwargs):
         new_box = DraggableBox(
             self, name, remove_box_button=self.remove_box_button, **kwargs
         )
@@ -45,7 +45,7 @@ class SortableList(MouseWheelScrollableFrame):
 
         self.after(50, self._check_scroll_visibility)
 
-    def remove_box(self, name):
+    def remove_box(self, name: str):
         for box in self.boxes:
             if box.name == name:
                 box.destroy()
@@ -74,7 +74,7 @@ class SortableList(MouseWheelScrollableFrame):
 
         self.placeholder.configure(height=item.winfo_height(), width=item.winfo_width())
 
-        self._repack_layout(with_placeholder=True)
+        self.repack_layout(with_placeholder=True)
         item.lift()
         self._update_dragged_item_position(event)
 
@@ -110,7 +110,7 @@ class SortableList(MouseWheelScrollableFrame):
         self.dragged_item = None
         self.placeholder_index = -1
 
-        self._repack_layout(with_placeholder=False)
+        self.repack_layout(with_placeholder=False)
 
     def _update_drag_scroll_direction(self, event):
         if not self._scrollbar.winfo_viewable():
@@ -193,9 +193,9 @@ class SortableList(MouseWheelScrollableFrame):
     def _update_placeholder_if_changed(self, new_index):
         if new_index != self.placeholder_index:
             self.placeholder_index = new_index
-            self._repack_layout(with_placeholder=True)
+            self.repack_layout(with_placeholder=True)
 
-    def _repack_layout(self, with_placeholder: bool):
+    def repack_layout(self, with_placeholder: bool):
         for child in self.winfo_children():
             child = cast("DraggableBox", child)
             if child is not self.dragged_item:

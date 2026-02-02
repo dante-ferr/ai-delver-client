@@ -29,6 +29,9 @@ class ClientRequester:
             training_state_manager.set_value(
                 "env_batch_size", response_json.get("env_batch_size")
             )
+            training_state_manager.set_value(
+                "max_training_levels", response_json.get("max_training_levels")
+            )
             training_state_manager.set_value("connected_to_server", "yes")
 
             return True

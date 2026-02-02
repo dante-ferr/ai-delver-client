@@ -4,8 +4,9 @@ from .state_manager import StateManager
 
 if TYPE_CHECKING:
     import customtkinter as ctk
-    from app.pages.agent.agent_panel.train_panel._train_logs_panel import (
-        TrainLogsPanel,
+    from app.pages.agent.agent_panel.train_panel._train_logs_panel import TrainLogsPanel
+    from app.pages.agent.agent_panel.train_panel.level_selector._level_list import (
+        LevelList as TrainingLevelList,
     )
 
 
@@ -23,6 +24,7 @@ class TrainingStateManager(StateManager):
         self.disable_on_train_elements: "set[ctk.CTkBaseClass]" = set()
         self.enable_on_train_elements: "set[ctk.CTkBaseClass]" = set()
         self.train_logs_panel: "TrainLogsPanel | None" = None
+        self.training_level_list_component: "TrainingLevelList | None" = None
 
         # Set by the UI before training starts.
         self.amount_of_cycles: int = 0
@@ -32,6 +34,7 @@ class TrainingStateManager(StateManager):
             "connected_to_server", ctk.StringVar, "no"
         )  # no, yes, loading
         self.add_variable("env_batch_size", ctk.IntVar, 32)
+        self.add_variable("max_training_levels", ctk.IntVar, 1)
         self.add_variable("sending_training_request", ctk.BooleanVar, False)
         self.add_variable("training", ctk.BooleanVar, False)
         self.add_variable("sending_interrupt_training_request", ctk.BooleanVar, False)
