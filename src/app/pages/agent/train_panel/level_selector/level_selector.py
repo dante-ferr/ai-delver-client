@@ -5,10 +5,11 @@ from app.components import SectionTitle
 from typing import Callable
 from src.config import config
 
+
 class LevelSelector(ctk.CTkFrame):
 
-    def __init__(self, master, on_amount_of_episodes_change: Callable, *args, **kwargs):
-        super().__init__(master, *args, **kwargs)
+    def __init__(self, master, on_amount_of_episodes_change: Callable, *args):
+        super().__init__(master, *args, height=240, fg_color="transparent")
 
         section_title = SectionTitle(self, "Training Levels")
         section_title.pack(anchor="w", pady=(0, 8))
@@ -26,7 +27,7 @@ class LevelSelector(ctk.CTkFrame):
         level_add_button = LevelAddButton(header)
         level_add_button.pack(side="right", pady=0)
 
-        self.level_list = LevelList(self, on_amount_of_episodes_change, **kwargs)
+        self.level_list = LevelList(self, on_amount_of_episodes_change)
         self.level_list.pack(fill="both")
 
         last_label = ctk.CTkLabel(

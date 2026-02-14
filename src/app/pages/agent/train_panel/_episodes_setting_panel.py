@@ -21,6 +21,7 @@ class EpisodesSettingPanel(ctk.CTkFrame):
             init_val=init_val,
             step=1,
             on_update=self._set_training_cycles,
+            fg_color="transparent",
         )
         self.training_cycles_input.pack(pady=(0, 16), fill="x")
         training_state_manager.amount_of_cycles = init_val
@@ -30,6 +31,7 @@ class EpisodesSettingPanel(ctk.CTkFrame):
             self,
             label_text="Episodes per Cycle:",
             on_update=self._set_episodes_per_cycle,
+            fg_color="transparent",
         )
         self.episodes_per_cycle_input.pack(pady=0, fill="x")
         training_state_manager.episodes_per_cycle = init_val

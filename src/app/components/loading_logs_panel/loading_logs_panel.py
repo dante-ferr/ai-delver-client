@@ -7,8 +7,11 @@ class LoadingLogsPanel(ctk.CTkFrame):
     A CustomTkinter panel for displaying multiple logs.
     """
 
-    def __init__(self, master):
-        super().__init__(master, fg_color="transparent", width=0, height=0)
+    def __init__(self, master, **kwargs):
+        kwargs.setdefault("width", 0)
+        kwargs.setdefault("height", 0)
+
+        super().__init__(master, corner_radius=0, **kwargs)
         self.loading_containers: dict[str, ctk.CTkFrame] = {}
 
     def show_log(self, key: str, text: str):

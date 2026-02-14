@@ -5,16 +5,19 @@ from src.config import config
 from .level_selector import LevelSelector
 from ._episodes_setting_panel import EpisodesSettingPanel
 
+
 class TrainPanel(ctk.CTkFrame):
     """
     A CustomTkinter panel for creating, editing, saving, and loading Agents.
     """
 
     def __init__(self, master):
-        super().__init__(master, fg_color="transparent", width=128)
+        super().__init__(master, fg_color="transparent")
 
         train_buttons_container = TrainButtonsContainer(self)
-        train_buttons_container.pack(padx=2, pady=(0, config.STYLE.SECTION_SPACING))
+        train_buttons_container.pack(
+            padx=2, pady=(0, config.STYLE.SECTION_SPACING), fill="x"
+        )
 
         self.episodes_setting_panel = EpisodesSettingPanel(
             self, on_amount_of_episodes_change=self._set_amount_of_episodes
@@ -34,12 +37,14 @@ class TrainPanel(ctk.CTkFrame):
         self.episodes_label.pack(anchor="w", pady=(0, config.STYLE.SECTION_SPACING))
 
         self.level_selector = LevelSelector(
-            self, on_amount_of_episodes_change=self._set_amount_of_episodes, height=240
+            self, on_amount_of_episodes_change=self._set_amount_of_episodes
         )
         self.level_selector.pack(pady=(0, config.STYLE.SECTION_SPACING), fill="x")
 
         train_logs_panel = TrainLogsPanel(self)
-        train_logs_panel.pack(padx=2, pady=(0, config.STYLE.SECTION_SPACING), fill="x")
+        train_logs_panel.pack(
+            padx=2, pady=(0, config.STYLE.SECTION_SPACING), fill="both", expand=True
+        )
 
         self._set_amount_of_episodes()
 

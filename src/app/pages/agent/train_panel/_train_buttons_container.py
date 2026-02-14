@@ -6,6 +6,7 @@ from client_requests import client_requester
 import threading
 from app.components import StandardButton
 
+
 class TrainButtonsContainer(ctk.CTkFrame):
     """
     A UI container with buttons to start and interrupt agent training.
@@ -14,7 +15,7 @@ class TrainButtonsContainer(ctk.CTkFrame):
     """
 
     def __init__(self, master):
-        super().__init__(master)
+        super().__init__(master, fg_color="transparent")
         self.train_button = StandardButton(
             self, text="Train", command=self._start_train_thread
         )

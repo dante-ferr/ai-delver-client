@@ -47,7 +47,7 @@ class RangeSliderInput(ctk.CTkFrame):
         self.label.pack(anchor="w")
 
         # Grid configuration
-        input_frame = ctk.CTkFrame(self)
+        input_frame = ctk.CTkFrame(self, fg_color="transparent")
         input_frame.pack(fill="x", expand=True)
 
         input_frame.grid_columnconfigure(0, weight=0)  # Input (static width)

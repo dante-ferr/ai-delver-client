@@ -6,7 +6,7 @@ from state_managers import training_state_manager
 class TrainLogsPanel(LoadingLogsPanel):
 
     def __init__(self, master):
-        super().__init__(master)
+        super().__init__(master, fg_color="transparent")
 
         self.training_progress_log: TrainProcessLog | None = None
         self.showing_training_progress = False
