@@ -4,8 +4,8 @@ from .state_manager import StateManager
 
 if TYPE_CHECKING:
     import customtkinter as ctk
-    from app.pages.agent.agent_panel.train_panel._train_logs_panel import TrainLogsPanel
-    from app.pages.agent.agent_panel.train_panel.level_selector._level_list import (
+    from app.pages.agent.train_panel._train_logs_panel import TrainLogsPanel
+    from app.pages.agent.train_panel.level_selector._level_list import (
         LevelList as TrainingLevelList,
     )
 
@@ -35,6 +35,7 @@ class TrainingStateManager(StateManager):
         )  # no, yes, loading
         self.add_variable("env_batch_size", ctk.IntVar, 32)
         self.add_variable("max_training_levels", ctk.IntVar, 1)
+        self.add_variable("level_transitioning_mode", ctk.StringVar, "static")
         self.add_variable("sending_training_request", ctk.BooleanVar, False)
         self.add_variable("training", ctk.BooleanVar, False)
         self.add_variable("sending_interrupt_training_request", ctk.BooleanVar, False)

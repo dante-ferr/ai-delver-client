@@ -4,6 +4,7 @@ from ._train_buttons_container import TrainButtonsContainer
 from src.config import config
 from .level_selector import LevelSelector
 from ._episodes_setting_panel import EpisodesSettingPanel
+from state_managers import training_state_manager
 
 
 class TrainPanel(ctk.CTkFrame):
@@ -20,16 +21,15 @@ class TrainPanel(ctk.CTkFrame):
         )
 
         self.episodes_setting_panel = EpisodesSettingPanel(
-            self, on_amount_of_episodes_change=self._set_amount_of_episodes
+            self,
+            on_amount_of_episodes_change=self._set_amount_of_episodes,
         )
-        self.episodes_setting_panel.pack(
-            pady=(0, config.STYLE.SECTION_SPACING), fill="x"
-        )
+        self.episodes_setting_panel.pack(pady=(0, 16), fill="x")
 
         self.cycles_label = ctk.CTkLabel(
             self, text="", font=ctk.CTkFont(size=config.STYLE.FONT.STANDARD_SIZE)
         )
-        self.cycles_label.pack(anchor="w", pady=0)
+        self.cycles_label.pack(anchor="w")
 
         self.episodes_label = ctk.CTkLabel(
             self, text=f"", font=ctk.CTkFont(size=config.STYLE.FONT.STANDARD_SIZE)
@@ -46,6 +46,17 @@ class TrainPanel(ctk.CTkFrame):
             padx=2, pady=(0, config.STYLE.SECTION_SPACING), fill="both", expand=True
         )
 
+        training_state_manager.add_callback(
+            "level_transitioning_mode", self._on_transition_mode_change
+        )
+
+        self._set_amount_of_episodes()
+
+    def _on_transition_mode_change(self, value):
+        if value == "dynamic":
+            self.cycles_label.pack_forget()
+        else:
+            self.cycles_label.pack(anchor="w", pady=0, before=self.episodes_label)
         self._set_amount_of_episodes()
 
     def _set_amount_of_episodes(self):

@@ -103,11 +103,21 @@ class ClientRequester:
             ) as file:
                 level_jsons.append(json.load(file))
 
-        return {
+        payload = {
             "levels": level_jsons,
-            "amount_of_cycles": training_state_manager.amount_of_cycles,
             "episodes_per_cycle": training_state_manager.episodes_per_cycle,
         }
+
+        level_transitioning_mode = training_state_manager.get_value(
+            "level_transitioning_mode"
+        )
+        if level_transitioning_mode == "dynamic":
+            payload["level_transitioning_mode"] = "dynamic"
+        elif level_transitioning_mode == "static":
+            payload["level_transitioning_mode"] = "static"
+            payload["amount_of_cycles"] = training_state_manager.amount_of_cycles
+
+        return payload
 
     def _handle_training_response(self, response_json: dict) -> bool:
         session_id = response_json.get("session_id")
