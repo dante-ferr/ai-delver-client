@@ -53,13 +53,26 @@ class TrajectoryListener:
             logging.error("Received invalid JSON from server.")
             return
 
-        trajectory_data = response_json.get("trajectory")
         is_end_signal = response_json.get("end")
-
-        if trajectory_data:
-            await self._handle_trajectory(trajectory_data)
-        elif is_end_signal:
+        if is_end_signal:
             self._handle_end_signal()
+
+        response_type = response_json.get("type")
+        if response_type == "showcase":
+            trajectory_data = response_json.get("trajectory")
+            if trajectory_data:
+                await self._handle_trajectory(trajectory_data)
+
+            level_episode_count = int(response_json.get("level_episode_count"))
+            if level_episode_count:
+                training_state_manager.set_value(
+                    "level_episode_count", level_episode_count
+                )
+
+        elif response_type == "level_transition":
+            levels_trained = response_json.get("levels_trained")
+            if levels_trained:
+                training_state_manager.set_value("levels_trained", levels_trained)
 
     async def _handle_trajectory(self, trajectory_data: str):
         trajectory = self.trajectory_factory.from_json(trajectory_data)

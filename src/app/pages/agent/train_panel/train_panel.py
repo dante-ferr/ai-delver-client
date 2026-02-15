@@ -26,20 +26,29 @@ class TrainPanel(ctk.CTkFrame):
         )
         self.episodes_setting_panel.pack(pady=(0, 16), fill="x")
 
+        self.info_frame = ctk.CTkFrame(self, fg_color="transparent", width=0, height=0)
+        self.info_frame.pack(fill="x")
+
         self.cycles_label = ctk.CTkLabel(
-            self, text="", font=ctk.CTkFont(size=config.STYLE.FONT.STANDARD_SIZE)
+            self.info_frame,
+            text="",
+            font=ctk.CTkFont(size=config.STYLE.FONT.STANDARD_SIZE),
         )
         self.cycles_label.pack(anchor="w")
 
         self.episodes_label = ctk.CTkLabel(
-            self, text=f"", font=ctk.CTkFont(size=config.STYLE.FONT.STANDARD_SIZE)
+            self.info_frame,
+            text=f"",
+            font=ctk.CTkFont(size=config.STYLE.FONT.STANDARD_SIZE),
         )
-        self.episodes_label.pack(anchor="w", pady=(0, config.STYLE.SECTION_SPACING))
+        self.episodes_label.pack(anchor="w")
 
         self.level_selector = LevelSelector(
             self, on_amount_of_episodes_change=self._set_amount_of_episodes
         )
-        self.level_selector.pack(pady=(0, config.STYLE.SECTION_SPACING), fill="x")
+        self.level_selector.pack(
+            pady=(config.STYLE.SECTION_SPACING, config.STYLE.SECTION_SPACING), fill="x"
+        )
 
         train_logs_panel = TrainLogsPanel(self)
         train_logs_panel.pack(
@@ -54,9 +63,13 @@ class TrainPanel(ctk.CTkFrame):
 
     def _on_transition_mode_change(self, value):
         if value == "dynamic":
-            self.cycles_label.pack_forget()
+            self.info_frame.pack_forget()
         else:
-            self.cycles_label.pack(anchor="w", pady=0, before=self.episodes_label)
+            self.info_frame.pack(
+                anchor="w",
+                before=self.level_selector,
+            )
+
         self._set_amount_of_episodes()
 
     def _set_amount_of_episodes(self):

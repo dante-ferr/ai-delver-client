@@ -1,3 +1,13 @@
+"""
+Client-side request handler for communicating with the AI training server.
+
+This module provides the ClientRequester class which handles:
+- Initial connection and server configuration
+- Sending training requests with level data
+- Interrupting ongoing training sessions
+- Listening for training results via WebSockets
+"""
+
 import logging
 import httpx
 from loaders import level_loader
@@ -93,9 +103,24 @@ class ClientRequester:
             self._handle_error(e)
 
     def _create_training_payload(self) -> dict:
+        """
+        Builds the training request payload from selected levels and configuration.
+        
+        Creates a dictionary containing:
+        - The JSON representations of all selected training levels
+        - The number of episodes per training cycle
+        - The level transitioning mode (dynamic or static) with related parameters
+        
+        Returns:
+            dict: A payload dictionary ready to be sent to the training server.
+            
+        Raises:
+            ValueError: If no levels have been selected for training.
+        """
         if len(training_state_manager.training_levels) == 0:
             raise ValueError("No levels selected for training.")
 
+        # Load all selected level JSON files from the save folder
         level_jsons = []
         for level_name in training_state_manager.training_levels:
             with open(
@@ -103,23 +128,48 @@ class ClientRequester:
             ) as file:
                 level_jsons.append(json.load(file))
 
+        # Build base payload with levels and episodes per cycle
         payload = {
             "levels": level_jsons,
             "episodes_per_cycle": training_state_manager.episodes_per_cycle,
         }
 
+        # Add level transitioning mode configuration
+        # Dynamic mode: cycles run indefinitely (amount_of_cycles is None)
+        # Static mode: cycles run for a fixed number of times
         level_transitioning_mode = training_state_manager.get_value(
             "level_transitioning_mode"
         )
         if level_transitioning_mode == "dynamic":
-            payload["level_transitioning_mode"] = "dynamic"
+            payload = {
+                **payload,
+                "level_transitioning_mode": "dynamic",
+                "amount_of_cycles": None,
+            }
         elif level_transitioning_mode == "static":
-            payload["level_transitioning_mode"] = "static"
-            payload["amount_of_cycles"] = training_state_manager.amount_of_cycles
+            payload = {
+                **payload,
+                "level_transitioning_mode": "static",
+                "amount_of_cycles": training_state_manager.amount_of_cycles,
+            }
 
         return payload
 
     def _handle_training_response(self, response_json: dict) -> bool:
+        """
+        Processes the server's response to a training request.
+        
+        Extracts the session_id from the response and updates the training state
+        accordingly. The session_id is used to identify this training session
+        in subsequent requests (e.g., for interruption or trajectory listening).
+        
+        Args:
+            response_json: The JSON response from the server containing session info.
+            
+        Returns:
+            bool: True if a valid session_id was received and training state was
+                  updated successfully; False otherwise.
+        """
         session_id = response_json.get("session_id")
         if session_id:
             self.session_id = session_id
@@ -133,6 +183,16 @@ class ClientRequester:
             return False
 
     def _ensure_levels_saved(self):
+        """
+        Saves each training level with a unique hash as filename.
+        
+        This ensures trajectories can reference specific level configurations
+        by hash. When replaying a trajectory, the correct level will be loaded
+        based on the hash stored in the trajectory data.
+        
+        Levels are only saved if they don't already exist at the target path
+        to avoid unnecessary disk writes.
+        """
         # Each level configuration is saved with a unique hash as its filename, into the agent's directory.
         # This is done in order to allow the trajectories to point to a specific level configuration through
         # its specific hash. So when the trajectory is loaded to render a replay, the correct level will be
@@ -150,6 +210,15 @@ class ClientRequester:
                 level.save(save_path)
 
     def _handle_error(self, e: Exception):
+        """
+        Handles errors that occur during training requests.
+        
+        Logs the error, displays an error message overlay to the user,
+        and resets the training state to allow for retrying.
+        
+        Args:
+            e: The exception that was raised during the request process.
+        """
         logging.error(f"An error occurred during the process: {e}")
         MessageOverlay(f"An error occurred during the process: {e}", subject="Error")
         training_state_manager.reset_states()
@@ -184,6 +253,22 @@ class ClientRequester:
             return self._get_response_data(response)
 
     def _get_response_data(self, response) -> dict:
+        """
+        Extracts and validates JSON data from an HTTP response.
+        
+        Raises an HTTPError if the response status code indicates an error
+        (4xx, 5xx). On success, logs the server's response message and
+        returns the parsed JSON data.
+        
+        Args:
+            response: The httpx Response object to extract data from.
+            
+        Returns:
+            dict: The parsed JSON response data.
+            
+        Raises:
+            httpx.HTTPStatusError: If the response indicates an HTTP error status.
+        """
         response.raise_for_status()
 
         response_data = response.json()
@@ -191,4 +276,5 @@ class ClientRequester:
         return response_data
 
 
+# Singleton instance used throughout the application for server communication
 client_requester = ClientRequester()
