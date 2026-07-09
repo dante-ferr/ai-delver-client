@@ -42,13 +42,13 @@ class Sidebar(ctk.CTkFrame):
         tools_frame = ToolsFrame(tools_frame_container)
         tools_frame.pack(anchor="center")
 
+        bottom_frame = BottomFrame(self)
+        bottom_frame.pack(side="bottom", fill="x")
+
         canvas_objects_panels_wrapper = CanvasObjectPanelsWrapper(self)
         canvas_objects_panels_wrapper.pack(
             pady=0, padx=0, anchor="w", fill="both", expand=True
         )
-
-        bottom_frame = BottomFrame(self)
-        bottom_frame.pack(side="bottom", fill="x")
 
     def _test_level(self):
         from app_manager import app_manager
